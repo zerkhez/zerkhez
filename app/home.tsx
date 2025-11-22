@@ -1,0 +1,414 @@
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, {
+    FadeIn,
+    FadeInLeft,
+    FadeInRight,
+    FadeInUp,
+    SlideInDown,
+    SlideInLeft,
+    SlideInRight,
+    useAnimatedStyle,
+    useSharedValue,
+    withRepeat,
+    withSequence,
+    withTiming
+} from 'react-native-reanimated';
+import Svg, { Path } from 'react-native-svg';
+
+const THEME_COLOR = '#4F611C';
+
+export default function HomeScreen() {
+    const router = useRouter();
+    const [weather, setWeather] = useState({
+        temp: 22,
+        condition: 'Partly Cloudy',
+        location: 'Lahore'
+    });
+
+    // Animation values
+    const bellRotation = useSharedValue(0);
+    const weatherIconScale = useSharedValue(1);
+
+    const crops = [
+        { id: 'wheat', name: 'گندم', nameEng: 'Wheat', icon: '🌾', color: THEME_COLOR, image: require('../assets/images/wheat.png') },
+        { id: 'rice', name: 'چاول', nameEng: 'Rice', icon: '🌾', color: THEME_COLOR, image: require('../assets/images/rice.png') },
+        { id: 'maize', name: 'مکئی', nameEng: 'Maize', icon: '🌽', color: THEME_COLOR, image: require('../assets/images/corn.png') },
+    ];
+
+    useEffect(() => {
+        // Bell notification animation - subtle shake
+        bellRotation.value = withRepeat(
+            withSequence(
+                withTiming(10, { duration: 100 }),
+                withTiming(-10, { duration: 100 }),
+                withTiming(10, { duration: 100 }),
+                withTiming(0, { duration: 100 }),
+                withTiming(0, { duration: 3000 }) // Pause between shakes
+            ),
+            -1, // Infinite repeat
+            false
+        );
+
+        // Weather icon pulse animation
+        weatherIconScale.value = withRepeat(
+            withSequence(
+                withTiming(1.1, { duration: 1500 }),
+                withTiming(1, { duration: 1500 })
+            ),
+            -1,
+            true
+        );
+    }, []);
+
+    const bellAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ rotate: `${bellRotation.value}deg` }],
+        };
+    });
+
+    const weatherIconAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ scale: weatherIconScale.value }],
+        };
+    });
+
+    const [displayTemp, setDisplayTemp] = useState(0);
+
+    useEffect(() => {
+        const targetTemp = weather.temp;
+        let current = 0;
+        const increment = targetTemp / 20; // 20 steps
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= targetTemp) {
+                setDisplayTemp(targetTemp);
+                clearInterval(timer);
+            } else {
+                setDisplayTemp(Math.round(current));
+            }
+        }, 50);
+
+        return () => clearInterval(timer);
+    }, [weather.temp]);
+
+    return (
+        <View style={styles.container}>
+            {/* Curved Header */}
+            <Animated.View
+                entering={FadeIn.duration(800)}
+                style={styles.headerContainer}
+            >
+                {/* SVG Curve */}
+                <Svg
+                    height="200"
+                    width="100%"
+                    style={styles.svg}
+                    viewBox="0 0 375 200"
+                    preserveAspectRatio="none"
+                >
+                    <Path
+                        d="M 0 0 L 0 150 Q 187.5 350 375 150 L 375 0 Z"
+                        fill={THEME_COLOR}
+                    />
+                </Svg>
+
+                {/* Header Content */}
+                <View style={styles.headerContent}>
+                    {/* Bell Icon - Top Left - Animated */}
+                    <Animated.View entering={FadeInLeft.delay(300).springify()}>
+                        <TouchableOpacity style={styles.bellIcon}>
+                            <Animated.Text style={[styles.bellText, bellAnimatedStyle]}>
+                                🔔
+                            </Animated.Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+
+                    {/* Title and Date - Top Right - Animated */}
+                    <Animated.View
+                        entering={FadeInRight.delay(300).springify()}
+                        style={styles.headerTextContainer}
+                    >
+                        <Text style={styles.headerTitle}>خوش آمدید کسان</Text>
+                        <Text style={styles.headerDate}>اپریل 25، جمعرات، 2025</Text>
+                    </Animated.View>
+                </View>
+            </Animated.View>
+
+            {/* Weather Card - Slide in from bottom */}
+            <Animated.View
+                entering={SlideInDown.delay(500).springify()}
+                style={styles.weatherCard}
+            >
+                <View style={styles.weatherTop}>
+                    <Text style={styles.weatherLocation}>{weather.location}</Text>
+                    <Animated.View
+                        style={[styles.weatherIcon, weatherIconAnimatedStyle]}
+                    >
+                        <Text style={styles.weatherIconText}>⛅</Text>
+                    </Animated.View>
+                </View>
+                <View style={styles.weatherBottom}>
+                    <Text style={styles.weatherTemp}>{displayTemp}°</Text>
+                    <Text style={styles.weatherCondition}>PARTLY CLOUDY</Text>
+                </View>
+            </Animated.View>
+
+            {/* Crop Options - Staggered entrance */}
+            <View style={styles.cropsContainer}>
+                {crops.map((crop, index) => (
+                    <Animated.View
+                        key={crop.id}
+                        entering={
+                            index % 2 === 0
+                                ? SlideInRight.delay(700 + index * 150).springify()
+                                : SlideInLeft.delay(700 + index * 150).springify()
+                        }
+                    >
+                        <TouchableOpacity
+                            style={[
+                                styles.cropCard,
+                                { backgroundColor: crop.color },
+                                index % 2 === 0 ? styles.cropCardRight : styles.cropCardLeft
+                            ]}
+                            onPress={() => {
+                                console.log(`Selected ${crop.nameEng}`);
+                            }}
+                            activeOpacity={0.7}
+                        >
+                            {/* Text on inside edge, image placeholder on outside edge */}
+                            {index % 2 === 0 ? (
+                                <>
+                                    <Text style={styles.cropName}>{crop.name}</Text>
+                                    <View style={styles.cropImagePlaceholder}>
+                                        <Image
+                                            source={crop.image}
+                                            style={styles.cropImage}
+                                            resizeMode="contain"
+                                        />
+                                    </View>
+                                </>
+                            ) : (
+                                <>
+                                    <View style={styles.cropImagePlaceholder}>
+                                        <Image
+                                            source={crop.image}
+                                            style={styles.cropImage}
+                                            resizeMode="contain"
+                                        />
+                                    </View>
+                                    <Text style={styles.cropName}>{crop.name}</Text>
+                                </>
+                            )}
+                        </TouchableOpacity>
+                    </Animated.View>
+                ))}
+            </View>
+
+            {/* Bottom Navigation - Fade in */}
+            <Animated.View
+                entering={FadeInUp.delay(1200).springify()}
+                style={styles.bottomNav}
+            >
+                <TouchableOpacity
+                    style={styles.navButton}
+                    onPress={() => {
+                        console.log('Voice input pressed');
+                    }}
+                >
+                    <View style={styles.voiceButton}>
+                        <Image source={require('../assets/icons/mic.png')} style={styles.navIconImage} />
+                    </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.navButtonRight}
+                    onPress={() => router.push('/instructions')}
+                >
+                    <Text style={styles.navTextRight}>ہدایات</Text>
+                    <Text style={styles.navArrow}>→</Text>
+                </TouchableOpacity>
+            </Animated.View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+    },
+    headerContainer: {
+        height: 200,
+        position: 'relative',
+    },
+    svg: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+    },
+    headerContent: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        paddingTop: 30,
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    bellIcon: {
+        padding: 5,
+    },
+    bellText: {
+        fontSize: 20,
+        color: 'white',
+    },
+    headerTextContainer: {
+        alignItems: 'flex-end',
+    },
+    headerTitle: {
+        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontSize: 20,
+        // fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'right',
+        // paddingTop: 5,
+    },
+    headerDate: {
+        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.9)',
+        marginTop: 0,
+        textAlign: 'right',
+    },
+    weatherCard: {
+        backgroundColor: 'white',
+        marginHorizontal: 30,
+        marginTop: -60,
+        padding: 20,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+    },
+    weatherTop: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    weatherLocation: {
+        fontSize: 18,
+        fontWeight: '600',
+    },
+    weatherIcon: {
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    weatherIconText: {
+        fontSize: 32,
+    },
+    weatherBottom: {
+        gap: 5,
+    },
+    weatherTemp: {
+        fontSize: 48,
+        fontWeight: 'bold',
+    },
+    weatherCondition: {
+        fontSize: 14,
+        color: '#666',
+        letterSpacing: 1,
+    },
+    cropsContainer: {
+        flex: 1,
+        // paddingHorizontal: 20,
+        paddingTop: 50,
+        gap: 30,
+    },
+    cropCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10,
+        paddingHorizontal: 32,
+        borderRadius: 25,
+        height: 74,
+        width: '75%',
+    },
+    cropCardLeft: {
+        alignSelf: 'flex-start',
+        marginLeft: -20,
+    },
+    cropCardRight: {
+        alignSelf: 'flex-end',
+        marginRight: -20,
+    },
+    cropName: {
+        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontSize: 22,
+        fontWeight: '300',
+        color: 'white',
+        lineHeight: 55,
+    },
+
+    bottomNav: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        backgroundColor: 'white',
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+    },
+    navButton: {
+        alignItems: 'center',
+    },
+    voiceButton: {
+        width: 50,
+        height: 50,
+        // backgroundColor: '#5a7c3e',
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    navIconImage: {
+        // fontSize: 24,
+        width: 24,
+        height: 24,
+    },
+    navButtonRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5,
+    },
+    navTextRight: {
+        fontSize: 16,
+        color: '#333',
+        fontWeight: '800',
+    },
+    navArrow: {
+        fontSize: 20,
+        color: '#333',
+    },
+    cropImagePlaceholder: {
+        width: 60,
+        height: 60,
+        // backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: 10,
+    },
+    cropImage: {
+        width: 80,
+        height: 80,
+        marginLeft: -20,
+        marginRight: 20,
+        marginTop: -40,
+    },
+});
