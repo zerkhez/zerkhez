@@ -1,8 +1,25 @@
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInLeft,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming
+} from 'react-native-reanimated';
+
+const THEME_COLOR = '#4F611C';
 
 export default function InstructionsScreen() {
   const router = useRouter();
+
+  // Animation values for play buttons
+  const playButtonScale1 = useSharedValue(1);
+  const playButtonScale2 = useSharedValue(1);
 
   const videos = [
     {
@@ -21,6 +38,42 @@ export default function InstructionsScreen() {
     },
   ];
 
+  useEffect(() => {
+    // Pulse animation for play button 1
+    playButtonScale1.value = withRepeat(
+      withSequence(
+        withTiming(1.15, { duration: 1000 }),
+        withTiming(1, { duration: 1000 })
+      ),
+      -1,
+      true
+    );
+
+    // Pulse animation for play button 2 (slightly offset)
+    playButtonScale2.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 500 }),
+        withTiming(1.15, { duration: 1000 }),
+        withTiming(1, { duration: 1000 }),
+        withTiming(1, { duration: 500 })
+      ),
+      -1,
+      true
+    );
+  }, []);
+
+  const playButtonAnimatedStyle1 = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: playButtonScale1.value }],
+    };
+  });
+
+  const playButtonAnimatedStyle2 = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: playButtonScale2.value }],
+    };
+  });
+
   const openVideo = (url: string) => {
     Linking.openURL(url);
   };
@@ -28,40 +81,69 @@ export default function InstructionsScreen() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          style={styles.backButton}
+      <Animated.View 
+        entering={FadeIn.duration(600)}
+        style={styles.header}
+      >
+        <Animated.View entering={FadeInLeft.delay(200).springify()}>
+          <TouchableOpacity 
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.Text 
+          entering={FadeIn.delay(300)}
+          style={styles.headerTitle}
         >
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>ہدایات</Text>
+          ہدایات
+        </Animated.Text>
         <View style={styles.placeholder} />
-      </View>
+      </Animated.View>
 
       <ScrollView style={styles.content}>
-        <Text style={styles.sectionTitle}>ویڈیو ٹیوٹوریلز</Text>
-        <Text style={styles.sectionSubtitle}>مزید معلومات کے لیے یہ ویڈیوز دیکھیں</Text>
+        <Animated.Text 
+          entering={FadeInDown.delay(400).springify()}
+          style={styles.sectionTitle}
+        >
+          ویڈیو ٹیوٹوریلز
+        </Animated.Text>
+        <Animated.Text 
+          entering={FadeInDown.delay(500).springify()}
+          style={styles.sectionSubtitle}
+        >
+          مزید معلومات کے لیے یہ ویڈیوز دیکھیں
+        </Animated.Text>
 
         <View style={styles.videosContainer}>
-          {videos.map((video) => (
-            <TouchableOpacity
+          {videos.map((video, index) => (
+            <Animated.View
               key={video.id}
-              style={styles.videoCard}
-              onPress={() => openVideo(video.url)}
-              activeOpacity={0.7}
+              entering={FadeInDown.delay(600 + index * 200).springify()}
             >
-              <View style={styles.videoThumbnail}>
-                <View style={styles.playButton}>
-                  <Text style={styles.playIcon}>▶</Text>
+              <TouchableOpacity
+                style={styles.videoCard}
+                onPress={() => openVideo(video.url)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.videoThumbnail}>
+                  <Animated.View 
+                    style={[
+                      styles.playButton, 
+                      index === 0 ? playButtonAnimatedStyle1 : playButtonAnimatedStyle2
+                    ]}
+                  >
+                    <Text style={styles.playIcon}>▶</Text>
+                  </Animated.View>
+                  <Text style={styles.thumbnailEmoji}>{video.thumbnail}</Text>
                 </View>
-                <Text style={styles.thumbnailEmoji}>{video.thumbnail}</Text>
-              </View>
-              <View style={styles.videoInfo}>
-                <Text style={styles.videoTitle}>{video.title}</Text>
-                <Text style={styles.videoTitleEng}>{video.titleEng}</Text>
-              </View>
-            </TouchableOpacity>
+                <View style={styles.videoInfo}>
+                  <Text style={styles.videoTitle}>{video.title}</Text>
+                  <Text style={styles.videoTitleEng}>{video.titleEng}</Text>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
           ))}
         </View>
       </ScrollView>
@@ -75,7 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   header: {
-    backgroundColor: '#5a7c3e',
+    backgroundColor: THEME_COLOR,
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 20,
@@ -94,6 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
   },
   headerTitle: {
+    fontFamily: 'NotoNastaliqUrdu-Bold',
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
@@ -106,15 +189,19 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   sectionTitle: {
+    fontFamily: 'NotoNastaliqUrdu-Bold',
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 8,
+    textAlign: 'right',
   },
   sectionSubtitle: {
+    fontFamily: 'NotoNastaliqUrdu-Regular',
     fontSize: 16,
     color: '#666',
     marginBottom: 24,
+    textAlign: 'right',
   },
   videosContainer: {
     gap: 20,
@@ -123,15 +210,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 16,
     overflow: 'hidden',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   videoThumbnail: {
     height: 200,
-    backgroundColor: '#5a7c3e',
+    backgroundColor: THEME_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -148,23 +232,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
   playIcon: {
     fontSize: 32,
-    color: '#5a7c3e',
+    color: THEME_COLOR,
     marginLeft: 4,
   },
   videoInfo: {
     padding: 20,
   },
   videoTitle: {
+    // fontFamily: 'NotoNastaliqUrdu-Bold',
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
     marginBottom: 4,
+    textAlign: 'right',
   },
   videoTitleEng: {
     fontSize: 14,
     color: '#666',
+    textAlign: 'right',
   },
 });

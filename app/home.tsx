@@ -77,22 +77,29 @@ export default function HomeScreen() {
     const [displayTemp, setDisplayTemp] = useState(0);
 
     useEffect(() => {
-        const targetTemp = weather.temp;
-        let current = 0;
-        const increment = targetTemp / 20; // 20 steps
-
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= targetTemp) {
-                setDisplayTemp(targetTemp);
-                clearInterval(timer);
-            } else {
-                setDisplayTemp(Math.round(current));
-            }
-        }, 50);
-
-        return () => clearInterval(timer);
-    }, [weather.temp]);
+    const targetTemp = weather.temp;
+    const duration = 2500; // 2 seconds total animation
+    const startTime = Date.now();
+    
+    const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1); // 0 to 1
+        
+        // Ease-out cubic function: starts fast, ends slow
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        
+        const currentTemp = Math.round(easeOut * targetTemp);
+        setDisplayTemp(currentTemp);
+        
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            setDisplayTemp(targetTemp); // Ensure exact final value
+        }
+    };
+    
+    requestAnimationFrame(animate);
+}, [weather.temp]);
 
     return (
         <View style={styles.container}>
