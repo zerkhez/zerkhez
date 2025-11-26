@@ -1,20 +1,38 @@
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  const onPressIn = () => {
+    scale.value = withSpring(0.95);
+  };
+
+  const onPressOut = () => {
+    scale.value = withSpring(1);
+  };
 
   return (
     <View style={styles.container}>
       {/* Background Image - you'll need to add your wheat field image */}
-      <Image 
-        source={require('../assets/images/welcome.jpg')} 
+      <Image
+        source={require('../assets/images/welcome.jpg')}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
-      
+
       {/* Overlay gradient */}
       <LinearGradient
         colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
@@ -36,21 +54,22 @@ export default function WelcomeScreen() {
           <View style={styles.titleContainer}>
             <Text style={styles.title} allowFontScaling={false} >نائٹروجن اسمارٹ</Text>
             <Text style={styles.subtitle} allowFontScaling={false}>درست نائٹروجن مشورے کے ساتھ اپنی فصل کی
-پیداوار بڑھائیں!</Text>
+              پیداوار بڑھائیں!</Text>
           </View>
-        </View> 
+        </View>
 
 
         {/* Get Started Button - fixed to bottom center with blur + dark tint */}
         <BlurView intensity={60} tint="light" style={styles.getStartedWrapper}>
-          <TouchableOpacity
-            style={styles.getStartedButton}
+          <AnimatedPressable
+            style={[styles.getStartedButton, animatedStyle]}
             onPress={() => router.push('/home')}
-            activeOpacity={0.85}
+            onPressIn={onPressIn}
+            onPressOut={onPressOut}
           >
             <Text style={styles.buttonText}>شروع کریں</Text>
             <Text style={styles.buttonArrow}>→</Text>
-          </TouchableOpacity>
+          </AnimatedPressable>
         </BlurView>
       </View>
     </View>
@@ -102,7 +121,7 @@ const styles = StyleSheet.create({
     // gap: 1,
     flexShrink: 1,
   },
-  
+
   title: {
     fontFamily: 'NotoNastaliqUrdu-Bold',
     // fontWeight: '700',
@@ -129,7 +148,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 40,
     alignSelf: 'center',
-    borderRadius: 14,
+    borderRadius: 50, // Made more round/oval
     overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',
@@ -140,17 +159,17 @@ const styles = StyleSheet.create({
   getStartedButton: {
     flexDirection: 'row',
     paddingVertical: 14,
-    paddingHorizontal: 25,
+    paddingHorizontal: 30, // Increased padding for better oval shape
     alignItems: 'center',
     gap: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.01)',
-    height: 56,
-    width: 130,
+    height: 60, // Slightly increased height
+    // width: 130, // Removed fixed width to allow content to define width + padding
   },
   buttonText: {
     fontFamily: 'NotoNastaliqUrdu-Bold',
     color: '#303b12ff',
-    fontSize: 12,
+    fontSize: 14, // Slightly larger font
     fontWeight: '600',
 
   },

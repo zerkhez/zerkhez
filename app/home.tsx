@@ -27,6 +27,44 @@ export default function HomeScreen() {
         location: 'Lahore'
     });
 
+    const getCurrentUrduDate = () => {
+        const now = new Date();
+
+        // Urdu month names
+        const urduMonths = [
+            'جنوری', 'فروری', 'مارچ', 'اپریل', 'مئی', 'جون',
+            'جولائی', 'اگست', 'ستمبر', 'اکتوبر', 'نومبر', 'دسمبر'
+        ];
+
+        // Urdu day names
+        const urduDays = [
+            'اتوار', 'پیر', 'منگل', 'بدھ', 'جمعرات', 'جمعہ', 'ہفتہ'
+        ];
+
+        // Urdu numbers (0-9)
+        const urduNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+        // Convert English number to Urdu
+        const toUrduNumber = (num: number) => {
+            return num.toString().split('').map(digit => urduNumbers[parseInt(digit)]).join('');
+        };
+
+        const day = now.getDate();
+        const month = urduMonths[now.getMonth()];
+        const year = now.getFullYear();
+        const dayName = urduDays[now.getDay()];
+
+        // Format: "اپریل ۲۵، جمعرات، ۲۰۲۵"
+        return `${month} ${toUrduNumber(day)}، ${dayName}، ${toUrduNumber(year)}`;
+    };
+
+    const [currentDate, setCurrentDate] = useState(getCurrentUrduDate())
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentDate(getCurrentUrduDate());
+        }, 60000);
+    })
     // Animation values
     const bellRotation = useSharedValue(0);
     const weatherIconScale = useSharedValue(1);
@@ -77,29 +115,29 @@ export default function HomeScreen() {
     const [displayTemp, setDisplayTemp] = useState(0);
 
     useEffect(() => {
-    const targetTemp = weather.temp;
-    const duration = 2500; // 2 seconds total animation
-    const startTime = Date.now();
-    
-    const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1); // 0 to 1
-        
-        // Ease-out cubic function: starts fast, ends slow
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        
-        const currentTemp = Math.round(easeOut * targetTemp);
-        setDisplayTemp(currentTemp);
-        
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        } else {
-            setDisplayTemp(targetTemp); // Ensure exact final value
-        }
-    };
-    
-    requestAnimationFrame(animate);
-}, [weather.temp]);
+        const targetTemp = weather.temp;
+        const duration = 2500; // 2 seconds total animation
+        const startTime = Date.now();
+
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1); // 0 to 1
+
+            // Ease-out cubic function: starts fast, ends slow
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+
+            const currentTemp = Math.round(easeOut * targetTemp);
+            setDisplayTemp(currentTemp);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                setDisplayTemp(targetTemp); // Ensure exact final value
+            }
+        };
+
+        requestAnimationFrame(animate);
+    }, [weather.temp]);
 
     return (
         <View style={styles.container}>
@@ -139,7 +177,7 @@ export default function HomeScreen() {
                         style={styles.headerTextContainer}
                     >
                         <Text style={styles.headerTitle}>خوش آمدید کسان</Text>
-                        <Text style={styles.headerDate}>اپریل 25، جمعرات، 2025</Text>
+                        <Text style={styles.headerDate}>{currentDate}</Text>
                     </Animated.View>
                 </View>
             </Animated.View>
@@ -181,7 +219,10 @@ export default function HomeScreen() {
                                 index % 2 === 0 ? styles.cropCardRight : styles.cropCardLeft
                             ]}
                             onPress={() => {
-                                console.log(`Selected ${crop.nameEng}`);
+                                router.push({
+                                    pathname: '/crop-types',
+                                    params: { id: crop.id, name: crop.name }
+                                });
                             }}
                             activeOpacity={0.7}
                         >
