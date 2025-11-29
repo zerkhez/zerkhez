@@ -5,34 +5,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const THEME_COLOR = '#4F611C';
 
-export default function CropTypesScreen() {
+export default function CropStagesScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { id, name } = params;
+    const { typeName } = params;
 
-    // Data for crop types
-    const cropTypesData: Record<string, string[]> = {
-        rice: [
-            'سونا سپر باسمتی - 282',
-            'کسان باسمتی',
-            'سپر باسمتی',
-            'باسمتی - 515',
-            'پی کے خوشبودار - 1121',
-            'پی کے خوشبودار - 2021',
-        ],
-        wheat: [
-            'گندم - 1',
-            'گندم - 2',
-            'گندم - 3',
-        ],
-        maize: [
-            'مکئی - 1',
-            'مکئی - 2',
-            'مکئی - 3',
-        ],
-    };
-
-    const currentCropTypes = cropTypesData[id as string] || [];
+    // Data for crop stages
+    const stages = [
+        'لاب لگانے سے پہلے کھادوں کا استعمال',
+        'شاخیں پھوٹنے کے مرحلہ پر کھاد کا استعمال',
+        'گوبھ پر کھاد کا استعمال',
+    ];
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -41,16 +24,16 @@ export default function CropTypesScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Text style={styles.backIcon}>←</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{name} کی فصل</Text>
+                <Text style={styles.headerTitle}>{typeName}</Text>
                 <View style={{ width: 40 }} />
             </Animated.View>
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
-                <Text style={styles.instructionText}>{name} کی قسم کا انتخاب کریں:</Text>
+                <Text style={styles.instructionText}>مرحلہ کا انتخاب کریں:</Text>
 
                 <ScrollView contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false}>
-                    {currentCropTypes.map((type, index) => (
+                    {stages.map((stage, index) => (
                         <Animated.View
                             key={index}
                             entering={FadeInUp.delay(400 + index * 60).springify()}
@@ -59,15 +42,12 @@ export default function CropTypesScreen() {
                             <TouchableOpacity
                                 style={styles.typeButton}
                                 onPress={() => {
-                                    console.log(`Selected type: ${type}`);
-                                    router.push({
-                                        pathname: '/crop-stages' as any,
-                                        params: { typeName: type }
-                                    });
+                                    console.log(`Selected stage: ${stage}`);
+                                    // Navigate to next screen or handle selection
                                 }}
                                 activeOpacity={0.8}
                             >
-                                <Text style={styles.typeButtonText}>{type}</Text>
+                                <Text style={styles.typeButtonText}>{stage}</Text>
                             </TouchableOpacity>
                         </Animated.View>
                     ))}
@@ -134,8 +114,8 @@ const styles = StyleSheet.create({
     },
     typeButton: {
         backgroundColor: '#b5d985', // Light green color from image
-        paddingVertical: 4,
-        paddingHorizontal: 40,
+        paddingVertical: 15, // Increased padding for better touch area
+        paddingHorizontal: 20,
         borderRadius: 20,
         width: '100%',
         alignItems: 'center',
@@ -149,7 +129,7 @@ const styles = StyleSheet.create({
     },
     typeButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 15,
+        fontSize: 18, // Slightly larger font for readability
         color: 'black',
         textAlign: 'center',
     },
