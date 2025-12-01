@@ -34,6 +34,8 @@ export default function RootLayout() {
         <Stack.Screen name="instructions" />
         <Stack.Screen name="selection" />
         <Stack.Screen name="instruction-nitrogen" />
+        <Stack.Screen name="pre-planting-instructions" />
+        <Stack.Screen name="fertilizer-selection" />
       </Stack>
       <StatusBar style="auto" />
     </>

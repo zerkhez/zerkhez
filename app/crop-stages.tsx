@@ -43,7 +43,14 @@ export default function CropStagesScreen() {
                                 style={styles.typeButton}
                                 onPress={() => {
                                     console.log(`Selected stage: ${stage}`);
-                                    // Navigate to next screen or handle selection
+                                    if (index === 0) {
+                                        router.push({
+                                            pathname: '/pre-planting-instructions' as any,
+                                            params: { id: typeName, name: typeName } // Passing typeName as id/name for context
+                                        });
+                                    } else {
+                                        // Navigate to other screens or handle selection
+                                    }
                                 }}
                                 activeOpacity={0.8}
                             >
