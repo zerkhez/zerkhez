@@ -32,6 +32,8 @@ export default function RootLayout() {
         <Stack.Screen name="crop-types" />
         <Stack.Screen name="crop-stages" />
         <Stack.Screen name="instructions" />
+        <Stack.Screen name="selection" />
+        <Stack.Screen name="instruction-nitrogen" />
       </Stack>
       <StatusBar style="auto" />
     </>
