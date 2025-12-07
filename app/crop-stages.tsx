@@ -48,6 +48,16 @@ export default function CropStagesScreen() {
                                             pathname: '/pre-planting-instructions' as any,
                                             params: { id: typeName, name: typeName } // Passing typeName as id/name for context
                                         });
+                                    } else if (index === 1) {
+                                        router.push({
+                                            pathname: '/sprout-instructions' as any,
+                                            params: { typeName: typeName }
+                                        });
+                                    } else if (index === 2) {
+                                        router.push({
+                                            pathname: '/gobh-instructions' as any,
+                                            params: { typeName: typeName }
+                                        });
                                     } else {
                                         // Navigate to other screens or handle selection
                                     }

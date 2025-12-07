@@ -18,21 +18,22 @@ const THEME_COLOR = '#4F611C';
 
 // Placeholder data for fertilizers
 const GROUP_1_FERTILIZERS = [
-    { id: '1', name: 'کھاد 1 - گروپ 1' },
-    { id: '2', name: 'کھاد 2 - گروپ 1' },
-    { id: '3', name: 'کھاد 3 - گروپ 1' },
+    { id: '1', name: 'DAP (18:46:0)\nڈی۔ اے۔ پی' },
+    { id: '2', name: 'SSP (0:18:0)\nایس۔ ایس۔ پی' },
+    { id: '3', name: 'Nitrophos (23:23:0)\nنائٹروفاس' },
+    { id: '4', name: 'TSP (0:46:0)\nٹی۔ ایس۔ پی' },
+    { id: '5', name: 'MAP (13:52:0)\nایم۔ اے۔ پی' },
 ];
 
 const GROUP_2_FERTILIZERS = [
-    { id: '1', name: 'کھاد 1 - گروپ 2' },
-    { id: '2', name: 'کھاد 2 - گروپ 2' },
-    { id: '3', name: 'کھاد 3 - گروپ 2' },
+    { id: '1', name: 'Urea (46:0:0)\nیوریا' },
+    { id: '2', name: 'CAN (26:0:0)\nسی۔ اے۔ این' },
+    { id: '3', name: 'Ammonium Sulfate (21:0:0)\nامونیم سلفیٹ' },
 ];
 
 const GROUP_3_FERTILIZERS = [
-    { id: '1', name: 'کھاد 1 - گروپ 3' },
-    { id: '2', name: 'کھاد 2 - گروپ 3' },
-    { id: '3', name: 'کھاد 3 - گروپ 3' },
+    { id: '1', name: 'SOP (0:0:50)\nایس۔ او۔ پی' },
+    { id: '2', name: 'MOP (0:0:60)\nایم۔ او۔ پی' },
 ];
 
 interface SelectionGroup {
@@ -70,9 +71,14 @@ export default function FertilizerSelectionScreen() {
         return [];
     };
 
-    const handleCalculate = () => {
+    const handleCalculate = async () => {
         console.log('Calculating with:', { group1, group2, group3 });
-        // Navigate to result page later
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Navigate to result page
+        router.push('/results');
     };
 
     const renderGroup = (
@@ -124,15 +130,15 @@ export default function FertilizerSelectionScreen() {
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <Animated.View entering={FadeInUp.delay(200).springify()}>
-                    {renderGroup(1, 'گروپ - 1', group1, setGroup1)}
+                    {renderGroup(1, 'گروپ - 1 (نائٹروجن)', group1, setGroup1)}
                 </Animated.View>
 
                 <Animated.View entering={FadeInUp.delay(300).springify()}>
-                    {renderGroup(2, 'گروپ - 2', group2, setGroup2)}
+                    {renderGroup(2, 'گروپ - 2 (فاسفورس)', group2, setGroup2)}
                 </Animated.View>
 
                 <Animated.View entering={FadeInUp.delay(400).springify()}>
-                    {renderGroup(3, 'گروپ - 3', group3, setGroup3)}
+                    {renderGroup(3, 'گروپ - 3 (پوٹاش)', group3, setGroup3)}
                 </Animated.View>
 
                 <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.buttonContainer}>
