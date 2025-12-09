@@ -14,38 +14,14 @@ export default function NitrogenCalculatorScreen() {
     const { typeName } = params;
     const [selectedDate, setSelectedDate] = useState('');
 
-    const pickImage = async (useCamera: boolean) => {
-        let result;
-        if (useCamera) {
-            const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-            if (permissionResult.granted === false) {
-                alert("You've refused to allow this appp to access your camera!");
-                return;
+    const handleSelectionMode = (useCamera: boolean) => {
+        router.push({
+            pathname: '/image-analysis',
+            params: {
+                mode: useCamera ? 'camera' : 'gallery',
+                typeName: typeName
             }
-            result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1,
-            });
-        } else {
-            const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (permissionResult.granted === false) {
-                alert("You've refused to allow this appp to access your photos!");
-                return;
-            }
-            result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1,
-            });
-        }
-
-        if (!result.canceled) {
-            console.log(result.assets[0].uri);
-            // Handle image selection here (e.g., upload to API or show preview)
-        }
+        });
     };
 
     return (
@@ -89,10 +65,10 @@ export default function NitrogenCalculatorScreen() {
                             disabledArrowColor: '#d9e1e8',
                             monthTextColor: 'black',
                             indicatorColor: 'blue',
-                            textDayFontFamily: 'NotoNastaliqUrdu-Regular',
-                            textMonthFontFamily: 'NotoNastaliqUrdu-Bold',
-                            textDayHeaderFontFamily: 'NotoNastaliqUrdu-Regular',
-                            textDayFontWeight: '300',
+                            // textDayFontFamily: 'NotoNastaliqUrdu-Regular',
+                            // textMonthFontFamily: 'NotoNastaliqUrdu-Bold',
+                            // textDayHeaderFontFamily: 'NotoNastaliqUrdu-Regular',
+                            textDayFontWeight: '200',
                             textMonthFontWeight: 'bold',
                             textDayHeaderFontWeight: '300',
                             textDayFontSize: 16,
@@ -107,7 +83,7 @@ export default function NitrogenCalculatorScreen() {
                 <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.actionButton}
-                        onPress={() => pickImage(true)}
+                        onPress={() => handleSelectionMode(true)}
                         activeOpacity={0.8}
                     >
                         <Text style={styles.actionButtonText}>کیمرا سے تصویر لیں</Text>
@@ -115,7 +91,7 @@ export default function NitrogenCalculatorScreen() {
 
                     <TouchableOpacity
                         style={[styles.actionButton, styles.secondaryButton]}
-                        onPress={() => pickImage(false)}
+                        onPress={() => handleSelectionMode(false)}
                         activeOpacity={0.8}
                     >
                         <Text style={styles.actionButtonText}>پہلے سے لی گئی تصویر منتخب کریں</Text>
@@ -216,7 +192,7 @@ const styles = StyleSheet.create({
     },
     actionButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 18,
+        fontSize: 12,
         color: 'black',
         textAlign: 'center',
     },

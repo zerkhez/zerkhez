@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     },
     typeButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 18, // Slightly larger font for readability
+        fontSize: 16, // Slightly larger font for readability
         color: 'black',
         textAlign: 'center',
     },

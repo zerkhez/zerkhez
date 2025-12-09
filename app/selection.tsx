@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     },
     optionButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 18,
+        fontSize: 12,
         color: 'black',
         textAlign: 'center',
     },

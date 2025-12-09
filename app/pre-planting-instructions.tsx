@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
         fontFamily: 'NotoNastaliqUrdu-Regular',
         fontSize: 15,
         color: 'black',
-        textAlign: 'rightr',
+        textAlign: 'right',
         marginTop: 20,
         marginBottom: 30,
         lineHeight: 26,
