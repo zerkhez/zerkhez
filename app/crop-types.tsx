@@ -20,15 +20,14 @@ export default function CropTypesScreen() {
             'پی کے خوشبودار - 1121',
             'پی کے خوشبودار - 2021',
         ],
-        wheat: [
-            'گندم - 1',
-            'گندم - 2',
-            'گندم - 3',
-        ],
+        // wheat: [
+        //     'گندم - 1',
+        //     'گندم - 2',
+        //     'گندم - 3',
+        // ],
         maize: [
-            'مکئی - 1',
-            'مکئی - 2',
-            'مکئی - 3',
+            'عام  ورائٹی',
+            'ہائبرڈ ورائٹی',
         ],
     };
 
@@ -62,7 +61,7 @@ export default function CropTypesScreen() {
                                     console.log(`Selected type: ${type}`);
                                     router.push({
                                         pathname: '/crop-stages' as any,
-                                        params: { typeName: type }
+                                        params: { typeName: type, name, id }
                                     });
                                 }}
                                 activeOpacity={0.8}

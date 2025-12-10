@@ -8,7 +8,7 @@ const THEME_COLOR = '#4F611C';
 export default function PrePlantingInstructionsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { id, name } = params;
+    const { id, name, stage } = params;
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -25,7 +25,7 @@ export default function PrePlantingInstructionsScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                    <Text style={styles.titleText}>لاب لگانے سے پہلے کھادوں کا استعمال</Text>
+                    <Text style={styles.titleText}>{stage}</Text>
 
                     <Text style={styles.descriptionText}>
                         لاب لگانے سے پہلے باسمتی دھان کو مندرجہ ذیل میں سے کھادوں کا کوئی بھی پیکچ ڈالا جا سکتا ہے۔

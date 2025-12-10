@@ -8,11 +8,15 @@ const THEME_COLOR = '#4F611C';
 export default function CropStagesScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { typeName } = params;
+    const { id, name, typeName } = params;
 
     // Data for crop stages
+    let stage1 = "لاب";
+    if(id!=="rice"){
+        stage1="بیج"
+    }
     const stages = [
-        'لاب لگانے سے پہلے کھادوں کا استعمال',
+        `${stage1} لگانے سے پہلے کھادوں کا استعمال`,
         'شاخیں پھوٹنے کے مرحلہ پر کھاد کا استعمال',
         'گوبھ پر کھاد کا استعمال',
     ];
@@ -46,7 +50,7 @@ export default function CropStagesScreen() {
                                     if (index === 0) {
                                         router.push({
                                             pathname: '/pre-planting-instructions' as any,
-                                            params: { id: typeName, name: typeName } // Passing typeName as id/name for context
+                                            params: { id: typeName, name: typeName, stage:stages[0] } // Passing typeName as id/name for context
                                         });
                                     } else if (index === 1) {
                                         router.push({

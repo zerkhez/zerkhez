@@ -9,6 +9,14 @@ export default function SelectionScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { id, name } = params;
+    let pathName: "/crop-types" | "/crop-stages" = "/crop-types";
+    let btnText = "دھان کی قسم کا انتخاب";
+    let typeName = "";
+    if(id==="wheat"){
+        btnText = "مرحلہ کا انتخاب کریں";
+        pathName = "/crop-stages";
+        typeName = " گندم کی فصل";
+    }
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -30,13 +38,13 @@ export default function SelectionScreen() {
                             style={styles.optionButton}
                             onPress={() => {
                                 router.push({
-                                    pathname: '/crop-types',
-                                    params: { id, name }
+                                    pathname:pathName,
+                                    params: { id, name, typeName}
                                 });
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.optionButtonText}>دھان کی قسم کا انتخاب</Text>
+                            <Text style={styles.optionButtonText}>{btnText}</Text>
                         </TouchableOpacity>
                     </Animated.View>
 
