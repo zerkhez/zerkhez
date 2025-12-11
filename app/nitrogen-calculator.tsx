@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
@@ -37,66 +37,71 @@ export default function NitrogenCalculatorScreen() {
 
             {/* Content Container */}
             <View style={styles.contentContainer}>
-                <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
-                    <Text style={styles.pageTitle}>لاب لگانے کی تاریخ منتخب کریں:</Text>
-                </Animated.View>
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
+                        <Text style={styles.pageTitle}>لاب لگانے کی تاریخ منتخب کریں:</Text>
+                    </Animated.View>
 
-                {/* Calendar */}
-                <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.calendarContainer}>
-                    <Calendar
-                        onDayPress={day => {
-                            setSelectedDate(day.dateString);
-                        }}
-                        markedDates={{
-                            [selectedDate]: { selected: true, disableTouchEvent: true, selectedColor: 'orange' }
-                        }}
-                        theme={{
-                            backgroundColor: '#ffffff',
-                            calendarBackground: '#ffffff',
-                            textSectionTitleColor: '#b6c1cd',
-                            selectedDayBackgroundColor: '#00adf5',
-                            selectedDayTextColor: '#ffffff',
-                            todayTextColor: '#00adf5',
-                            dayTextColor: '#2d4150',
-                            textDisabledColor: '#d9e1e8',
-                            dotColor: '#00adf5',
-                            selectedDotColor: '#ffffff',
-                            arrowColor: 'orange',
-                            disabledArrowColor: '#d9e1e8',
-                            monthTextColor: 'black',
-                            indicatorColor: 'blue',
-                            // textDayFontFamily: 'NotoNastaliqUrdu-Regular',
-                            // textMonthFontFamily: 'NotoNastaliqUrdu-Bold',
-                            // textDayHeaderFontFamily: 'NotoNastaliqUrdu-Regular',
-                            textDayFontWeight: '200',
-                            textMonthFontWeight: 'bold',
-                            textDayHeaderFontWeight: '300',
-                            textDayFontSize: 16,
-                            textMonthFontSize: 16,
-                            textDayHeaderFontSize: 16
-                        }}
-                        style={styles.calendar}
-                    />
-                </Animated.View>
+                    {/* Calendar */}
+                    <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.calendarContainer}>
+                        <Calendar
+                            onDayPress={day => {
+                                setSelectedDate(day.dateString);
+                            }}
+                            markedDates={{
+                                [selectedDate]: { selected: true, disableTouchEvent: true, selectedColor: 'orange' }
+                            }}
+                            theme={{
+                                backgroundColor: '#ffffff',
+                                calendarBackground: '#ffffff',
+                                textSectionTitleColor: '#b6c1cd',
+                                selectedDayBackgroundColor: '#00adf5',
+                                selectedDayTextColor: '#ffffff',
+                                todayTextColor: '#00adf5',
+                                dayTextColor: '#2d4150',
+                                textDisabledColor: '#d9e1e8',
+                                dotColor: '#00adf5',
+                                selectedDotColor: '#ffffff',
+                                arrowColor: 'orange',
+                                disabledArrowColor: '#d9e1e8',
+                                monthTextColor: 'black',
+                                indicatorColor: 'blue',
+                                // textDayFontFamily: 'NotoNastaliqUrdu-Regular',
+                                // textMonthFontFamily: 'NotoNastaliqUrdu-Bold',
+                                // textDayHeaderFontFamily: 'NotoNastaliqUrdu-Regular',
+                                textDayFontWeight: '200',
+                                textMonthFontWeight: 'bold',
+                                textDayHeaderFontWeight: '300',
+                                textDayFontSize: 16,
+                                textMonthFontSize: 16,
+                                textDayHeaderFontSize: 16
+                            }}
+                            style={styles.calendar}
+                        />
+                    </Animated.View>
 
-                {/* Buttons */}
-                <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={() => handleSelectionMode(true)}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={styles.actionButtonText}>کیمرا سے تصویر لیں</Text>
-                    </TouchableOpacity>
+                    {/* Buttons */}
+                    <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={() => handleSelectionMode(true)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.actionButtonText}>کیمرا سے تصویر لیں</Text>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={[styles.actionButton, styles.secondaryButton]}
-                        onPress={() => handleSelectionMode(false)}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={styles.actionButtonText}>پہلے سے لی گئی تصویر منتخب کریں</Text>
-                    </TouchableOpacity>
-                </Animated.View>
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.secondaryButton]}
+                            onPress={() => handleSelectionMode(false)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.actionButtonText}>پہلے سے لی گئی تصویر منتخب کریں</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </ScrollView>
 
                 {/* Mic Button */}
                 <Animated.View entering={ZoomIn.delay(500).springify()} style={styles.micContainer}>
@@ -140,8 +145,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
+        overflow: 'hidden', // Ensure content doesn't bleed out
+    },
+    scrollContent: {
         padding: 20,
         alignItems: 'center',
+        paddingBottom: 100, // Extra space for Mic button
     },
     titleContainer: {
         marginTop: 20,
