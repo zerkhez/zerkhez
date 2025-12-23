@@ -12,7 +12,7 @@ export default function SelectionScreen() {
     let pathName: "/crop-types" | "/crop-stages" = "/crop-types";
     let btnText = "دھان کی قسم کا انتخاب";
     let typeName = "";
-    if(id==="wheat"){
+    if (id === "wheat") {
         btnText = "مرحلہ کا انتخاب کریں";
         pathName = "/crop-stages";
         typeName = " گندم کی فصل";
@@ -33,35 +33,102 @@ export default function SelectionScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
 
                 <View style={styles.buttonsContainer}>
-                    <Animated.View entering={FadeInUp.delay(400).springify()} style={{ width: '100%' }}>
-                        <TouchableOpacity
-                            style={styles.optionButton}
-                            onPress={() => {
-                                router.push({
-                                    pathname:pathName,
-                                    params: { id, name, typeName}
-                                });
-                            }}
-                            activeOpacity={0.8}
-                        >
-                            <Text style={styles.optionButtonText}>{btnText}</Text>
-                        </TouchableOpacity>
-                    </Animated.View>
+                    {id === 'rice' ? (
+                        <>
+                            <Animated.View entering={FadeInUp.delay(300).springify()} style={{ width: '100%' }}>
+                                <TouchableOpacity
+                                    style={styles.optionButton}
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: '/crop-stages',
+                                            params: { id, name, typeName: "چاول کی فصل" }
+                                        });
+                                    }}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text style={styles.optionButtonText}>بوقت کاشت چاول کی کھادیں</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
 
-                    <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%' }}>
-                        <TouchableOpacity
-                            style={styles.optionButton}
-                            onPress={() => {
-                                router.push({
-                                    pathname: '/instruction-nitrogen' as any,
-                                    params: { id, name }
-                                });
-                            }}
-                            activeOpacity={0.8}
-                        >
-                            <Text style={styles.optionButtonText}>ہدایات برائے کافی نائٹروجن پلاٹ</Text>
-                        </TouchableOpacity>
-                    </Animated.View>
+                            <Animated.View entering={FadeInUp.delay(400).springify()} style={{ width: '100%' }}>
+                                <TouchableOpacity
+                                    style={styles.optionButton}
+                                    onPress={() => {
+                                        router.push('/rice-tutorial');
+                                    }}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text style={styles.optionButtonText}>چاول کی تصویر لینے کا طریقہ</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+
+                            <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%' }}>
+                                <TouchableOpacity
+                                    style={styles.optionButton}
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: '/instruction-nitrogen',
+                                            params: { id, name }
+                                        });
+                                    }}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text style={styles.optionButtonText}>ہدایات برائے کافی نائٹروجن پلاٹ</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+
+                            <Animated.View entering={FadeInUp.delay(600).springify()} style={{ width: '100%' }}>
+                                <TouchableOpacity
+                                    style={styles.optionButton}
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: '/crop-types',
+                                            params: {
+                                                id: 'rice',
+                                                name: 'چاول',
+                                                nextRoute: '/nitrogen-calculator'
+                                            }
+                                        });
+                                    }}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text style={styles.optionButtonText}>تصویر سے نائٹروجن کی کمی معلوم کریں</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </>
+                    ) : (
+                        <>
+                            <Animated.View entering={FadeInUp.delay(400).springify()} style={{ width: '100%' }}>
+                                <TouchableOpacity
+                                    style={styles.optionButton}
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: pathName,
+                                            params: { id, name, typeName }
+                                        });
+                                    }}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text style={styles.optionButtonText}>{btnText}</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+
+                            <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%' }}>
+                                <TouchableOpacity
+                                    style={styles.optionButton}
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: '/instruction-nitrogen' as any,
+                                            params: { id, name }
+                                        });
+                                    }}
+                                    activeOpacity={0.8}
+                                >
+                                    <Text style={styles.optionButtonText}>ہدایات برائے کافی نائٹروجن پلاٹ</Text>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </>
+                    )}
                 </View>
 
             </Animated.View>

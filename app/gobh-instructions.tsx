@@ -33,18 +33,7 @@ export default function GobhInstructionsScreen() {
                     </Text>
                 </Animated.View>
 
-                <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={styles.actionButton}
-                        activeOpacity={0.8}
-                        onPress={() => router.push({
-                            pathname: '/nitrogen-calculator',
-                            params: { typeName: typeName }
-                        })}
-                    >
-                        <Text style={styles.actionButtonText}>تصویر سے نائٹروجن کھاد معلوم کریں</Text>
-                    </TouchableOpacity>
-                </Animated.View>
+
 
                 {/* Mic Button */}
                 <Animated.View entering={ZoomIn.delay(500).springify()} style={styles.micContainer}>

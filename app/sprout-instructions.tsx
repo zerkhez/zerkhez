@@ -33,24 +33,9 @@ export default function SproutInstructionsScreen() {
                     </Text>
                 </Animated.View>
 
-                <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.textContainer}>
-                    <Text style={styles.instructionText}>
-                        نچلے بٹن پر کلک کر کے کھاد ڈالنے والی نائٹروجن کھاد مقدار فصل کی تصویر سے معلوم کریں۔
-                    </Text>
-                </Animated.View>
 
-                <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={styles.actionButton}
-                        activeOpacity={0.8}
-                        onPress={() => router.push({
-                            pathname: '/nitrogen-calculator',
-                            params: { typeName: typeName }
-                        })}
-                    >
-                        <Text style={styles.actionButtonText}>تصویر سے نائٹروجن کھاد معلوم کریں</Text>
-                    </TouchableOpacity>
-                </Animated.View>
+
+
 
                 {/* Mic Button */}
                 <Animated.View entering={ZoomIn.delay(600).springify()} style={styles.micContainer}>

@@ -7,8 +7,8 @@ const THEME_COLOR = '#4F611C';
 
 export default function CropTypesScreen() {
     const router = useRouter();
-    const params = useLocalSearchParams();
-    const { id, name } = params;
+    const searchParams = useLocalSearchParams();
+    const { id, name, nextRoute } = searchParams;
 
     // Data for crop types
     const cropTypesData: Record<string, string[]> = {
@@ -59,10 +59,21 @@ export default function CropTypesScreen() {
                                 style={styles.typeButton}
                                 onPress={() => {
                                     console.log(`Selected type: ${type}`);
-                                    router.push({
-                                        pathname: '/crop-stages' as any,
-                                        params: { typeName: type, name, id }
-                                    });
+                                    const params: any = { typeName: type, name, id };
+
+                                    if (nextRoute) {
+                                        // If nextRoute is passed, navigate there
+                                        router.push({
+                                            pathname: nextRoute as any,
+                                            params: { typeName: type }
+                                        });
+                                    } else {
+                                        // Default behavior
+                                        router.push({
+                                            pathname: '/crop-stages' as any,
+                                            params: params
+                                        });
+                                    }
                                 }}
                                 activeOpacity={0.8}
                             >
