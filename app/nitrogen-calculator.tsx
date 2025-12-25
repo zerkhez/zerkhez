@@ -1,18 +1,50 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Calendar } from 'react-native-calendars';
-import { useState } from 'react';
-import * as ImagePicker from 'expo-image-picker';
 
 const THEME_COLOR = '#4F611C';
+
+const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
+    'سونا سپر باسمتی - 282': { min: 47, max: 60 },
+    'کسان باسمتی': { min: 30, max: 43 },
+    'سپر باسمتی': { min: 54, max: 65 },
+    'باسمتی - 515': { min: 49, max: 61 },
+    'پی کے خوشبودار - 1121': { min: 55, max: 70 },
+    'پی کے خوشبودار - 2021': { min: 50, max: 65 },
+};
 
 export default function NitrogenCalculatorScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { typeName } = params;
     const [selectedDate, setSelectedDate] = useState('');
+
+    const validationState = useMemo(() => {
+        if (!selectedDate || !typeName) return { state: 'idle', days: 0 };
+
+        const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
+        const config = CROP_DAT_CONFIG[cropName];
+
+        if (!config) return { state: 'idle', days: 0 };
+
+        const today = new Date();
+        const selected = new Date(selectedDate);
+        const diffTime = Math.abs(today.getTime() - selected.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        // If selected date is in future, it's 0 days (or negative, but abs handles diff, logic assumes past)
+
+        if (selected > today) return { state: 'idle', days: 0 }; // Cannot support future dates for planting
+
+        if (diffDays < config.min) return { state: 'early', days: diffDays, config };
+        if (diffDays > config.max) return { state: 'late', days: diffDays, config };
+
+        return { state: 'valid', days: diffDays };
+    }, [selectedDate, typeName]);
+
 
     const handleSelectionMode = (useCamera: boolean) => {
         router.push({
@@ -23,6 +55,42 @@ export default function NitrogenCalculatorScreen() {
             }
         });
     };
+
+    const renderMessage = () => {
+        if (validationState.state === 'idle' || validationState.state === 'valid') return null;
+
+        const { state, days, config } = validationState;
+        const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
+
+        if (state === 'early') {
+            return (
+                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
+                    <Text style={styles.messageText}>
+                        تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے ابھی
+                        <Text style={styles.redText}> {days} </Text>
+                        دن ہوئے ہیں۔
+                    </Text>
+                    {/* <View style={styles.returnButton}>
+                        <Text style={styles.returnButtonText}>واپسی</Text>
+                    </View> */}
+                </Animated.View>
+            );
+        }
+
+        if (state === 'late') {
+            return (
+                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
+                    <Text style={styles.messageText}>
+                        تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے
+                        <Text style={styles.redText}> {days} </Text>
+                        دن ہو چکے ہیں۔ تاہم پھول آنے سے قبل کھاد ڈالی جا سکتی ہے۔
+                    </Text>
+                </Animated.View>
+            );
+        }
+    };
+
+    const isButtonsDisabled = validationState.state === 'early';
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -69,9 +137,6 @@ export default function NitrogenCalculatorScreen() {
                                 disabledArrowColor: '#d9e1e8',
                                 monthTextColor: 'black',
                                 indicatorColor: 'blue',
-                                // textDayFontFamily: 'NotoNastaliqUrdu-Regular',
-                                // textMonthFontFamily: 'NotoNastaliqUrdu-Bold',
-                                // textDayHeaderFontFamily: 'NotoNastaliqUrdu-Regular',
                                 textDayFontWeight: '200',
                                 textMonthFontWeight: 'bold',
                                 textDayHeaderFontWeight: '300',
@@ -83,20 +148,24 @@ export default function NitrogenCalculatorScreen() {
                         />
                     </Animated.View>
 
+                    {renderMessage()}
+
                     {/* Buttons */}
-                    <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.buttonContainer}>
+                    <Animated.View entering={FadeInUp.delay(400).springify()} style={[styles.buttonContainer, isButtonsDisabled && styles.disabledContainer]}>
                         <TouchableOpacity
-                            style={styles.actionButton}
+                            style={[styles.actionButton, isButtonsDisabled && styles.disabledButton]}
                             onPress={() => handleSelectionMode(true)}
                             activeOpacity={0.8}
+                            disabled={isButtonsDisabled}
                         >
                             <Text style={styles.actionButtonText}>کیمرا سے تصویر لیں</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.actionButton, styles.secondaryButton]}
+                            style={[styles.actionButton, styles.secondaryButton, isButtonsDisabled && styles.disabledButton]}
                             onPress={() => handleSelectionMode(false)}
                             activeOpacity={0.8}
+                            disabled={isButtonsDisabled}
                         >
                             <Text style={styles.actionButtonText}>پہلے سے لی گئی تصویر منتخب کریں</Text>
                         </TouchableOpacity>
@@ -164,7 +233,7 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         width: '100%',
-        marginBottom: 30,
+        marginBottom: 20, // Reduced margin
         borderRadius: 15,
         overflow: 'hidden',
         elevation: 3,
@@ -180,6 +249,10 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         gap: 15,
+        marginTop: 20,
+    },
+    disabledContainer: {
+        opacity: 0.5,
     },
     actionButton: {
         backgroundColor: '#b5d985',
@@ -196,8 +269,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#a3c970',
     },
+    disabledButton: {
+        backgroundColor: '#e0e0e0',
+        borderColor: '#ccc',
+    },
     secondaryButton: {
-        backgroundColor: '#b5d985', // Same color as per design, or slightly different if needed
+        backgroundColor: '#b5d985',
     },
     actionButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
@@ -228,4 +305,40 @@ const styles = StyleSheet.create({
         height: 30,
         tintColor: 'white',
     },
+    messageContainer: {
+        width: '100%',
+        padding: 15,
+        // backgroundColor: '#f8f9fa',
+        // borderRadius: 10,
+        // borderWidth: 1,
+        // borderColor: '#ddd',
+        marginBottom: 10,
+        alignItems: 'center',
+    },
+    messageText: {
+        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontSize: 16,
+        color: 'black',
+        textAlign: 'center',
+        lineHeight: 28,
+    },
+    redText: {
+        color: 'red',
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    returnButton: {
+        marginTop: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 20,
+        backgroundColor: '#eee',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    returnButtonText: {
+        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontSize: 14,
+        color: 'black',
+    }
 });
