@@ -1,4 +1,4 @@
-# <img src="assets/images/logo.png" alt="Zerkhez Logo" width="50" height="50"/> Zerkhez: AI-Based Nitrogen Fertilizer Optimizer
+# <img src="assets/images/logo.png" alt="Zerkhez Logo" width="40" style="vertical-align: middle;"/> Zerkhez: AI-Based Nitrogen Fertilizer Optimizer
 
 **Zerkhez** is an AI-based mobile application designed to help farmers optimize the use of nitrogen fertilizer for major crops such as **rice, wheat, and maize**. 
 
@@ -28,7 +28,7 @@ The application focuses on the following key areas:
 ## 👥 Team Members
 
 | Name | Registration No. | Role / Responsibilities |
-|Source Code|------------------|-------------------------|
+|---|---|---|
 | **Zainab Mehmood** (Group Lead) | BCSF22M038 | Project coordination, frontend development (React Native), system architecture, weather & crop age integration |
 | **Hamid Ahmad** | BCSF22M011 | Literature review, backend development (Flask APIs), AI model integration |
 | **Ashjia Alvi** | BCSF22M032 | Dataset collection, UI/UX design, database setup and management |
@@ -86,9 +86,8 @@ This project contributes to **precision agriculture** by:
 ## 🎓 Project Advisor
 
 **Dr. M. Shahid Farid**
-shahid@pucit.edu.pk
-Associate Professor  
-Department of Computer Science  
-University of the Punjab
+Associate Professor
+Department of Computer Science, University of the Punjab
+[shahid@pucit.edu.pk](mailto:shahid@pucit.edu.pk)
 
-**License:** This project is developed as part of the Final Year Project (FYP) at the Department of Computer Science, FCIT, University of the Punjab.
+This project is developed as part of the Final Year Project (FYP) at the Department of Computer Science, FCIT, University of the Punjab.
