@@ -1,4 +1,6 @@
-# <img src="assets/images/logo.png" alt="Zerkhez Logo" width="70" style="vertical-align: middle;"/> **Zerkhez**: AI-Based Nitrogen Fertilizer Optimizer
+<img src="assets/images/logo.png" alt="Zerkhez Logo" width="70" style="vertical-align: middle;"/>  
+
+# **Zerkhez**: AI-Based Nitrogen Fertilizer Optimizer
 
 **Zerkhez** is an AI-based mobile application designed to help farmers optimize the use of nitrogen fertilizer for major crops such as **rice, wheat, and maize**. 
 
