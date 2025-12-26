@@ -33,7 +33,23 @@ This project contributes to **precision agriculture** by:
 *   Validating results against ground-truth GreenSeeker readings.
 *   Creating a practical, offline-first solution for developing regions.
 
-## 👥 Team Members
+## � Development Phases
+
+The project development is divided into two main phases:
+
+### Phase 1: Frontend Development (Current Status)
+- Implementation of the complete user interface using **React Native**.
+- Integration of **Expo Camera** for image capture.
+- Development of offline-first instructions and navigation flows.
+- UI/UX design and implementation for crop selection, instructions, and results.
+
+### Phase 2: Backend Integration & AI Model (Planned)
+- Integration of the **Flask** backend with the React Native app.
+- Connection to the AI model for real-time nitrogen estimation.
+- Implementation of the **SQLite** database for user history.
+- API development for fetching weather data.
+
+## �👥 Team Members
 
 | Name | Registration No. | Role / Responsibilities |
 |---|---|---|
