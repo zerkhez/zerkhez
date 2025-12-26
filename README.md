@@ -25,6 +25,14 @@ The application focuses on the following key areas:
 - **Voice Assistance:** Guides users through the process, making the app accessible to those with lower literacy.
 - **Alerts & Reminders:** Notifies farmers when it's time to recheck nitrogen levels or apply fertilizer.
 
+## 🔬 Research Contributions
+
+This project contributes to **precision agriculture** by:
+*   Providing a cost-effective alternative to expensive hardware like GreenSeeker.
+*   Applying advanced image segmentation for accurate nitrogen estimation on mobile devices.
+*   Validating results against ground-truth GreenSeeker readings.
+*   Creating a practical, offline-first solution for developing regions.
+
 ## 👥 Team Members
 
 | Name | Registration No. | Role / Responsibilities |
@@ -73,21 +81,13 @@ To run this project locally, you need to have **Node.js** installed.
     *   Press `i` to run on an iOS Simulator.
     *   Press `w` to run in a web browser.
 
-## 🔬 Research Contributions
-
-This project contributes to **precision agriculture** by:
-*   Providing a cost-effective alternative to expensive hardware like GreenSeeker.
-*   Applying advanced image segmentation for accurate nitrogen estimation on mobile devices.
-*   Validating results against ground-truth GreenSeeker readings.
-*   Creating a practical, offline-first solution for developing regions.
-
 ---
 
 ## 🎓 Project Advisor
 
-**Dr. M. Shahid Farid**
-Associate Professor
-Department of Computer Science, University of the Punjab
-[shahid@pucit.edu.pk](mailto:shahid@pucit.edu.pk)
+**Dr. M. Shahid Farid**  
+Associate Professor  
+Department of Computer Science, University of the Punjab  
+[shahid@pucit.edu.pk](mailto:shahid@pucit.edu.pk)  
 
 This project is developed as part of the Final Year Project (FYP) at the Department of Computer Science, FCIT, University of the Punjab.
