@@ -1,6 +1,14 @@
-<img src="assets/images/logo.png" alt="Zerkhez Logo" width="70" style="vertical-align: middle;"/>  
+<table>
+  <tr>
+    <td style="border: none;">
+      <img src="assets/images/logo.png" alt="Zerkhez Logo" width="70"/>
+    </td>
+    <td style="border: none; padding-left: 10px;">
+      <h1 style="margin: 0;">Zerkhez: AI-Based Nitrogen Fertilizer Optimizer</h1>
+    </td>
+  </tr>
+</table>
 
-# **Zerkhez**: AI-Based Nitrogen Fertilizer Optimizer
 
 **Zerkhez** is an AI-based mobile application designed to help farmers optimize the use of nitrogen fertilizer for major crops such as **rice, wheat, and maize**. 
 
@@ -27,7 +35,49 @@ The application focuses on the following key areas:
 - **Voice Assistance:** Guides users through the process, making the app accessible to those with lower literacy.
 - **Alerts & Reminders:** Notifies farmers when it's time to recheck nitrogen levels or apply fertilizer.
 
-## 🔬 Research Contributions
+## � Tech Stack
+
+### Frontend
+- **React Native** – Cross-platform mobile application development
+- **Expo CLI** – Simplified build and testing
+- **SpeechRecognition** – Voice commands and audio feedback
+- **Axios** – API communication
+
+### Backend
+- **Python 3.12**
+- **Flask** – RESTful API development
+- **Node.js** – Backend runtime and API integration
+
+### AI & Image Processing
+- **TensorFlow** – Deep learning model training
+- **OpenCV** – Image preprocessing and segmentation
+- **NumPy** – Numerical computation and feature extraction
+- **K-Means Clustering** – Leaf segmentation and nitrogen-related color analysis
+
+### Database
+- **SQLite** – Lightweight database for user data and history
+
+## 📊 Dataset Details
+
+The project utilizes an **Image-based dataset of crop leaves** for **Rice, Wheat, and Maize (Corn)**.
+
+- **Data Source:** Primary collection using mobile phone cameras under real field conditions.
+- **Validation Data:** Nitrogen level readings from a **GreenSeeker** device (ground truth).
+
+### Data Content
+Each entry consists of:
+- **Crop type** (Rice / Wheat / Maize)
+- **Leaf image** (RGB)
+- **Nitrogen level reference** (from GreenSeeker)
+- **Crop age / growth stage**
+- **Timestamp** and **Weather conditions** (last 10 days)
+
+### Characteristics
+- **Size:** Large-scale collection across low, medium, and sufficient nitrogen conditions.
+- **Preprocessing:** Resizing, noise removal, K-means segmentation, and background removal.
+- **Usage:** Training/Validation of the nitrogen estimation model and comparison with GreenSeeker.
+
+## �🔬 Research Contributions
 
 This project contributes to **precision agriculture** by:
 *   Providing a cost-effective alternative to expensive hardware like GreenSeeker.
@@ -53,12 +103,12 @@ The project development is divided into two main phases:
 
 ## �👥 Team Members
 
-| Name | Registration No. | Role / Responsibilities |
-|---|---|---|
-| **Zainab Mehmood** (Group Lead) | BCSF22M038 | Project coordination, frontend development (React Native), system architecture, weather & crop age integration |
-| **Hamid Ahmad** | BCSF22M011 | Literature review, backend development (Flask APIs), AI model integration |
-| **Ashjia Alvi** | BCSF22M032 | Dataset collection, UI/UX design, database setup and management |
-| **M. Aaqil Irshad** | BCSF22M053 | AI/ML model development, image processing, voice assistant, alerts & reminders, frontend development |
+| Name | Registration No. | Email | Role / Responsibilities |
+|---|---|---|---|
+| **Zainab Mehmood** (Group Lead) | BCSF22M038 | bcsf22m038@pucit.edu.pk | Project coordination, frontend development, system architecture |
+| **Hamid Ahmad** | BCSF22M011 | bcsf22m011@pucit.edu.pk | Backend APIs, AI integration, Literature review |
+| **Ashjia Alvi** | BCSF22M032 | bcsf22m032@pucit.edu.pk | Dataset collection, UI/UX, database management |
+| **M. Aaqil Irshad** | BCSF22M053 | bcsf22m053@pucit.edu.pk | AI/ML model, image processing, voice assistant, frontend |
 
 ## 📂 Repository Structure
 
@@ -101,11 +151,20 @@ To run this project locally, you need to have **Node.js** installed.
 
 ---
 
-## 🎓 Project Advisor
+## 📞 Contact
 
+For inquiries, please contact:
+
+**Project Supervisor**  
 **Dr. M. Shahid Farid**  
-Associate Professor  
+Associate Professor,  
 Department of Computer Science, University of the Punjab  
-[shahid@pucit.edu.pk](mailto:shahid@pucit.edu.pk)  
+📧 [shahid@pucit.edu.pk](mailto:shahid@pucit.edu.pk)
 
-This project is developed as part of the Final Year Project (FYP) at the Department of Computer Science, FCIT, University of the Punjab.
+**Group Leader**  
+**Zainab Mehmood**  
+📧 [bcsf22m038@pucit.edu.pk](mailto:bcsf22m038@pucit.edu.pk)
+
+---
+
+**License:** This project is developed as part of the Final Year Project (FYP) at the Department of Computer Science, FCIT, University of the Punjab.
