@@ -1,93 +1,93 @@
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
+# Expo (Frontend)
+frontend/.expo/
+frontend/dist/
+frontend/web-build/
+frontend/expo-env.d.ts
 
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
+# Dependencies (Frontend)
+frontend/node_modules/
+frontend.pnp
+frontend.pnp.js
 
-# Testing
-coverage/
+# Testing (Frontend)
+frontend/coverage/
 
-# Production
-build/
-*.jsbundle
+# Production (Frontend)
+frontend/build/
+frontend/*.jsbundle
 
-# Misc
+# Misc (General)
 .DS_Store
 *.pem
 
-# Debug
+# Debug (General)
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Local env files
+# Local env files (General)
 .env*.local
 .env
 
-# Vercel
+# Vercel (General)
 .vercel
 
-# TypeScript
-*.tsbuild*
+# TypeScript (Frontend)
+frontend/*.tsbuild*
 
-# IDE
+# IDE (General)
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# OS (General)
 .DS_Store
 Thumbs.db
 
-# Android
-*.apk
-*.aab
-*.ap_
-*.dex
-*.class
-bin/
-gen/
-out/
-.gradle/
-build/
-local.properties
-*.iml
-.idea/
-*.hprof
-.cxx/
-*.keystore
-!debug.keystore
+# Android (Frontend)
+frontend/*.apk
+frontend/*.aab
+frontend/*.ap_
+frontend/*.dex
+frontend/*.class
+frontend/bin/
+frontend/gen/
+frontend/out/
+frontend.gradle/
+frontend/build/
+frontend/local.properties
+frontend/*.iml
+frontend.idea/
+frontend.*.hprof
+frontend.cxx/
+frontend/*.keystore
+!frontend.debug.keystore
 
-# iOS
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata/
-*.xccheckout
-*.moved-aside
-DerivedData
-*.hmap
-*.ipa
-*.xcuserstate
-ios/.xcode.env.local
+# iOS (Frontend)
+frontend/*.pbxuser
+!frontend.default.pbxuser
+frontend.*.mode1v3
+!frontend.default.mode1v3
+frontend.*.mode2v3
+!frontend.default.mode2v3
+frontend.*.perspectivev3
+!frontend.default.perspectivev3
+frontend.xcuserdata/
+frontend.*.xccheckout
+frontend.*.moved-aside
+frontend.DerivedData
+frontend.*.hmap
+frontend.*.ipa
+frontend.xcuserstate
+frontend/ios/.xcode.env.local
 
-# macOS
+# macOS (General)
 .DS_Store
 
-# Temporary files
+# Temporary files (General)
 *.tmp
 *.temp
 *.log
@@ -100,3 +100,41 @@ ios/.xcode.env.local
 # Assets (if you have large assets you don't want in repo)
 # assets/videos/
 # assets/large-files/
+
+# Backend (Flask)
+
+# Python virtual environment
+backend/venv/
+backend/.env
+
+# Flask and Python-related files
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+
+# IDE (for backend)
+backend/.vscode/
+backend/.idea/
+backend/*.swp
+backend/*.swo
+backend*~
+
+# OS files (for backend)
+backend/.DS_Store
+backend/Thumbs.db
+
+# Logs
+backend/*.log
+
+# Local env files (for backend)
+backend/.env*
+backend/.flaskenv
+
+# Database (if using SQLite for example)
+backend/*.db
+backend/*.sqlite3
+
+# Temporary files (for backend)
+backend/*.tmp
+backend/*.temp
