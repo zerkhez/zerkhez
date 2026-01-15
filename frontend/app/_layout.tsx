@@ -30,7 +30,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="home" />
         <Stack.Screen name="crop-types" />
-        <Stack.Screen name="crop-stages" />
+        {/* <Stack.Screen name="crop-stages" /> */}
         <Stack.Screen name="instructions" />
         <Stack.Screen name="selection" />
         <Stack.Screen name="instruction-nitrogen" />

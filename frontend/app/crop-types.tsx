@@ -20,11 +20,14 @@ export default function CropTypesScreen() {
             'پی کے خوشبودار - 1121',
             'پی کے خوشبودار - 2021',
         ],
-        // wheat: [
-        //     'گندم - 1',
-        //     'گندم - 2',
-        //     'گندم - 3',
-        // ],
+        wheat: [
+            "فیصل آباد -08",
+            "پنجاب -11",
+            "اجالا - 16",
+            "اکبر - 19",
+            "دلکش - 20",
+            "سبحانی - 2"
+        ],
         maize: [
             'عام  ورائٹی',
             'ہائبرڈ ورائٹی',
@@ -65,13 +68,13 @@ export default function CropTypesScreen() {
                                         // If nextRoute is passed, navigate there
                                         router.push({
                                             pathname: nextRoute as any,
-                                            params: { typeName: type }
+                                            params: { typeName: type, id, name }
                                         });
                                     } else {
                                         // Default behavior
                                         router.push({
                                             pathname: '/crop-stages' as any,
-                                            params: params
+                                            params: params,
                                         });
                                     }
                                 }}

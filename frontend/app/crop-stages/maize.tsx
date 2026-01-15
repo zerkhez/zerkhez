@@ -17,7 +17,7 @@ export default function PrePlantingInstructionsScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Text style={styles.backIcon}>←</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{name}</Text>
+                <Text style={styles.headerTitle}>{name} کی فصل </Text>
                 <View style={{ width: 40 }} />
             </Animated.View>
 
@@ -25,28 +25,31 @@ export default function PrePlantingInstructionsScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                    <Text style={styles.titleText}>{stage}</Text>
 
-                    <Text style={styles.descriptionText}>
-                        لاب لگانے سے پہلے باسمتی دھان کو مندرجہ ذیل میں سے کھادوں کا کوئی بھی پیکچ ڈالا جا سکتا ہے۔
+
+                    <Text style={styles.packageText}>
+                        بوقت کاشت مکئی کو منذرجہ ذیل میں سے کھادوں کا کوئی بھی پیکج ڈالا جا سکتا ہے۔
                     </Text>
 
                     <View style={styles.packageContainer}>
                         <Text style={styles.packageTitle}>پیکچ نمبر 1:</Text>
                         <Text style={styles.packageText}>
-                            75 کلو گرام ڈی اے پی اور 25 کلو گرام پوٹاش کی کوئی بھی کھاد
+                            ہاںؑبرڈ اقسام کے لیے اڑھائی بوری ڈی اے پی + ڈیڑھ بوری پوٹاشیم سلفیٹ فی ایکڑ۔
+                            عام دیسی اقسام کے لیے دو بوری ڈی اے پی + ڈیڑھ بوری پوٹاشیم سلفیٹ فی ایکڑ۔
+
                         </Text>
                     </View>
 
                     <View style={styles.packageContainer}>
                         <Text style={styles.packageTitle}>پیکچ نمبر 2:</Text>
                         <Text style={styles.packageText}>
-                            200 کلوگرام ایس ایس پی، 25 کلو گرام یوریا اور 25 کلو گرام پوٹاش کی کوئی بھی کھاد
+                            اںؑبرڈ اقسام کے لیے ساڑھے چھ بوری سنگل سپرفاسفیٹ (18 فیصد) + ڈیڑھ بوری پوٹاشیم سلفیٹ + ایک بوری یوریا فی ایکڑ۔
+                            عام دیسی اقسام کے لیے پانچ بوری سنگل سپرفاسفیٹ (18 فیصد) + ڈیڑھ بوری پوٹاشیم سلفیٹ + پونی بوری یوریا فی ایکڑ۔
                         </Text>
                     </View>
 
                     <Text style={styles.noteText}>
-                        اگر آپ کوئی اور پیکچ بنانا چاہتے ہیں تو نیچے بٹن پر کلک کریں، صفحہ کھلنے پر نائٹروجن، فاسفورس اور پوٹاش کی جگہ پر بالترتيب 12، 35 اور 12 درج کریں اور گروپ 1، گروپ 2 اور گروپ 3 میں سے اپنی مرضی کی ایک ایک کھاد کا چناؤ کریں۔
+                        اگر آپ کوئی اور پیکج بنانا چاہتے ہیں تونیچے بٹن پر کلک کریں، پیج کُھلنے پر نا ئٹروجن، فاسفورس اور پوٹاش کی جگہ پر بلترتیب 22، 58 اور37 ہاںؑبرڈ اقسام کے لیے، اور 18، 46 اور37  عام دیسی اقسام کے لیے درج کریں اور گروپ ۱، گروپ ۲ اور گروپ ۳ میں سے اپنی مرضی کی ایک ایک کھاد کا چناؤ کریں۔
                     </Text>
 
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={styles.buttonContainer}>
@@ -74,7 +77,7 @@ export default function PrePlantingInstructionsScreen() {
             {/* Mic Button */}
             <Animated.View entering={ZoomIn.delay(800).springify()} style={styles.micContainer}>
                 <TouchableOpacity style={styles.micButton}>
-                    <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
+                    <Image source={require('../../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
                 </TouchableOpacity>
             </Animated.View>
         </SafeAreaView>

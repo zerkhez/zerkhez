@@ -12,8 +12,8 @@ export default function CropStagesScreen() {
 
     // Data for crop stages
     let stage1 = "لاب";
-    if(id!=="rice"){
-        stage1="بیج"
+    if (id !== "rice") {
+        stage1 = "بیج"
     }
     const stages = [
         `${stage1} لگانے سے پہلے کھادوں کا استعمال`,
@@ -50,7 +50,7 @@ export default function CropStagesScreen() {
                                     if (index === 0) {
                                         router.push({
                                             pathname: '/pre-planting-instructions' as any,
-                                            params: { id: typeName, name: typeName, stage:stages[0] } // Passing typeName as id/name for context
+                                            params: { id: typeName, name: typeName, stage: stages[0] } // Passing typeName as id/name for context
                                         });
                                     } else if (index === 1) {
                                         router.push({
@@ -78,7 +78,7 @@ export default function CropStagesScreen() {
             {/* Mic Button */}
             <Animated.View entering={ZoomIn.delay(800).springify()} style={styles.micContainer}>
                 <TouchableOpacity style={styles.micButton}>
-                    <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
+                    <Image source={require('../../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
                 </TouchableOpacity>
             </Animated.View>
         </SafeAreaView>

@@ -19,7 +19,7 @@ const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
 export default function NitrogenCalculatorScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { typeName } = params;
+    const { typeName, id, name } = params;
     const [selectedDate, setSelectedDate] = useState('');
 
     const validationState = useMemo(() => {
@@ -47,6 +47,7 @@ export default function NitrogenCalculatorScreen() {
 
 
     const handleSelectionMode = (useCamera: boolean) => {
+        console.log("Days are ", validationState.days)
         router.push({
             pathname: '/image-analysis',
             params: {
@@ -56,7 +57,43 @@ export default function NitrogenCalculatorScreen() {
             }
         });
     };
+    const riceRenderMessage = () => {
+        const min = 30;
+        const max = 70;
+        const today = new Date();
+        const selected = new Date(selectedDate);
+        const diffTime = Math.abs(today.getTime() - selected.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+        // If selected date is in future, it's 0 days (or negative, but abs handles diff, logic assumes past)
+        let state = "";
+
+        if (diffDays < min) {
+            state = "early";
+        }
+        if (diffDays > max) {
+            state = "late";
+        }
+        if (state === 'early') {
+            return (
+                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
+                    <Text style={styles.messageText}>
+                        گندم کی فصل کو بالائی کھاد دو دفعہ یعنی بوائی کے 30 سے 40 دن بعد تک اور بوائی کے 50 سے 70 دن بعد تک ڈالی جا سکتی ہے۔ تصویر کے ذریعے بالائی کھاد معلوم کرنے کے لیے گندم کی قسم کا انتخاب کریں
+                    </Text>
+                </Animated.View>
+            )
+        }
+
+        if (state === 'late') {
+            return (
+                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
+                    <Text style={styles.messageText}>آپ کی گندم کی فصل کو نائٹروجنی کھاد ڈالنے کا وقت گزر چکا ہے۔</Text>
+                </Animated.View>
+            )
+
+
+        }
+    }
     const renderMessage = () => {
         if (validationState.state === 'idle' || validationState.state === 'valid') return null;
 
@@ -64,6 +101,7 @@ export default function NitrogenCalculatorScreen() {
         const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
 
         if (state === 'early') {
+
             return (
                 <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
                     <Text style={styles.messageText}>
@@ -71,9 +109,6 @@ export default function NitrogenCalculatorScreen() {
                         <Text style={styles.redText}> {days} </Text>
                         دن ہوئے ہیں۔
                     </Text>
-                    {/* <View style={styles.returnButton}>
-                        <Text style={styles.returnButtonText}>واپسی</Text>
-                    </View> */}
                 </Animated.View>
             );
         }
@@ -110,46 +145,56 @@ export default function NitrogenCalculatorScreen() {
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={false}
                 >
-                    <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
-                        <Text style={styles.pageTitle}>لاب لگانے کی تاریخ منتخب کریں:</Text>
-                    </Animated.View>
+                    {id !== "maize" && (
+                        <>
+                            <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
+                                {id === "rice" ? (
+                                    <Text style={styles.pageTitle}>لاب لگانے کی تاریخ منتخب کریں:</Text>
+                                ) : (
+                                    <Text style={styles.pageTitle}>بیج لگانے کی تاریخ منتخب کریں:</Text>
+                                )}
+                            </Animated.View>
 
-                    {/* Calendar */}
-                    <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.calendarContainer}>
-                        <Calendar
-                            onDayPress={day => {
-                                setSelectedDate(day.dateString);
-                            }}
-                            markedDates={{
-                                [selectedDate]: { selected: true, disableTouchEvent: true, selectedColor: 'orange' }
-                            }}
-                            theme={{
-                                backgroundColor: '#ffffff',
-                                calendarBackground: '#ffffff',
-                                textSectionTitleColor: '#b6c1cd',
-                                selectedDayBackgroundColor: '#00adf5',
-                                selectedDayTextColor: '#ffffff',
-                                todayTextColor: '#00adf5',
-                                dayTextColor: '#2d4150',
-                                textDisabledColor: '#d9e1e8',
-                                dotColor: '#00adf5',
-                                selectedDotColor: '#ffffff',
-                                arrowColor: 'orange',
-                                disabledArrowColor: '#d9e1e8',
-                                monthTextColor: 'black',
-                                indicatorColor: 'blue',
-                                textDayFontWeight: '200',
-                                textMonthFontWeight: 'bold',
-                                textDayHeaderFontWeight: '300',
-                                textDayFontSize: 16,
-                                textMonthFontSize: 16,
-                                textDayHeaderFontSize: 16
-                            }}
-                            style={styles.calendar}
-                        />
-                    </Animated.View>
+                            {/* Calendar */}
+                            <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.calendarContainer}>
+                                <Calendar
+                                    onDayPress={day => {
+                                        setSelectedDate(day.dateString);
+                                    }}
+                                    markedDates={{
+                                        [selectedDate]: { selected: true, disableTouchEvent: true, selectedColor: 'orange' }
+                                    }}
+                                    theme={{
+                                        backgroundColor: '#ffffff',
+                                        calendarBackground: '#ffffff',
+                                        textSectionTitleColor: '#b6c1cd',
+                                        selectedDayBackgroundColor: '#00adf5',
+                                        selectedDayTextColor: '#ffffff',
+                                        todayTextColor: '#00adf5',
+                                        dayTextColor: '#2d4150',
+                                        textDisabledColor: '#d9e1e8',
+                                        dotColor: '#00adf5',
+                                        selectedDotColor: '#ffffff',
+                                        arrowColor: 'orange',
+                                        disabledArrowColor: '#d9e1e8',
+                                        monthTextColor: 'black',
+                                        indicatorColor: 'blue',
+                                        textDayFontWeight: '200',
+                                        textMonthFontWeight: 'bold',
+                                        textDayHeaderFontWeight: '300',
+                                        textDayFontSize: 16,
+                                        textMonthFontSize: 16,
+                                        textDayHeaderFontSize: 16
+                                    }}
+                                    style={styles.calendar}
+                                />
+                            </Animated.View>
+                        </>
+                    )}
 
-                    {renderMessage()}
+
+                    {id === "rice" && renderMessage()}
+                    {id === "wheat" && riceRenderMessage()}
 
                     {/* Buttons */}
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={[styles.buttonContainer, isButtonsDisabled && styles.disabledContainer]}>

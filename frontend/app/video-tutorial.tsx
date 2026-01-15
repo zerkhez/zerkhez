@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +7,8 @@ const THEME_COLOR = '#4F611C';
 
 export default function RiceTutorialScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const { id, name } = params;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -15,7 +17,7 @@ export default function RiceTutorialScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>چاول کی تصویر لینے کا طریقہ</Text>
+        <Text style={styles.headerTitle}>{name} کی تصویر لینے کا طریقہ</Text>
         <View style={{ width: 40 }} />
       </Animated.View>
 
@@ -24,7 +26,7 @@ export default function RiceTutorialScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
           <Text style={styles.instructionText}>
-            چاول کی فصل کی تصویر لینے کا درست طریقہ جاننے کے لیے ویڈیو دیکھیں:
+            {name} کی فصل کی تصویر لینے کا درست طریقہ جاننے کے لیے ویڈیو دیکھیں:
           </Text>
 
           {/* Video Placeholder */}
