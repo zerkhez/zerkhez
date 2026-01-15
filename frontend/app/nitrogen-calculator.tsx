@@ -51,7 +51,8 @@ export default function NitrogenCalculatorScreen() {
             pathname: '/image-analysis',
             params: {
                 mode: useCamera ? 'camera' : 'gallery',
-                typeName: typeName
+                typeName: typeName,
+                dat: validationState.days
             }
         });
     };

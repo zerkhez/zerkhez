@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import numpy as np
 from PIL import Image
 import io
 
 app = Flask(__name__)
+CORS(app)
 
 # Rice Variety Data: (Formula Logic, Slope M, Intercept C)
 # Formula Logic keys: 'R+B', '2G-B-R', 'G/R', '(G-B)/(R+G+B)', 'R-G', 'B'
@@ -75,8 +77,8 @@ def calculate_gi(formula_type, R, G, B):
         print(f"Error calculating GI: {e}")
         return 0
 
-@app.route('/calculate_fertilizer', methods=['POST'])
-def calculate_fertilizer():
+@app.route('/api/calculate_fertilizer/rice', methods=['POST'])
+def calculate_fertilizer_rice():
     try:
         # Check inputs
         if 'kaafi_image' not in request.files or 'aam_image' not in request.files:

@@ -1,6 +1,8 @@
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import * as Location from 'expo-location';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
@@ -9,6 +11,35 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export default function WelcomeScreen() {
   const router = useRouter();
   const scale = useSharedValue(1);
+  const [weatherData, setWeatherData] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const apiKey = process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY || "fddbdfd48ce21911399a167863770702";
+
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=metric&appid=${apiKey}`
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setWeatherData({
+            temp: Math.round(data.main.temp).toString(),
+            condition: data.weather[0].main,
+            location: data.name
+          });
+        }
+      } catch (e) {
+        console.log("Error fetching weather in index", e);
+      }
+    })();
+  }, []);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -63,7 +94,10 @@ export default function WelcomeScreen() {
         <BlurView intensity={60} tint="light" style={styles.getStartedWrapper}>
           <AnimatedPressable
             style={[styles.getStartedButton, animatedStyle]}
-            onPress={() => router.push('/home')}
+            onPress={() => router.push({
+              pathname: '/home',
+              params: weatherData || {}
+            })}
             onPressIn={onPressIn}
             onPressOut={onPressOut}
           >

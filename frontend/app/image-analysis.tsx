@@ -4,14 +4,27 @@ import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import { Platform } from 'react-native';
+import { BACKEND_API_URL } from '@/constants';
 
 const THEME_COLOR = '#4F611C';
 
 export default function ImageAnalysisScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { mode, typeName } = params;
+    const { mode, typeName, dat } = params;
+
+    const VARIETY_MAPPING: Record<string, string> = {
+        'سونا سپر باسمتی - 282': 'Sona super Basmati',
+        'کسان باسمتی': 'Kisan Basmati',
+        'سپر باسمتی': 'Super Basmati',
+        'باسمتی - 515': 'Basmati 515',
+        'پی کے خوشبودار - 1121': 'PK 1121 Aromatic',
+        'پی کے خوشبودار - 2021': 'Pk 2021 Aromatic'
+    };
 
     // State to store selected images
     const [sufficientPlotImage, setSufficientPlotImage] = useState<string | null>(null);
@@ -65,19 +78,80 @@ export default function ImageAnalysisScreen() {
 
     const handleAnalyze = async () => {
         if (!sufficientPlotImage || !commonPlotImage) {
-            Alert.alert("Images Required", "Please select images for both plots.");
+            Alert.alert("Images Required", "Please select both Plot images.");
             return;
         }
 
+        if (!typeName || !dat) {
+            Alert.alert("Missing Info", "Variety or DAT info is missing. Go back and select again.");
+            return;
+        }
+
+        const variety = VARIETY_MAPPING[typeName as string] || typeName;
         setIsAnalyzing(true);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            const formData = new FormData();
 
-        setIsAnalyzing(false);
+            if (Platform.OS === 'web') {
+                // 🔥 WEB: convert image URI → Blob
+                const kaafiBlob = await (await fetch(sufficientPlotImage)).blob();
+                const aamBlob = await (await fetch(commonPlotImage)).blob();
 
-        // Navigate to results
-        router.push('/analysis-results');
+                formData.append('kaafi_image', kaafiBlob, 'kaafi.jpg');
+                formData.append('aam_image', aamBlob, 'aam.jpg');
+            } else {
+                // 📱 MOBILE (Android / iOS)
+                formData.append('kaafi_image', {
+                    uri: sufficientPlotImage,
+                    name: 'kaafi.jpg',
+                    type: 'image/jpeg',
+                } as any);
+
+                formData.append('aam_image', {
+                    uri: commonPlotImage,
+                    name: 'aam.jpg',
+                    type: 'image/jpeg',
+                } as any);
+            }
+
+            formData.append('variety', variety as string);
+            formData.append('dat', String(dat));
+
+            const response = await fetch(
+                `${BACKEND_API_URL}/api/calculate_fertilizer/rice`,
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            );
+            const data = await response.json();
+
+            if (data && data.recommendations_kg_acre) {
+                const recs = data.recommendations_kg_acre;
+                const calcs = data.calculations;
+                router.push({
+                    pathname: '/analysis-results',
+                    params: {
+                        urea: recs.Urea,
+                        can: recs.CAN,
+                        ammonium_sulfate: recs.Ammonium_Sulfate,
+                        n_rate: calcs?.N_rate_kg_ha ? Math.round(calcs.N_rate_kg_ha) : 0
+                    }
+                });
+            } else {
+                Alert.alert("Error", "Invalid response from server");
+                console.log("Invalid Response:", data);
+            }
+
+
+            console.log("SUCCESS:", data);
+
+        } catch (error) {
+            console.log("UPLOAD ERROR:", error);
+        } finally {
+            setIsAnalyzing(false);
+        }
     };
 
     return (

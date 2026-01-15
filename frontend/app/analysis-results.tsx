@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,6 +8,8 @@ const THEME_COLOR = '#4F611C';
 
 export default function AnalysisResultsScreen() {
     const router = useRouter();
+    const params = useLocalSearchParams();
+    const { urea, can, ammonium_sulfate, n_rate } = params;
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -28,24 +30,24 @@ export default function AnalysisResultsScreen() {
 
                     {/* Result Rows */}
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.resultRow}>
-                        <Text style={styles.resultValue}>0.36</Text>
+                        <Text style={styles.resultValue}>{ammonium_sulfate || '-'}</Text>
                         <Text style={styles.resultLabel}>-:امونیم سلفیٹ</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.resultRow}>
-                        <Text style={styles.resultValue}>0.36</Text>
+                        <Text style={styles.resultValue}>{urea || '-'}</Text>
                         <Text style={styles.resultLabel}>-:یوریا</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.resultRow}>
-                        <Text style={styles.resultValue}>0.36</Text>
+                        <Text style={styles.resultValue}>{can || '-'}</Text>
                         <Text style={styles.resultLabel}>-:کین (کیلشیم امونیم نائٹریٹ)</Text>
                     </Animated.View>
 
                     {/* Summary Section */}
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={styles.summaryBox}>
                         <Text style={styles.summaryText}>
-                            تجویز کردہ نائٹروجن شرح: <Text style={styles.summaryValue}>0.24</Text> کلوگرام فی ہیکٹر
+                            تجویز کردہ نائٹروجن شرح: <Text style={styles.summaryValue}>{n_rate || '-'}</Text> کلوگرام فی ہیکٹر
                         </Text>
                     </Animated.View>
 

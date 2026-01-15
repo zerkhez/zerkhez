@@ -1,5 +1,7 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import * as Location from 'expo-location';
+import { OPEN_WEATHER_API_URL } from '@/constants';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
     FadeIn,
@@ -21,10 +23,12 @@ const THEME_COLOR = '#4F611C';
 
 export default function HomeScreen() {
     const router = useRouter();
+    const params = useLocalSearchParams();
+
     const [weather, setWeather] = useState({
-        temp: 22,
-        condition: 'Partly Cloudy',
-        location: 'Lahore'
+        temp: params.temp ? params.temp as string : "Loading...",
+        condition: params.condition ? params.condition as string : 'Loading...',
+        location: params.location ? params.location as string : 'Loading...'
     });
 
     const getCurrentUrduDate = () => {
@@ -61,10 +65,52 @@ export default function HomeScreen() {
     const [currentDate, setCurrentDate] = useState(getCurrentUrduDate())
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentDate(getCurrentUrduDate());
-        }, 60000);
-    })
+        // If weather data was passed via params, we don't need to fetch again immediately
+        if (params.temp && params.location) {
+            setWeather({
+                temp: params.temp as string,
+                condition: params.condition as string,
+                location: params.location as string
+            });
+            return;
+        }
+
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setWeather(prev => ({ ...prev, location: 'Permission Denied' }));
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            console.log("Location ", location)
+            fetchWeather(location.coords.latitude, location.coords.longitude);
+        })();
+    }, [params.temp, params.condition, params.location]);
+
+    const fetchWeather = async (lat: number, lon: number) => {
+        try {
+
+            // directly using api for now handle it later
+            const response = await fetch(
+                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPEN_WEATHER_API_URL}`
+            );
+            const data = await response.json();
+            console.log("Weather ", data)
+            if (response.ok) {
+                setWeather({
+                    temp: Math.round(data.main.temp).toString(),
+                    condition: data.weather[0].main,
+                    location: data.name
+                });
+            } else {
+                console.error("Weather API Error:", data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching weather:", error);
+        }
+    };
+
     // Animation values
     const bellRotation = useSharedValue(0);
     const weatherIconScale = useSharedValue(1);
@@ -115,7 +161,13 @@ export default function HomeScreen() {
     const [displayTemp, setDisplayTemp] = useState(0);
 
     useEffect(() => {
-        const targetTemp = weather.temp;
+        const targetTemp = parseFloat(weather.temp.toString());
+
+        if (isNaN(targetTemp)) {
+            // If temp is "Loading..." or invalid, don't animate or set to 0
+            return;
+        }
+
         const duration = 2500; // 2 seconds total animation
         const startTime = Date.now();
 
