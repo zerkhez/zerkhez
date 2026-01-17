@@ -15,7 +15,7 @@ const THEME_COLOR = '#4F611C';
 export default function ImageAnalysisScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { mode, typeName, dat } = params;
+    const { mode, typeName, dat, id, name } = params;
 
     const VARIETY_MAPPING: Record<string, string> = {
         'سونا سپر باسمتی - 282': 'Sona super Basmati',
@@ -119,7 +119,7 @@ export default function ImageAnalysisScreen() {
             formData.append('dat', String(dat));
 
             const response = await fetch(
-                `${BACKEND_API_URL}/api/calculate_fertilizer/rice`,
+                `${BACKEND_API_URL}/api/calculate_fertilizer/${id}`,
                 {
                     method: 'POST',
                     body: formData,

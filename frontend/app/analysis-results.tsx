@@ -31,17 +31,17 @@ export default function AnalysisResultsScreen() {
                     {/* Result Rows */}
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{ammonium_sulfate || '-'}</Text>
-                        <Text style={styles.resultLabel}>-:امونیم سلفیٹ</Text>
+                        <Text style={styles.resultLabel}>امونیم سلفیٹ:</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{urea || '-'}</Text>
-                        <Text style={styles.resultLabel}>-:یوریا</Text>
+                        <Text style={styles.resultLabel}>یوریا:</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{can || '-'}</Text>
-                        <Text style={styles.resultLabel}>-:کین (کیلشیم امونیم نائٹریٹ)</Text>
+                        <Text style={styles.resultLabel}>کین (کیلشیم امونیم نائٹریٹ):</Text>
                     </Animated.View>
 
                     {/* Summary Section */}

@@ -23,27 +23,33 @@ export default function NitrogenCalculatorScreen() {
     const [selectedDate, setSelectedDate] = useState('');
 
     const validationState = useMemo(() => {
-        if (!selectedDate || !typeName) return { state: 'idle', days: 0 };
+        if (id === 'maize') return { state: 'valid', days: 0 };
 
-        const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
-        const config = CROP_DAT_CONFIG[cropName];
-
-        if (!config) return { state: 'idle', days: 0 };
+        if (!selectedDate) return { state: 'idle', days: 0 };
 
         const today = new Date();
         const selected = new Date(selectedDate);
         const diffTime = Math.abs(today.getTime() - selected.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        // If selected date is in future, it's 0 days (or negative, but abs handles diff, logic assumes past)
+        if (selected > today) return { state: 'idle', days: 0 };
 
-        if (selected > today) return { state: 'idle', days: 0 }; // Cannot support future dates for planting
+        if (id === 'wheat') {
+            return { state: 'valid', days: diffDays };
+        }
+
+        if (!typeName) return { state: 'idle', days: 0 };
+
+        const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
+        const config = CROP_DAT_CONFIG[cropName];
+
+        if (!config) return { state: 'idle', days: 0 };
 
         if (diffDays < config.min) return { state: 'early', days: diffDays, config };
         if (diffDays > config.max) return { state: 'late', days: diffDays, config };
 
         return { state: 'valid', days: diffDays };
-    }, [selectedDate, typeName]);
+    }, [selectedDate, typeName, id]);
 
 
     const handleSelectionMode = (useCamera: boolean) => {
@@ -53,7 +59,9 @@ export default function NitrogenCalculatorScreen() {
             params: {
                 mode: useCamera ? 'camera' : 'gallery',
                 typeName: typeName,
-                dat: validationState.days
+                dat: validationState.days,
+                id,
+                name
             }
         });
     };
@@ -126,7 +134,7 @@ export default function NitrogenCalculatorScreen() {
         }
     };
 
-    const isButtonsDisabled = validationState.state === 'early';
+    const isButtonsDisabled = validationState.state === 'early' || validationState.state === 'idle';
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>

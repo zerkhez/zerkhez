@@ -210,5 +210,127 @@ def calculate_fertilizer_rice():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('/api/calculate_fertilizer/wheat', methods=['POST'])
+def calculate_fertilizer_wheat():
+    try:
+        # Check inputs
+        if 'kaafi_image' not in request.files or 'aam_image' not in request.files:
+            return jsonify({"error": "Missing image files (kaafi_image, aam_image)"}), 400
+        
+        kaafi_file = request.files['kaafi_image']
+        aam_file = request.files['aam_image']
+        
+        variety = request.form.get('variety') # Captured for record, formula currently uses fixed params
+        try:
+            das = float(request.form.get('dat')) # Days After Sowing
+        except (TypeError, ValueError):
+            return jsonify({"error": "Invalid or missing DAS (Days After Sowing)"}), 400
+
+        # Wheat Fixed Parameters (Step viii)
+        # NDVI = m*X + c
+        WHEAT_M = 0.003
+        WHEAT_C = 0.1087
+
+        # 1. Process Images
+        # Kaafi 
+        gp_nl, tp_nl, r_nl, g_nl, b_nl = process_image(kaafi_file)
+        ratio_nl = gp_nl / tp_nl if tp_nl > 0 else 0
+        
+        # Aam
+        gp_t, tp_t, r_t, g_t, b_t = process_image(aam_file)
+        ratio_t = gp_t / tp_t if tp_t > 0 else 0
+        
+        # 2. Calculate GI (Step vi: GI = 2G - B - R)
+        # Using helper with key "2G-B-R"
+        gi_nl = calculate_gi("2G-B-R", r_nl, g_nl, b_nl)
+        gi_t = calculate_gi("2G-B-R", r_t, g_t, b_t)
+        
+        # 3. Calculate X (Step vii: X = GI * (B/A))
+        # B/A is ratio
+        x_nl = gi_nl * ratio_nl
+        x_t = gi_t * ratio_t
+        
+        # 4. Calculate NDVI (Step viii: NDVI = 0.003X + 0.1087)
+        ndvi_nl = (WHEAT_M * x_nl) + WHEAT_C
+        ndvi_t = (WHEAT_M * x_t) + WHEAT_C
+        
+        # 5. Calculate IEY (Step xi: IEY = NDVI_t / DAS)
+        if das == 0:
+             return jsonify({"error": "DAS cannot be zero"}), 400
+        iey = ndvi_t / das
+        
+        # 6. Calculate PYP (Step xii: PYP = 6084.6 * IEY / 1.61)
+        pyp = (6084.6 * iey) / 1.61
+        
+        # 7. Calculate RI (Step xiii: RI = NDVI_nl / NDVI_t)
+        if ndvi_t == 0:
+            ri = 0
+        else:
+            ri = ndvi_nl / ndvi_t
+            
+        # 8. Calculate PYPN (Step xiv: PYPN = PYP * RI)
+        pypn = pyp * ri
+        
+        # 9. Calculate N rate (Step xv: N rate = 10 * (PYPN - PYP) * 1.85 / 50)
+        n_rate_kg_ha = 10 * (pypn - pyp) * 1.85 / 50.0
+        
+        # 10. Convert to Fertilizers (Step xvi)
+        # 1 ha = 2.47105 acres
+        
+        # Urea (46% N)
+        urea_kg_ha = n_rate_kg_ha * 100 / 46
+        urea_kg_acre = urea_kg_ha / 2.47105
+        
+        # CAN (26% N)
+        can_kg_ha = n_rate_kg_ha * 100 / 26
+        can_kg_acre = can_kg_ha / 2.47105
+        
+        # Ammonium Sulfate (21% N)
+        amm_sulf_kg_ha = n_rate_kg_ha * 100 / 21
+        amm_sulf_kg_acre = amm_sulf_kg_ha / 2.47105
+        
+        response = {
+            "inputs": {
+                "variety": variety,
+                "das": das,
+                "kaafi_stats": {
+                    "total_pixels": int(tp_nl),
+                    "green_pixels": int(gp_nl),
+                    "ratio": float(ratio_nl),
+                    "mean_rgb": [float(r_nl), float(g_nl), float(b_nl)]
+                },
+                "aam_stats": {
+                    "total_pixels": int(tp_t),
+                    "green_pixels": int(gp_t),
+                    "ratio": float(ratio_t),
+                    "mean_rgb": [float(r_t), float(g_t), float(b_t)]
+                }
+            },
+            "calculations": {
+                "GI_nl": float(gi_nl),
+                "GI_t": float(gi_t),
+                "X_nl": float(x_nl),
+                "X_t": float(x_t),
+                "NDVI_nl": float(ndvi_nl),
+                "NDVI_t": float(ndvi_t),
+                "IEY": float(iey),
+                "PYP": float(pyp),
+                "RI": float(ri),
+                "PYPN": float(pypn),
+                "N_rate_kg_ha": float(n_rate_kg_ha)
+            },
+            "recommendations_kg_acre": {
+                "Urea": max(0, round(urea_kg_acre, 2)),
+                "CAN": max(0, round(can_kg_acre, 2)),
+                "Ammonium_Sulfate": max(0, round(amm_sulf_kg_acre, 2))
+            }
+        }
+        
+        return jsonify(response)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
