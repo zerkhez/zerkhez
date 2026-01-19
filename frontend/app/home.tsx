@@ -249,7 +249,7 @@ export default function HomeScreen() {
                 </View>
                 <View style={styles.weatherBottom}>
                     <Text style={styles.weatherTemp}>{displayTemp}°</Text>
-                    <Text style={styles.weatherCondition}>PARTLY CLOUDY</Text>
+                    <Text style={styles.weatherCondition}>{weather.condition.toUpperCase()}</Text>
                 </View>
             </Animated.View>
 
