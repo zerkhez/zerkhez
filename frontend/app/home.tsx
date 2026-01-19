@@ -28,6 +28,7 @@ export default function HomeScreen() {
     const [weather, setWeather] = useState({
         temp: params.temp ? params.temp as string : "Loading...",
         condition: params.condition ? params.condition as string : 'Loading...',
+        description: params.description ? params.description as string : '',
         location: params.location ? params.location as string : 'Loading...'
     });
 
@@ -70,6 +71,7 @@ export default function HomeScreen() {
             setWeather({
                 temp: params.temp as string,
                 condition: params.condition as string,
+                description: params.description ? params.description as string : '',
                 location: params.location as string
             });
             return;
@@ -101,6 +103,7 @@ export default function HomeScreen() {
                 setWeather({
                     temp: Math.round(data.main.temp).toString(),
                     condition: data.weather[0].main,
+                    description: data.weather[0].description,
                     location: data.name
                 });
             } else {
@@ -108,6 +111,27 @@ export default function HomeScreen() {
             }
         } catch (error) {
             console.error("Error fetching weather:", error);
+        }
+    };
+
+    const getWeatherIcon = (condition: string) => {
+        switch (condition.toLowerCase()) {
+            case 'clear': return '☀️';
+            case 'clouds': return '⛅';
+            case 'rain':
+            case 'drizzle': return '🌧️';
+            case 'thunderstorm': return '⛈️';
+            case 'snow': return '❄️';
+            case 'mist':
+            case 'smoke':
+            case 'haze':
+            case 'dust':
+            case 'fog':
+            case 'sand':
+            case 'ash':
+            case 'squall':
+            case 'tornado': return '☁️';
+            default: return '⛅';
         }
     };
 
@@ -241,11 +265,16 @@ export default function HomeScreen() {
             >
                 <View style={styles.weatherTop}>
                     <Text style={styles.weatherLocation}>{weather.location}</Text>
-                    <Animated.View
-                        style={[styles.weatherIcon, weatherIconAnimatedStyle]}
-                    >
-                        <Text style={styles.weatherIconText}>⛅</Text>
-                    </Animated.View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Animated.View
+                            style={[styles.weatherIcon, weatherIconAnimatedStyle]}
+                        >
+                            <Text style={styles.weatherIconText}>{getWeatherIcon(weather.condition)}</Text>
+                        </Animated.View>
+                        {weather.description ? (
+                            <Text style={styles.weatherDescription}>{weather.description}</Text>
+                        ) : null}
+                    </View>
                 </View>
                 <View style={styles.weatherBottom}>
                     <Text style={styles.weatherTemp}>{displayTemp}°</Text>
@@ -406,8 +435,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     weatherIcon: {
-        width: 50,
-        height: 50,
+        // width: 50,
+        // height: 50,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -425,6 +454,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#666',
         letterSpacing: 1,
+    },
+    weatherDescription: {
+        fontSize: 12,
+        color: '#888',
+        textTransform: 'capitalize',
     },
     cropsContainer: {
         flex: 1,
