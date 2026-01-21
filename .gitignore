@@ -138,3 +138,4 @@ backend/*.sqlite3
 # Temporary files (for backend)
 backend/*.tmp
 backend/*.temp
+node_modules
