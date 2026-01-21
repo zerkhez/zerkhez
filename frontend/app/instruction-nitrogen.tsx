@@ -2,8 +2,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const THEME_COLOR = '#4F611C';
+import { THEME_COLOR } from '@/constants/theme';
 
 export default function NitrogenInstructionScreen() {
     const router = useRouter();

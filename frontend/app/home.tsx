@@ -18,8 +18,7 @@ import Animated, {
     withTiming
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
-
-const THEME_COLOR = '#4F611C';
+import { THEME_COLOR } from '@/constants/theme';
 
 export default function HomeScreen() {
     const router = useRouter();
@@ -96,7 +95,6 @@ export default function HomeScreen() {
                 `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPEN_WEATHER_API_URL}`
             );
             const data = await response.json();
-            console.log("Weather ", data)
             if (response.ok) {
                 setWeather({
                     temp: Math.round(data.main.temp).toString(),

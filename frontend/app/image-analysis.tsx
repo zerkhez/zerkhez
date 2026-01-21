@@ -9,8 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
-
-const THEME_COLOR = '#4F611C';
+import { THEME_COLOR } from '@/constants/theme';
 
 export default function ImageAnalysisScreen() {
     const router = useRouter();

@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { THEME_COLOR } from '@/constants/theme';
 
-const THEME_COLOR = '#4F611C';
 
 // Placeholder data for fertilizers
 const GROUP_1_FERTILIZERS = [

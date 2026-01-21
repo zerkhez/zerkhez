@@ -4,8 +4,7 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import { Calendar } from 'react-native-calendars';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const THEME_COLOR = '#4F611C';
+import { THEME_COLOR } from '@/constants/theme';
 
 const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
     'سونا سپر باسمتی - 282': { min: 47, max: 60 },

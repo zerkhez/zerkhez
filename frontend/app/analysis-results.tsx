@@ -1,10 +1,12 @@
+// Purpose: To show the results on screen after calculating amount of fertilizer.
+// Author: 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { THEME_COLOR } from '@/constants/theme';
 
-const THEME_COLOR = '#4F611C';
 
 export default function AnalysisResultsScreen() {
     const router = useRouter();

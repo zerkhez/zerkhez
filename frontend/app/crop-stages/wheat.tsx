@@ -2,8 +2,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { THEME_COLOR } from '@/constants/theme';
 
-const THEME_COLOR = '#4F611C';
 
 export default function PrePlantingInstructionsScreen() {
     const router = useRouter();

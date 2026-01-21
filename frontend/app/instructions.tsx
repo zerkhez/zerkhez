@@ -11,8 +11,7 @@ import Animated, {
   withSequence,
   withTiming
 } from 'react-native-reanimated';
-
-const THEME_COLOR = '#4F611C';
+import { THEME_COLOR } from '@/constants/theme';
 
 export default function InstructionsScreen() {
   const router = useRouter();
