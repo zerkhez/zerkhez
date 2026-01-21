@@ -11,6 +11,9 @@ import Animated, {
   withSequence,
   withTiming
 } from 'react-native-reanimated';
+import { commonStyles } from '@/styles/common';
+import { commonTexts } from '@/constants/commonText';
+import { Ionicons } from '@expo/vector-icons';
 import { THEME_COLOR } from '@/constants/theme';
 
 export default function InstructionsScreen() {
@@ -78,41 +81,38 @@ export default function InstructionsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.lightContainer}>
       {/* Header */}
-      <Animated.View 
+      <Animated.View
         entering={FadeIn.duration(600)}
-        style={styles.header}
+        style={commonStyles.header}
       >
         <Animated.View entering={FadeInLeft.delay(200).springify()}>
-          <TouchableOpacity 
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Text style={styles.backButtonText}>←</Text>
+          <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
+            <Ionicons name="arrow-back" size={28} color="white" />
           </TouchableOpacity>
         </Animated.View>
-        <Animated.Text 
+        <Animated.Text
           entering={FadeIn.delay(300)}
-          style={styles.headerTitle}
+          style={commonStyles.headerTitle}
         >
-          ہدایات
+          {commonTexts.instructions}
         </Animated.Text>
-        <View style={styles.placeholder} />
+        <View style={commonStyles.midViewWidth} />
       </Animated.View>
 
       <ScrollView style={styles.content}>
-        <Animated.Text 
+        <Animated.Text
           entering={FadeInDown.delay(400).springify()}
           style={styles.sectionTitle}
         >
-          ویڈیو ٹیوٹوریلز
+          {commonTexts.videos}
         </Animated.Text>
-        <Animated.Text 
+        <Animated.Text
           entering={FadeInDown.delay(500).springify()}
           style={styles.sectionSubtitle}
         >
-          مزید معلومات کے لیے یہ ویڈیوز دیکھیں
+          {commonTexts.moreInfo}
         </Animated.Text>
 
         <View style={styles.videosContainer}>
@@ -127,9 +127,9 @@ export default function InstructionsScreen() {
                 activeOpacity={0.7}
               >
                 <View style={styles.videoThumbnail}>
-                  <Animated.View 
+                  <Animated.View
                     style={[
-                      styles.playButton, 
+                      styles.playButton,
                       index === 0 ? playButtonAnimatedStyle1 : playButtonAnimatedStyle2
                     ]}
                   >
@@ -151,35 +151,6 @@ export default function InstructionsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    backgroundColor: THEME_COLOR,
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    color: 'white',
-    fontSize: 28,
-  },
-  headerTitle: {
-    fontFamily: 'NotoNastaliqUrdu-Bold',
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
   placeholder: {
     width: 40,
   },
@@ -242,7 +213,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   videoTitle: {
-    // fontFamily: 'NotoNastaliqUrdu-Bold',
     fontSize: 18,
     fontWeight: '600',
     color: '#333',

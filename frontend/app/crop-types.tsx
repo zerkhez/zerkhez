@@ -1,56 +1,39 @@
+// Purpose: This screen is used to display the sub-crop types of a specific crop.
+// Author: 
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { THEME_COLOR } from '@/constants/theme';
+import { commonStyles } from '@/styles/common';
+import { commonTexts, cropTypesData } from '@/constants/commonText';
 
 export default function CropTypesScreen() {
     const router = useRouter();
     const searchParams = useLocalSearchParams();
     const { id, name, nextRoute } = searchParams;
 
-    // Data for crop types
-    const cropTypesData: Record<string, string[]> = {
-        rice: [
-            'سونا سپر باسمتی - 282',
-            'کسان باسمتی',
-            'سپر باسمتی',
-            'باسمتی - 515',
-            'پی کے خوشبودار - 1121',
-            'پی کے خوشبودار - 2021',
-        ],
-        wheat: [
-            "فیصل آباد -08",
-            "پنجاب -11",
-            "اجالا - 16",
-            "اکبر - 19",
-            "دلکش - 20",
-            "سبحانی - 2"
-        ],
-        maize: [
-            'عام  ورائٹی',
-            'ہائبرڈ ورائٹی',
-        ],
-    };
+
 
     const currentCropTypes = cropTypesData[id as string] || [];
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Text style={styles.backIcon}>←</Text>
+            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
+                    <Ionicons name="arrow-back" size={28} color="white" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{name} کی فصل</Text>
-                <View style={{ width: 40 }} />
+                <Text style={commonStyles.headerTitle}>{name} {commonTexts.ofCrop}</Text>
+                <View style={commonStyles.midViewWidth} />
             </Animated.View>
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
-                <Text style={styles.instructionText}>{name} کی قسم کا انتخاب کریں:</Text>
+                <Text style={styles.instructionText}>{name}{commonTexts.chooseType}</Text>
 
                 <ScrollView contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false}>
+                    {/* display the sub-types of crop */}
                     {currentCropTypes.map((type, index) => (
                         <Animated.View
                             key={index}
@@ -60,9 +43,7 @@ export default function CropTypesScreen() {
                             <TouchableOpacity
                                 style={styles.typeButton}
                                 onPress={() => {
-                                    console.log(`Selected type: ${type}`);
                                     const params: any = { typeName: type, name, id };
-
                                     if (nextRoute) {
                                         // If nextRoute is passed, navigate there
                                         router.push({
@@ -87,9 +68,9 @@ export default function CropTypesScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Animated.View entering={ZoomIn.delay(800).springify()} style={styles.micContainer}>
-                <TouchableOpacity style={styles.micButton}>
-                    <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
+            <Animated.View entering={ZoomIn.delay(800).springify()} style={commonStyles.micContainer}>
+                <TouchableOpacity style={commonStyles.micButton}>
+                    <Image source={require('../assets/icons/mic.png')} style={commonStyles.micIcon} resizeMode="contain" />
                 </TouchableOpacity>
             </Animated.View>
         </SafeAreaView>
@@ -97,31 +78,6 @@ export default function CropTypesScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: THEME_COLOR,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-    },
-    backButton: {
-        padding: 5,
-    },
-    backIcon: {
-        fontSize: 28,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 24,
-        color: 'white',
-        textAlign: 'center',
-    },
     contentContainer: {
         flex: 1,
         backgroundColor: 'white',
@@ -164,28 +120,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: 'black',
         textAlign: 'center',
-    },
-    micContainer: {
-        position: 'absolute',
-        bottom: 30,
-        left: 30,
-    },
-    micButton: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: '#6a8a2c', // Slightly darker green for mic button
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-    },
-    micIcon: {
-        width: 30,
-        height: 30,
-        tintColor: 'white',
     },
 });

@@ -10,20 +10,14 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
 import { THEME_COLOR } from '@/constants/theme';
+import { commonTexts, VARIETY_MAPPING, imageAnalysisTexts } from '@/constants/commonText';
 
 export default function ImageAnalysisScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { mode, typeName, dat, id, name } = params;
 
-    const VARIETY_MAPPING: Record<string, string> = {
-        'سونا سپر باسمتی - 282': 'Sona super Basmati',
-        'کسان باسمتی': 'Kisan Basmati',
-        'سپر باسمتی': 'Super Basmati',
-        'باسمتی - 515': 'Basmati 515',
-        'پی کے خوشبودار - 1121': 'PK 1121 Aromatic',
-        'پی کے خوشبودار - 2021': 'Pk 2021 Aromatic'
-    };
+
 
     // State to store selected images
     const [sufficientPlotImage, setSufficientPlotImage] = useState<string | null>(null);
@@ -160,7 +154,7 @@ export default function ImageAnalysisScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={28} color="white" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>نائٹروجن کھاد معلوم کریں</Text>
+                <Text style={styles.headerTitle}>{commonTexts.calculateNitrogenFertilizer}</Text>
                 <View style={{ width: 28 }} />
             </Animated.View>
 
@@ -174,13 +168,13 @@ export default function ImageAnalysisScreen() {
                             onPress={() => handleImageSelection('sufficient')}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.actionButtonText}>کافی نائٹروجن پلاٹ</Text>
+                            <Text style={styles.actionButtonText}>{commonTexts.sufficientNitrogenPlot}</Text>
                         </TouchableOpacity>
 
                         {sufficientPlotImage && (
                             <Animated.View entering={ZoomIn.springify()} style={styles.previewContainer}>
                                 <Image source={{ uri: sufficientPlotImage }} style={styles.previewImage} />
-                                <Text style={styles.previewText}>کافی نائٹروجن پلاٹ منتخب</Text>
+                                <Text style={styles.previewText}>{commonTexts.chooseSufficientNitrogenPlot}</Text>
                             </Animated.View>
                         )}
                     </Animated.View>
@@ -192,13 +186,13 @@ export default function ImageAnalysisScreen() {
                             onPress={() => handleImageSelection('common')}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.actionButtonText}>عام پلاٹ</Text>
+                            <Text style={styles.actionButtonText}>{commonTexts.commonNitrogenPlot}</Text>
                         </TouchableOpacity>
 
                         {commonPlotImage && (
                             <Animated.View entering={ZoomIn.springify()} style={styles.previewContainer}>
                                 <Image source={{ uri: commonPlotImage }} style={styles.previewImage} />
-                                <Text style={styles.previewText}>عام پلاٹ منتخب</Text>
+                                <Text style={styles.previewText}>{commonTexts.chooseCommonNitrogenPlot}</Text>
                             </Animated.View>
                         )}
                     </Animated.View>
@@ -212,7 +206,7 @@ export default function ImageAnalysisScreen() {
                             disabled={isAnalyzing}
                         >
                             <Text style={styles.actionButtonText}>
-                                {isAnalyzing ? 'تجزیہ ہو رہا ہے...' : 'دونوں تصاویر کا تجزیہ کریں'}
+                                {isAnalyzing ? imageAnalysisTexts.analyzing : imageAnalysisTexts.analyzeBothImages}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>

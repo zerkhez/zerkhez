@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { zerkhezAppTitle, motto, commonTexts } from '@/constants/commonText';
+import { forwardButtonIcon } from '@/constants/constants';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -83,9 +85,8 @@ export default function WelcomeScreen() {
           </View>
 
           <View style={styles.titleContainer}>
-            <Text style={styles.title} allowFontScaling={false} >نائٹروجن اسمارٹ</Text>
-            <Text style={styles.subtitle} allowFontScaling={false}>درست نائٹروجن مشورے کے ساتھ اپنی فصل کی
-              پیداوار بڑھائیں!</Text>
+            <Text style={styles.title} allowFontScaling={false} >{zerkhezAppTitle}</Text>
+            <Text style={styles.subtitle} allowFontScaling={false}>{motto}</Text>
           </View>
         </View>
 
@@ -101,8 +102,8 @@ export default function WelcomeScreen() {
             onPressIn={onPressIn}
             onPressOut={onPressOut}
           >
-            <Text style={styles.buttonText}>شروع کریں</Text>
-            <Text style={styles.buttonArrow}>→</Text>
+            <Text style={styles.buttonText}>{commonTexts.start}</Text>
+            <Text style={styles.buttonArrow}>{forwardButtonIcon}</Text>
           </AnimatedPressable>
         </BlurView>
       </View>
@@ -152,13 +153,11 @@ const styles = StyleSheet.create({
   titleContainer: {
     fontFamily: 'NotoNastaliqUrdu-Bold',
     alignItems: 'flex-end',
-    // gap: 1,
     flexShrink: 1,
   },
 
   title: {
     fontFamily: 'NotoNastaliqUrdu-Bold',
-    // fontWeight: '700',
     fontStyle: 'normal',
     fontSize: 35,
     lineHeight: 80,
@@ -198,7 +197,6 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.01)',
     height: 60, // Slightly increased height
-    // width: 130, // Removed fixed width to allow content to define width + padding
   },
   buttonText: {
     fontFamily: 'NotoNastaliqUrdu-Bold',

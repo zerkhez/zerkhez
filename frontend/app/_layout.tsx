@@ -1,3 +1,5 @@
+// Purpose: Root layout for the app
+// Author: 
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -30,7 +32,6 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="home" />
         <Stack.Screen name="crop-types" />
-        {/* <Stack.Screen name="crop-stages" /> */}
         <Stack.Screen name="instructions" />
         <Stack.Screen name="selection" />
         <Stack.Screen name="instruction-nitrogen" />

@@ -1,31 +1,33 @@
-// Purpose: To show the results on screen after calculating amount of fertilizer.
+// Purpose: To show the final results on screen after calculating amount of fertilizer.
 // Author: 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { THEME_COLOR } from '@/constants/theme';
+import { commonStyles } from '@/styles/common';
+import { commonTexts, nameOfFertilizers, resultTexts } from '@/constants/commonText';
 
 
 export default function AnalysisResultsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    // paramerts providng amount of fertilizer
     const { urea, can, ammonium_sulfate, n_rate } = params;
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
                     <Ionicons name="arrow-back" size={28} color="white" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>کھاد کی مقدار (کلوگرام فی ایکڑ)</Text>
+                <Text style={commonStyles.headerTitle}>{commonTexts.fertilizerAmount}</Text>
                 <View style={{ width: 28 }} />
             </Animated.View>
 
-            <View style={styles.contentContainer}>
-                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <View style={commonStyles.contentContainer}>
+                <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
                     {/* Spacer */}
                     <View style={{ height: 40 }} />
@@ -33,31 +35,31 @@ export default function AnalysisResultsScreen() {
                     {/* Result Rows */}
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{ammonium_sulfate || '-'}</Text>
-                        <Text style={styles.resultLabel}>امونیم سلفیٹ:</Text>
+                        <Text style={styles.resultLabel}>{nameOfFertilizers.ammonium_sulfate}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{urea || '-'}</Text>
-                        <Text style={styles.resultLabel}>یوریا:</Text>
+                        <Text style={styles.resultLabel}>{nameOfFertilizers.urea}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{can || '-'}</Text>
-                        <Text style={styles.resultLabel}>کین (کیلشیم امونیم نائٹریٹ):</Text>
+                        <Text style={styles.resultLabel}>{nameOfFertilizers.can}</Text>
                     </Animated.View>
 
                     {/* Summary Section */}
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={styles.summaryBox}>
                         <Text style={styles.summaryText}>
-                            تجویز کردہ نائٹروجن شرح: <Text style={styles.summaryValue}>{n_rate || '-'}</Text> کلوگرام فی ہیکٹر
+                            {resultTexts.recommendedNitrogenRate} <Text style={styles.summaryValue}>{n_rate || '-'}</Text> {resultTexts.perHectare}
                         </Text>
                     </Animated.View>
 
                 </ScrollView>
 
                 {/* Microphone Icon */}
-                <Animated.View entering={FadeInUp.delay(700).springify()} style={styles.micContainer}>
-                    <TouchableOpacity style={styles.micButton}>
+                <Animated.View entering={FadeInUp.delay(700).springify()} style={commonStyles.micContainer}>
+                    <TouchableOpacity style={commonStyles.micButton}>
                         <Ionicons name="mic" size={32} color="white" />
                     </TouchableOpacity>
                 </Animated.View>
@@ -67,39 +69,6 @@ export default function AnalysisResultsScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: THEME_COLOR,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        backgroundColor: THEME_COLOR,
-    },
-    backButton: {
-        padding: 5,
-    },
-    headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 20,
-        color: 'white',
-        textAlign: 'center',
-    },
-    contentContainer: {
-        flex: 1,
-        backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        overflow: 'hidden',
-    },
-    scrollContent: {
-        padding: 20,
-        alignItems: 'center',
-        paddingBottom: 100,
-    },
     resultRow: {
         width: '100%',
         flexDirection: 'row',
@@ -112,14 +81,7 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         paddingHorizontal: 30,
         marginBottom: 20,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 3,
+        ...commonStyles.shadowSmall,
     },
     resultLabel: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
@@ -144,14 +106,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#AED581',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 3,
+        ...commonStyles.shadowSmall,
     },
     summaryText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
@@ -163,23 +118,5 @@ const styles = StyleSheet.create({
     summaryValue: {
         fontWeight: 'bold',
         color: 'black',
-    },
-    micContainer: {
-        position: 'absolute',
-        bottom: 30,
-        left: 30,
-    },
-    micButton: {
-        backgroundColor: '#7cb342', // Light green button color
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 5,
     },
 });

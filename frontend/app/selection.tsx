@@ -3,7 +3,6 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
-import { THEME_COLOR } from '@/constants/theme';
 
 export default function SelectionScreen() {
     const router = useRouter();

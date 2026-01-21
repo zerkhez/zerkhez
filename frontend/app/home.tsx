@@ -19,6 +19,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import { THEME_COLOR } from '@/constants/theme';
+import { commonTexts, urduDays, urduMonths, urduNumbers } from '@/constants/commonText';
+import { commonStyles } from '@/styles/common';
+import { bellIcon, forwardButtonIcon, wheatIcon, riceIcon, maizeIcon } from '@/constants/constants';
+
 
 export default function HomeScreen() {
     const router = useRouter();
@@ -34,20 +38,6 @@ export default function HomeScreen() {
     const getCurrentUrduDate = () => {
         const now = new Date();
 
-        // Urdu month names
-        const urduMonths = [
-            'جنوری', 'فروری', 'مارچ', 'اپریل', 'مئی', 'جون',
-            'جولائی', 'اگست', 'ستمبر', 'اکتوبر', 'نومبر', 'دسمبر'
-        ];
-
-        // Urdu day names
-        const urduDays = [
-            'اتوار', 'پیر', 'منگل', 'بدھ', 'جمعرات', 'جمعہ', 'ہفتہ'
-        ];
-
-        // Urdu numbers (0-9)
-        const urduNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-
         // Convert English number to Urdu
         const toUrduNumber = (num: number) => {
             return num.toString().split('').map(digit => urduNumbers[parseInt(digit)]).join('');
@@ -58,7 +48,6 @@ export default function HomeScreen() {
         const year = now.getFullYear();
         const dayName = urduDays[now.getDay()];
 
-        // Format: "اپریل ۲۵، جمعرات، ۲۰۲۵"
         return `${month} ${toUrduNumber(day)}، ${dayName}، ${toUrduNumber(year)}`;
     };
 
@@ -84,7 +73,6 @@ export default function HomeScreen() {
             }
 
             let location = await Location.getCurrentPositionAsync({});
-            console.log("Location ", location)
             fetchWeather(location.coords.latitude, location.coords.longitude);
         })();
     }, [params.temp, params.condition, params.location]);
@@ -138,9 +126,9 @@ export default function HomeScreen() {
     const weatherIconScale = useSharedValue(1);
 
     const crops = [
-        { id: 'wheat', name: 'گندم', nameEng: 'Wheat', icon: '🌾', color: THEME_COLOR, image: require('../assets/images/wheat.png') },
-        { id: 'rice', name: 'چاول', nameEng: 'Rice', icon: '🌾', color: THEME_COLOR, image: require('../assets/images/rice.png') },
-        { id: 'maize', name: 'مکئی', nameEng: 'Maize', icon: '🌽', color: THEME_COLOR, image: require('../assets/images/corn.png') },
+        { id: 'wheat', name: 'گندم', nameEng: 'Wheat', icon: wheatIcon, color: THEME_COLOR, image: require('../assets/images/wheat.png') },
+        { id: 'rice', name: 'چاول', nameEng: 'Rice', icon: riceIcon, color: THEME_COLOR, image: require('../assets/images/rice.png') },
+        { id: 'maize', name: 'مکئی', nameEng: 'Maize', icon: maizeIcon, color: THEME_COLOR, image: require('../assets/images/corn.png') },
     ];
 
     useEffect(() => {
@@ -214,7 +202,7 @@ export default function HomeScreen() {
     }, [weather.temp]);
 
     return (
-        <View style={styles.container}>
+        <View style={commonStyles.lightContainer}>
             {/* Curved Header */}
             <Animated.View
                 entering={FadeIn.duration(800)}
@@ -240,7 +228,7 @@ export default function HomeScreen() {
                     <Animated.View entering={FadeInLeft.delay(300).springify()}>
                         <TouchableOpacity style={styles.bellIcon}>
                             <Animated.Text style={[styles.bellText, bellAnimatedStyle]}>
-                                🔔
+                                {bellIcon}
                             </Animated.Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -250,7 +238,7 @@ export default function HomeScreen() {
                         entering={FadeInRight.delay(300).springify()}
                         style={styles.headerTextContainer}
                     >
-                        <Text style={styles.headerTitle}>خوش آمدید کسان</Text>
+                        <Text style={styles.headerTitle}>{commonTexts.welcomeFarmer}</Text>
                         <Text style={styles.headerDate}>{currentDate}</Text>
                     </Animated.View>
                 </View>
@@ -354,8 +342,8 @@ export default function HomeScreen() {
                     style={styles.navButtonRight}
                     onPress={() => router.push('/instructions')}
                 >
-                    <Text style={styles.navTextRight}>ہدایات</Text>
-                    <Text style={styles.navArrow}>→</Text>
+                    <Text style={styles.navTextRight}>{commonTexts.instructions}</Text>
+                    <Text style={styles.navArrow}>{forwardButtonIcon}</Text>
                 </TouchableOpacity>
             </Animated.View>
         </View>
@@ -363,10 +351,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-    },
     headerContainer: {
         height: 200,
         position: 'relative',
@@ -401,10 +385,8 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
         fontSize: 20,
-        // fontWeight: 'bold',
         color: 'white',
         textAlign: 'right',
-        // paddingTop: 5,
     },
     headerDate: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
@@ -433,8 +415,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     weatherIcon: {
-        // width: 50,
-        // height: 50,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -460,7 +440,6 @@ const styles = StyleSheet.create({
     },
     cropsContainer: {
         flex: 1,
-        // paddingHorizontal: 20,
         paddingTop: 50,
         gap: 30,
     },
@@ -506,13 +485,11 @@ const styles = StyleSheet.create({
     voiceButton: {
         width: 50,
         height: 50,
-        // backgroundColor: '#5a7c3e',
         borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
     },
     navIconImage: {
-        // fontSize: 24,
         width: 24,
         height: 24,
     },
@@ -533,7 +510,6 @@ const styles = StyleSheet.create({
     cropImagePlaceholder: {
         width: 60,
         height: 60,
-        // backgroundColor: 'rgba(255, 255, 255, 0.2)',
         borderRadius: 10,
     },
     cropImage: {
