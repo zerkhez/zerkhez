@@ -1,7 +1,7 @@
 <table>
   <tr>
     <td style="border: none;">
-      <img src="assets/images/logo.png" alt="Zerkhez Logo" width="70"/>
+      <img src="frontend/assets/images/logo.png" alt="Zerkhez Logo" width="70"/>
     </td>
     <td style="border: none; padding-left: 10px;">
       <h1 style="margin: 0;">Zerkhez: AI-Based Nitrogen Fertilizer Optimizer</h1>
