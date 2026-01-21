@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { commonStyles } from '@/styles/common';
 import { stagesOfRice } from '@/constants/riceText';
 import { commonTexts } from '@/constants/commonText';
+import Microphone from '@/components/microphone';
 
 export default function CropStagesScreen() {
     const router = useRouter();
@@ -69,11 +70,7 @@ export default function CropStagesScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Animated.View entering={ZoomIn.delay(800).springify()} style={commonStyles.micContainer}>
-                <TouchableOpacity style={[commonStyles.micButton, commonStyles.micButtonSecColor]}>
-                    <Image source={require('../../assets/icons/mic.png')} style={commonStyles.micIcon} resizeMode="contain" />
-                </TouchableOpacity>
-            </Animated.View>
+            <Microphone/>
         </SafeAreaView>
     );
 }

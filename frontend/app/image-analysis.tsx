@@ -11,6 +11,8 @@ import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
 import { THEME_COLOR } from '@/constants/theme';
 import { commonTexts, VARIETY_MAPPING, imageAnalysisTexts } from '@/constants/commonText';
+import Microphone from '@/components/microphone';
+import Header from '@/components/header';
 
 export default function ImageAnalysisScreen() {
     const router = useRouter();
@@ -150,14 +152,8 @@ export default function ImageAnalysisScreen() {
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>{commonTexts.calculateNitrogenFertilizer}</Text>
-                <View style={{ width: 28 }} />
-            </Animated.View>
-
+            <Header text={commonTexts.calculateNitrogenFertilizer} viewSize={28}/>
+            
             <View style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
@@ -214,11 +210,7 @@ export default function ImageAnalysisScreen() {
                 </ScrollView>
 
                 {/* Mic Button */}
-                <Animated.View entering={ZoomIn.delay(500).springify()} style={styles.micContainer}>
-                    <TouchableOpacity style={styles.micButton}>
-                        <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
-                    </TouchableOpacity>
-                </Animated.View>
+                <Microphone/>
             </View>
         </SafeAreaView>
     );

@@ -1,3 +1,5 @@
+import Header from '@/components/header';
+import Microphone from '@/components/microphone';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
@@ -13,13 +15,7 @@ export default function SproutInstructionsScreen() {
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Text style={styles.backIcon}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>{typeName}</Text>
-                <View style={{ width: 40 }} />
-            </Animated.View>
+            <Header text={typeName}/>
 
             {/* Content Container */}
             <View style={styles.contentContainer}>
@@ -32,17 +28,8 @@ export default function SproutInstructionsScreen() {
                         لاب لگانے کے 25 تا 30 دن بعد دھان کی فصل کو 40 کلوگرام یوریا، یا 70 کلوگرام کین، یا 85 کلوگرام امونیم سلفیٹ ڈالیں۔
                     </Text>
                 </Animated.View>
-
-
-
-
-
                 {/* Mic Button */}
-                <Animated.View entering={ZoomIn.delay(600).springify()} style={styles.micContainer}>
-                    <TouchableOpacity style={styles.micButton}>
-                        <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
-                    </TouchableOpacity>
-                </Animated.View>
+                <Microphone/>
             </View>
         </SafeAreaView>
     );

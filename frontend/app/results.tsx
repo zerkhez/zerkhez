@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
+import Microphone from '@/components/microphone';
 
 export default function ResultsScreen() {
     const router = useRouter();
@@ -43,11 +44,7 @@ export default function ResultsScreen() {
                 </ScrollView>
 
                 {/* Microphone Icon */}
-                <Animated.View entering={FadeInUp.delay(600).springify()} style={styles.micContainer}>
-                    <TouchableOpacity style={styles.micButton}>
-                        <Ionicons name="mic" size={32} color="white" />
-                    </TouchableOpacity>
-                </Animated.View>
+                <Microphone/>
             </View>
         </SafeAreaView>
     );

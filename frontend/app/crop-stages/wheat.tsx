@@ -9,6 +9,8 @@ import { commonStyles } from '@/styles/common';
 import { commonTexts } from '@/constants/commonText';
 import { wheatPlantingInstructions } from '@/constants/wheatText';
 import { pacakagesUrdu } from '@/constants/commonText';
+import Microphone from '@/components/microphone';
+
 
 export default function PrePlantingInstructionsScreen() {
     const router = useRouter();
@@ -67,11 +69,7 @@ export default function PrePlantingInstructionsScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Animated.View entering={ZoomIn.delay(800).springify()} style={commonStyles.micContainer}>
-                <TouchableOpacity style={[commonStyles.micButton, commonStyles.micButtonSecColor]}>
-                    <Image source={require('../../assets/icons/mic.png')} style={commonStyles.micIcon} resizeMode="contain" />
-                </TouchableOpacity>
-            </Animated.View>
+            <Microphone/>
         </SafeAreaView>
     );
 }

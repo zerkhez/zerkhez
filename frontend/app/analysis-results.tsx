@@ -7,6 +7,9 @@ import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { commonStyles } from '@/styles/common';
 import { commonTexts, nameOfFertilizers, resultTexts } from '@/constants/commonText';
+import React from 'react';
+import Microphone from '@/components/microphone';
+import Header from '@/components/header';
 
 
 export default function AnalysisResultsScreen() {
@@ -18,19 +21,13 @@ export default function AnalysisResultsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
-                </TouchableOpacity>
-                <Text style={commonStyles.headerTitle}>{commonTexts.fertilizerAmount}</Text>
-                <View style={{ width: 28 }} />
-            </Animated.View>
+            <Header viewSize={28} text={commonTexts.fertilizerAmount}/>
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
                     {/* Spacer */}
-                    <View style={{ height: 40 }} />
+                    <View style={commonStyles.midViewWidth} />
 
                     {/* Result Rows */}
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.resultRow}>
@@ -58,11 +55,7 @@ export default function AnalysisResultsScreen() {
                 </ScrollView>
 
                 {/* Microphone Icon */}
-                <Animated.View entering={FadeInUp.delay(700).springify()} style={commonStyles.micContainer}>
-                    <TouchableOpacity style={commonStyles.micButton}>
-                        <Ionicons name="mic" size={32} color="white" />
-                    </TouchableOpacity>
-                </Animated.View>
+                <Microphone />
             </View>
         </SafeAreaView>
     );
@@ -120,3 +113,4 @@ const styles = StyleSheet.create({
         color: 'black',
     },
 });
+

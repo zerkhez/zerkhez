@@ -5,6 +5,9 @@ import { Calendar } from 'react-native-calendars';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
+import Microphone from '@/components/microphone';
+import { commonTexts } from '@/constants/commonText';
+import Header from '@/components/header';
 
 const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
     'سونا سپر باسمتی - 282': { min: 47, max: 60 },
@@ -138,13 +141,7 @@ export default function NitrogenCalculatorScreen() {
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Text style={styles.backIcon}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>نائٹروجن کھاد معلوم کریں</Text>
-                <View style={{ width: 40 }} />
-            </Animated.View>
+            <Header text={commonTexts.calculateNitrogenFertilizer} />
 
             {/* Content Container */}
             <View style={styles.contentContainer}>
@@ -226,11 +223,7 @@ export default function NitrogenCalculatorScreen() {
                 </ScrollView>
 
                 {/* Mic Button */}
-                <Animated.View entering={ZoomIn.delay(500).springify()} style={styles.micContainer}>
-                    <TouchableOpacity style={styles.micButton}>
-                        <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
-                    </TouchableOpacity>
-                </Animated.View>
+                <Microphone/>
             </View>
         </SafeAreaView>
     );

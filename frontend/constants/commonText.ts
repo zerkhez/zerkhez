@@ -22,6 +22,8 @@ export const commonTexts = {
     instructionsForNitrogenPlot:"ہدایات برائے کافی نائٹروجن پلاٹ",
     videos:"ویڈیو ٹیوٹوریلز",
     moreInfo:"مزید معلومات کے لیے یہ ویڈیوز دیکھیں",
+    watchVideo: "کی فصل کی تصویر لینے کا درست طریقہ جاننے کے لیے ویڈیو دیکھیں:",
+    wayOfImage:"کی تصویر لینے کا طریقہ"
 }
 
 export const imageAnalysisTexts = {

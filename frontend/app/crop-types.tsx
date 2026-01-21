@@ -7,26 +7,20 @@ import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { commonStyles } from '@/styles/common';
 import { commonTexts, cropTypesData } from '@/constants/commonText';
+import Microphone from '@/components/microphone';
+import Header from '@/components/header';
 
 export default function CropTypesScreen() {
     const router = useRouter();
     const searchParams = useLocalSearchParams();
     const { id, name, nextRoute } = searchParams;
 
-
-
     const currentCropTypes = cropTypesData[id as string] || [];
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
-                </TouchableOpacity>
-                <Text style={commonStyles.headerTitle}>{name} {commonTexts.ofCrop}</Text>
-                <View style={commonStyles.midViewWidth} />
-            </Animated.View>
+            <Header text={`${name} ${commonTexts.ofCrop}`}/>
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
@@ -68,11 +62,7 @@ export default function CropTypesScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Animated.View entering={ZoomIn.delay(800).springify()} style={commonStyles.micContainer}>
-                <TouchableOpacity style={commonStyles.micButton}>
-                    <Image source={require('../assets/icons/mic.png')} style={commonStyles.micIcon} resizeMode="contain" />
-                </TouchableOpacity>
-            </Animated.View>
+            <Microphone/>
         </SafeAreaView>
     );
 }

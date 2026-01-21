@@ -1,6 +1,13 @@
-import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -9,12 +16,12 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming
-} from 'react-native-reanimated';
-import { commonStyles } from '@/styles/common';
-import { commonTexts } from '@/constants/commonText';
-import { Ionicons } from '@expo/vector-icons';
-import { THEME_COLOR } from '@/constants/theme';
+  withTiming,
+} from "react-native-reanimated";
+import { commonStyles } from "@/styles/common";
+import { commonTexts } from "@/constants/commonText";
+import { THEME_COLOR } from "@/constants/theme";
+import Header from "@/components/header";
 
 export default function InstructionsScreen() {
   const router = useRouter();
@@ -26,17 +33,17 @@ export default function InstructionsScreen() {
   const videos = [
     {
       id: 1,
-      title: 'فصلوں کی بیماریوں کی تشخیص',
-      titleEng: 'Crop Disease Identification',
-      url: 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID_1',
-      thumbnail: '📹',
+      title: "فصلوں کی بیماریوں کی تشخیص",
+      titleEng: "Crop Disease Identification",
+      url: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_1",
+      thumbnail: "📹",
     },
     {
       id: 2,
-      title: 'ایپ استعمال کرنے کی ہدایات',
-      titleEng: 'App Usage Instructions',
-      url: 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID_2',
-      thumbnail: '📹',
+      title: "ایپ استعمال کرنے کی ہدایات",
+      titleEng: "App Usage Instructions",
+      url: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_2",
+      thumbnail: "📹",
     },
   ];
 
@@ -45,10 +52,10 @@ export default function InstructionsScreen() {
     playButtonScale1.value = withRepeat(
       withSequence(
         withTiming(1.15, { duration: 1000 }),
-        withTiming(1, { duration: 1000 })
+        withTiming(1, { duration: 1000 }),
       ),
       -1,
-      true
+      true,
     );
 
     // Pulse animation for play button 2 (slightly offset)
@@ -57,10 +64,10 @@ export default function InstructionsScreen() {
         withTiming(1, { duration: 500 }),
         withTiming(1.15, { duration: 1000 }),
         withTiming(1, { duration: 1000 }),
-        withTiming(1, { duration: 500 })
+        withTiming(1, { duration: 500 }),
       ),
       -1,
-      true
+      true,
     );
   }, []);
 
@@ -83,23 +90,7 @@ export default function InstructionsScreen() {
   return (
     <View style={commonStyles.lightContainer}>
       {/* Header */}
-      <Animated.View
-        entering={FadeIn.duration(600)}
-        style={commonStyles.header}
-      >
-        <Animated.View entering={FadeInLeft.delay(200).springify()}>
-          <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-            <Ionicons name="arrow-back" size={28} color="white" />
-          </TouchableOpacity>
-        </Animated.View>
-        <Animated.Text
-          entering={FadeIn.delay(300)}
-          style={commonStyles.headerTitle}
-        >
-          {commonTexts.instructions}
-        </Animated.Text>
-        <View style={commonStyles.midViewWidth} />
-      </Animated.View>
+      <Header text={commonTexts.instructions} />
 
       <ScrollView style={styles.content}>
         <Animated.Text
@@ -130,7 +121,9 @@ export default function InstructionsScreen() {
                   <Animated.View
                     style={[
                       styles.playButton,
-                      index === 0 ? playButtonAnimatedStyle1 : playButtonAnimatedStyle2
+                      index === 0
+                        ? playButtonAnimatedStyle1
+                        : playButtonAnimatedStyle2,
                     ]}
                   >
                     <Text style={styles.playIcon}>▶</Text>
@@ -159,49 +152,49 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   sectionTitle: {
-    fontFamily: 'NotoNastaliqUrdu-Bold',
+    fontFamily: "NotoNastaliqUrdu-Bold",
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 8,
-    textAlign: 'right',
+    textAlign: "right",
   },
   sectionSubtitle: {
-    fontFamily: 'NotoNastaliqUrdu-Regular',
+    fontFamily: "NotoNastaliqUrdu-Regular",
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     marginBottom: 24,
-    textAlign: 'right',
+    textAlign: "right",
   },
   videosContainer: {
     gap: 20,
   },
   videoCard: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   videoThumbnail: {
     height: 200,
     backgroundColor: THEME_COLOR,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
   },
   thumbnailEmoji: {
     fontSize: 64,
     opacity: 0.3,
   },
   playButton: {
-    position: 'absolute',
+    position: "absolute",
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1,
   },
   playIcon: {
@@ -214,14 +207,14 @@ const styles = StyleSheet.create({
   },
   videoTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 4,
-    textAlign: 'right',
+    textAlign: "right",
   },
   videoTitleEng: {
     fontSize: 14,
-    color: '#666',
-    textAlign: 'right',
+    color: "#666",
+    textAlign: "right",
   },
 });

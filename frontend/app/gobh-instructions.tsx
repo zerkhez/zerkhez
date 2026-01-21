@@ -2,9 +2,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { commonStyles } from '@/styles/common';
 import { gobhInstructions } from '@/constants/riceText';
+import Microphone from '@/components/microphone';
+import Header from '@/components/header';
 
 export default function GobhInstructionsScreen() {
     const router = useRouter();
@@ -14,13 +15,7 @@ export default function GobhInstructionsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
-                </TouchableOpacity>
-                <Text style={commonStyles.headerTitle}>{typeName}</Text>
-                <View style={commonStyles.midViewWidth} />
-            </Animated.View>
+            <Header text={typeName}/>
 
             {/* Content Container */}
             <View style={commonStyles.contentContainer}>
@@ -34,11 +29,7 @@ export default function GobhInstructionsScreen() {
                     </Text>
                 </Animated.View>
                 {/* Mic Button */}
-                <Animated.View entering={ZoomIn.delay(500).springify()} style={commonStyles.micContainer}>
-                    <TouchableOpacity style={[commonStyles.micButton, commonStyles.micButtonSecColor]}>
-                        <Image source={require('../assets/icons/mic.png')} style={commonStyles.micIcon} resizeMode="contain" />
-                    </TouchableOpacity>
-                </Animated.View>
+                <Microphone/>
             </View>
         </SafeAreaView>
     );

@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {commonStyles} from '@/styles/common';
 import { ricePlantingInstructions } from '@/constants/riceText';
 import { pacakagesUrdu, commonTexts } from '@/constants/commonText';
-import { backButtonIcon } from '@/constants/constants';
+import Microphone from '@/components/microphone';
+import Header from '@/components/header';
 
 export default function PrePlantingInstructionsScreen() {
     const router = useRouter();
@@ -18,13 +19,7 @@ export default function PrePlantingInstructionsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                    <Text style={commonStyles.backButtonText}>{backButtonIcon}</Text>
-                </TouchableOpacity>
-                <Text style={commonStyles.headerTitle}>{name}</Text>
-                <View style={commonStyles.midViewWidth} />
-            </Animated.View>
+            <Header text={name} />
 
             {/* Content Container */}
             {/* show the instructions text in urdu */}
@@ -69,11 +64,7 @@ export default function PrePlantingInstructionsScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Animated.View entering={ZoomIn.delay(800).springify()} style={commonStyles.micContainer}>
-                <TouchableOpacity style={[commonStyles.micButton, commonStyles.micButtonSecColor]}>
-                    <Image source={require('../assets/icons/mic.png')} style={commonStyles.micIcon} resizeMode="contain" />
-                </TouchableOpacity>
-            </Animated.View>
+            <Microphone/>
         </SafeAreaView>
     );
 }

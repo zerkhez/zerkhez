@@ -3,29 +3,26 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
+import Microphone from '@/components/microphone';
+import Header from '@/components/header';
+import { commonTexts } from '@/constants/commonText';
+
 
 export default function RiceTutorialScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { id, name } = params;
+  const { name } = params;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
-      <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{name} کی تصویر لینے کا طریقہ</Text>
-        <View style={{ width: 40 }} />
-      </Animated.View>
-
+      <Header text={`${name} ${commonTexts.wayOfImage}`}/>
       {/* Content Container */}
       <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
           <Text style={styles.instructionText}>
-            {name} کی فصل کی تصویر لینے کا درست طریقہ جاننے کے لیے ویڈیو دیکھیں:
+            {name} {commonTexts.watchVideo}
           </Text>
 
           {/* Video Placeholder */}
@@ -42,11 +39,7 @@ export default function RiceTutorialScreen() {
         </ScrollView>
 
         {/* Mic Button */}
-        <Animated.View entering={ZoomIn.delay(500).springify()} style={styles.micContainer}>
-          <TouchableOpacity style={styles.micButton}>
-            <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} resizeMode="contain" />
-          </TouchableOpacity>
-        </Animated.View>
+        <Microphone/>
       </Animated.View>
     </SafeAreaView>
   );

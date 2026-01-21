@@ -15,7 +15,6 @@ import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
 
-
 // Placeholder data for fertilizers
 const GROUP_1_FERTILIZERS = [
     { id: '1', name: 'DAP (18:46:0)\nڈی۔ اے۔ پی' },

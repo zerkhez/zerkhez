@@ -9,6 +9,7 @@ import { maizeNitrogenInstructions } from '@/constants/maizeText';
 import { riceNitrogenInstructions } from '@/constants/riceText';
 import { commonStyles } from '@/styles/common';
 import { commonTexts } from '@/constants/commonText';
+import Header from '@/components/header';
 
 export default function NitrogenInstructionScreen() {
     const router = useRouter();
@@ -18,19 +19,11 @@ export default function NitrogenInstructionScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
-                </TouchableOpacity>
-                <Text style={commonStyles.headerTitle}>{commonTexts.instructionsForNitrogenPlot}</Text>
-                <View style={commonStyles.midViewWidth} />
-            </Animated.View>
+            <Header text={commonTexts.instructionsForNitrogenPlot} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-
                     <View style={styles.card}>
                         {
                             id === 'wheat' ? (
