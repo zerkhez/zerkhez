@@ -10,16 +10,29 @@ import { commonStyles } from '@/styles/common';
 export default function SelectionScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { id, name } = params;
+
+    // Normalize params to strings
+    const id = (Array.isArray(params.id) ? params.id[0] : params.id) || '';
+    const name = (Array.isArray(params.name) ? params.name[0] : params.name) || '';
+
     let pathName: "/crop-types" | "/crop-stages" = "/crop-types";
     let btnText = "دھان کی قسم کا انتخاب";
     let typeName = "";
+
     if (id === "wheat") {
         btnText = "مرحلہ کا انتخاب کریں";
         pathName = "/crop-stages";
         typeName = " گندم کی فصل";
     }
-    const fields = { "wheat": "گندم", "rice": "چاول", "maize": "مکئی" }
+
+    const fields: Record<string, string> = {
+        "wheat": "گندم",
+        "rice": "چاول",
+        "maize": "مکئی"
+    };
+
+    const displayFieldName = fields[id] || '';
+
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
@@ -33,13 +46,6 @@ export default function SelectionScreen() {
                         <TouchableOpacity
                             style={commonStyles.actionButton}
                             onPress={() => {
-                                type FieldId = 'rice' | 'wheat' | 'maize';
-                                const fields: Record<FieldId, string> = {
-                                    rice: 'چاول',
-                                    wheat: 'گندم',
-                                    maize: 'مکئی',
-                                };
-
                                 if (id !== 'rice' && id !== 'wheat' && id !== 'maize') {
                                     return;
                                 }
@@ -55,7 +61,9 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>{commonTexts.atTimeOf} {fields[id]} {commonTexts.ofFertilizers}</Text>
+                            <Text style={commonStyles.actionButtonText}>
+                                {commonTexts.atTimeOf} {displayFieldName} {commonTexts.ofFertilizers}
+                            </Text>
                         </TouchableOpacity>
                     </Animated.View>
 
@@ -67,7 +75,7 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>{fields[id]} {commonTexts.wayOfImage}</Text>
+                            <Text style={commonStyles.actionButtonText}>{displayFieldName} {commonTexts.wayOfImage}</Text>
                         </TouchableOpacity>
                     </Animated.View>
 
