@@ -19,11 +19,13 @@ export const commonTexts = {
     chooseCommonNitrogenPlot: "عام پلاٹ منتخب کریں",
     commonNitrogenPlot: "عام پلاٹ",
     start: "شروع کریں",
-    instructionsForNitrogenPlot:"ہدایات برائے کافی نائٹروجن پلاٹ",
-    videos:"ویڈیو ٹیوٹوریلز",
-    moreInfo:"مزید معلومات کے لیے یہ ویڈیوز دیکھیں",
+    instructionsForNitrogenPlot: "ہدایات برائے کافی نائٹروجن پلاٹ",
+    videos: "ویڈیو ٹیوٹوریلز",
+    moreInfo: "مزید معلومات کے لیے یہ ویڈیوز دیکھیں",
     watchVideo: "کی فصل کی تصویر لینے کا درست طریقہ جاننے کے لیے ویڈیو دیکھیں:",
-    wayOfImage:"کی تصویر لینے کا طریقہ"
+    wayOfImage: "کی تصویر لینے کا طریقہ",
+    atTimeOf: "بوقت کاشت",
+    ofFertilizers: "کی کھادیں",
 }
 
 export const imageAnalysisTexts = {

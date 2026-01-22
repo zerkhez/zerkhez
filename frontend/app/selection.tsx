@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
+import { commonTexts } from '@/constants/commonText';
 
 export default function SelectionScreen() {
     const router = useRouter();
@@ -32,14 +33,29 @@ export default function SelectionScreen() {
                         <TouchableOpacity
                             style={styles.optionButton}
                             onPress={() => {
+                                type FieldId = 'rice' | 'wheat' | 'maize';
+                                const fields: Record<FieldId, string> = {
+                                    rice: 'چاول',
+                                    wheat: 'گندم',
+                                    maize: 'مکئی',
+                                };
+
+                                if (id !== 'rice' && id !== 'wheat' && id !== 'maize') {
+                                    return;
+                                }
+
                                 router.push({
                                     pathname: `/crop-stages/${id}`,
-                                    params: { id, name, typeName: `${fields[id]} کی فصل` }
+                                    params: {
+                                        id,
+                                        name,
+                                        typeName: `${fields[id]} کی فصل`,
+                                    },
                                 });
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.optionButtonText}>بوقت کاشت {fields[id]} کی کھادیں</Text>
+                            <Text style={styles.optionButtonText}>{commonTexts.atTimeOf} {fields[id]} {commonTexts.ofFertilizers}</Text>
                         </TouchableOpacity>
                     </Animated.View>
 
@@ -51,7 +67,7 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.optionButtonText}>{fields[id]} کی تصویر لینے کا طریقہ</Text>
+                            <Text style={styles.optionButtonText}>{fields[id]} {commonTexts.wayOfImage}</Text>
                         </TouchableOpacity>
                     </Animated.View>
 
@@ -94,7 +110,7 @@ export default function SelectionScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Microphone/>
+            <Microphone />
         </SafeAreaView>
     );
 }
