@@ -13,35 +13,36 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export default function WelcomeScreen() {
   const router = useRouter();
   const scale = useSharedValue(1);
-  const [weatherData, setWeatherData] = useState<object>({});
+  const [weatherData, setWeatherData] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    (async () => {
+    const fetchWeather = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
-      }
+      if (status !== 'granted') return;
 
       let location = await Location.getCurrentPositionAsync({});
-      const apiKey = process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY || "fddbdfd48ce21911399a167863770702";
+      const apiKey =
+        process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY ||
+        'fddbdfd48ce21911399a167863770702';
 
-      try {
-        const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=metric&appid=${apiKey}`
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setWeatherData({
-            temp: Math.round(data.main.temp).toString(),
-            condition: data.weather[0].main,
-            location: data.name
-          });
-        }
-      } catch (e) {
-        console.log("Error fetching weather in index", e);
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=metric&appid=${apiKey}`
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        setWeatherData({
+          temp: Math.round(data.main.temp).toString(),
+          condition: data.weather[0].main,
+          location: data.name,
+        });
       }
-    })();
+    };
+
+    fetchWeather().catch((err) => console.log('Error fetching weather in index', err));
   }, []);
+
+
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
