@@ -92,7 +92,7 @@ export default function FertilizerSelectionScreen() {
             {/* Dropdown Trigger */}
             <TouchableOpacity
                 style={styles.dropdownButton}
-                onPress={() => openModal(groupNum)}
+                onPress={() => { openModal(groupNum) }}
                 activeOpacity={0.7}
             >
                 <Text style={[styles.dropdownText, !state.fertilizer && styles.placeholderText]}>
@@ -108,7 +108,7 @@ export default function FertilizerSelectionScreen() {
                     style={styles.input}
                     keyboardType="numeric"
                     value={state.amount}
-                    onChangeText={(text) => setState({ ...state, amount: text })}
+                    onChangeText={(text) => { setState({ ...state, amount: text }) }}
                     placeholder="0"
                     placeholderTextColor="#999"
                 />
@@ -156,15 +156,15 @@ export default function FertilizerSelectionScreen() {
                 visible={modalVisible}
                 transparent={true}
                 animationType="fade"
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => { setModalVisible(false); }}
             >
-                <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+                <TouchableWithoutFeedback onPress={() => { setModalVisible(false); }}>
                     <View style={styles.modalOverlay}>
                         <TouchableWithoutFeedback>
                             <View style={styles.modalContent}>
                                 <View style={styles.modalHeader}>
                                     <Text style={styles.modalTitle}>کھاد کا انتخاب کریں</Text>
-                                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                    <TouchableOpacity onPress={() => { setModalVisible(false); }}>
                                         <Text style={styles.closeButton}>✕</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -174,7 +174,7 @@ export default function FertilizerSelectionScreen() {
                                     renderItem={({ item }) => (
                                         <TouchableOpacity
                                             style={styles.modalItem}
-                                            onPress={() => selectFertilizer(item)}
+                                            onPress={() => { selectFertilizer(item); }}
                                         >
                                             <Text style={styles.modalItemText}>{item.name}</Text>
                                         </TouchableOpacity>

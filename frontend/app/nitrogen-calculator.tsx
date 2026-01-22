@@ -213,7 +213,7 @@ export default function NitrogenCalculatorScreen() {
 
                         <TouchableOpacity
                             style={[styles.actionButton, styles.secondaryButton, isButtonsDisabled && styles.disabledButton]}
-                            onPress={() => handleSelectionMode(false)}
+                            onPress={() => { handleSelectionMode(false); }}
                             activeOpacity={0.8}
                             disabled={isButtonsDisabled}
                         >
@@ -223,7 +223,7 @@ export default function NitrogenCalculatorScreen() {
                 </ScrollView>
 
                 {/* Mic Button */}
-                <Microphone/>
+                <Microphone />
             </View>
         </SafeAreaView>
     );

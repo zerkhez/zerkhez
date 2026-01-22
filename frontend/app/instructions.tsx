@@ -114,7 +114,7 @@ export default function InstructionsScreen() {
             >
               <TouchableOpacity
                 style={styles.videoCard}
-                onPress={() => openVideo(video.url)}
+                onPress={() => { openVideo(video.url); }}
                 activeOpacity={0.7}
               >
                 <View style={styles.videoThumbnail}>
