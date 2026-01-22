@@ -13,7 +13,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export default function WelcomeScreen() {
   const router = useRouter();
   const scale = useSharedValue(1);
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherData, setWeatherData] = useState<object>({});
 
   useEffect(() => {
     (async () => {

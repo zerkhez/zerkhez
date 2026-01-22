@@ -20,7 +20,7 @@ export default function CropTypesScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={`${name} ${commonTexts.ofCrop}`}/>
+            <Header text={`${name} ${commonTexts.ofCrop}`} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
@@ -41,13 +41,13 @@ export default function CropTypesScreen() {
                                     if (nextRoute) {
                                         // If nextRoute is passed, navigate there
                                         router.push({
-                                            pathname: nextRoute as any,
+                                            pathname: nextRoute as string,
                                             params: { typeName: type, id, name }
                                         });
                                     } else {
                                         // Default behavior
                                         router.push({
-                                            pathname: '/crop-stages' as any,
+                                            pathname: '/crop-stages' as string,
                                             params: params,
                                         });
                                     }
@@ -62,7 +62,7 @@ export default function CropTypesScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Microphone/>
+            <Microphone />
         </SafeAreaView>
     );
 }

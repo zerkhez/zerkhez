@@ -16,7 +16,7 @@ export default function PrePlantingInstructionsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     // getting id and name from the params to know which crop is selected
-    const { id, name} = params;
+    const { id, name } = params;
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
@@ -30,7 +30,7 @@ export default function PrePlantingInstructionsScreen() {
             </Animated.View>
 
             {/* Content Container */}
-            <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={ commonStyles.contentContainer}>
+            <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
 
@@ -55,7 +55,7 @@ export default function PrePlantingInstructionsScreen() {
                             onPress={() => {
                                 // Navigate to crop-types for now as the next logical step or a placeholder
                                 router.push({
-                                    pathname: '/fertilizer-selection' as any,
+                                    pathname: '/fertilizer-selection',
                                     params: { id, name }
                                 });
                             }}
@@ -69,7 +69,7 @@ export default function PrePlantingInstructionsScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Microphone/>
+            <Microphone />
         </SafeAreaView>
     );
 }
