@@ -21,12 +21,18 @@ const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
 export default function NitrogenCalculatorScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { typeName, id, name } = params;
+    const { id, name } = params;
+
+    // Normalize typeName to a single string
+    const cropName = useMemo(() => {
+        const rawTypeName = params.typeName;
+        return Array.isArray(rawTypeName) ? rawTypeName[0] : rawTypeName || '';
+    }, [params.typeName]);
+
     const [selectedDate, setSelectedDate] = useState('');
 
     const validationState = useMemo(() => {
         if (id === 'maize') return { state: 'valid', days: 0 };
-
         if (!selectedDate) return { state: 'idle', days: 0 };
 
         const today = new Date();
@@ -37,13 +43,16 @@ export default function NitrogenCalculatorScreen() {
         if (selected > today) return { state: 'idle', days: 0 };
 
         if (id === 'wheat') {
+            const min = 30;
+            const max = 70;
+            if (diffDays < min) return { state: 'early', days: diffDays, config: { min, max } };
+            if (diffDays > max) return { state: 'late', days: diffDays, config: { min, max } };
             return { state: 'valid', days: diffDays };
         }
 
-        if (!typeName) return { state: 'idle', days: 0 };
+        if (!cropName) return { state: 'idle', days: 0 };
 
-        const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
-        const config = cropName && Object.prototype.hasOwnProperty.call(CROP_DAT_CONFIG, cropName)
+        const config = Object.prototype.hasOwnProperty.call(CROP_DAT_CONFIG, cropName)
             ? CROP_DAT_CONFIG[cropName]
             : null;
 
@@ -53,89 +62,61 @@ export default function NitrogenCalculatorScreen() {
         if (diffDays > config.max) return { state: 'late', days: diffDays, config };
 
         return { state: 'valid', days: diffDays };
-    }, [selectedDate, typeName, id]);
-
+    }, [selectedDate, cropName, id]);
 
     const handleSelectionMode = (useCamera: boolean) => {
-        console.log("Days are ", validationState.days)
         router.push({
             pathname: '/image-analysis',
             params: {
                 mode: useCamera ? 'camera' : 'gallery',
-                typeName: typeName,
+                typeName: cropName,
                 dat: validationState.days,
                 id,
                 name
             }
         });
     };
-    const riceRenderMessage = () => {
-        const min = 30;
-        const max = 70;
-        const today = new Date();
-        const selected = new Date(selectedDate);
-        const diffTime = Math.abs(today.getTime() - selected.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        // If selected date is in future, it's 0 days (or negative, but abs handles diff, logic assumes past)
-        let state = "";
+    const StatusMessage = ({ children }: { children: React.ReactNode }) => (
+        <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
+            <Text style={styles.messageText}>{children}</Text>
+        </Animated.View>
+    );
 
-        if (diffDays < min) {
-            state = "early";
-        }
-        if (diffDays > max) {
-            state = "late";
-        }
-        if (state === 'early') {
-            return (
-                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
-                    <Text style={styles.messageText}>
-                        گندم کی فصل کو بالائی کھاد دو دفعہ یعنی بوائی کے 30 سے 40 دن بعد تک اور بوائی کے 50 سے 70 دن بعد تک ڈالی جا سکتی ہے۔ تصویر کے ذریعے بالائی کھاد معلوم کرنے کے لیے گندم کی قسم کا انتخاب کریں
-                    </Text>
-                </Animated.View>
-            )
-        }
-
-        if (state === 'late') {
-            return (
-                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
-                    <Text style={styles.messageText}>آپ کی گندم کی فصل کو نائٹروجنی کھاد ڈالنے کا وقت گزر چکا ہے۔</Text>
-                </Animated.View>
-            )
-
-
-        }
-    }
-    const renderMessage = () => {
-        if (validationState.state === 'idle' || validationState.state === 'valid') return null;
-
+    const renderValidationMessage = () => {
         const { state, days, config } = validationState;
-        const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
+        if (state === 'idle' || state === 'valid') return null;
+
+        if (id === 'wheat') {
+            if (state === 'early') {
+                return (
+                    <StatusMessage>
+                        گندم کی فصل کو بالائی کھاد دو دفعہ یعنی بوائی کے 30 سے 40 دن بعد تک اور بوائی کے 50 سے 70 دن بعد تک ڈالی جا سکتی ہے۔ تصویر کے ذریعے بالائی کھاد معلوم کرنے کے لیے گندم کی قسم کا انتخاب کریں
+                    </StatusMessage>
+                );
+            }
+            return (
+                <StatusMessage>آپ کی گندم کی فصل کو نائٹروجنی کھاد ڈالنے کا وقت گزر چکا ہے۔</StatusMessage>
+            );
+        }
 
         if (state === 'early') {
-
             return (
-                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
-                    <Text style={styles.messageText}>
-                        تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے ابھی
-                        <Text style={styles.redText}> {days} </Text>
-                        دن ہوئے ہیں۔
-                    </Text>
-                </Animated.View>
+                <StatusMessage>
+                    تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے ابھی
+                    <Text style={styles.redText}> {days} </Text>
+                    دن ہوئے ہیں۔
+                </StatusMessage>
             );
         }
 
-        if (state === 'late') {
-            return (
-                <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
-                    <Text style={styles.messageText}>
-                        تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے
-                        <Text style={styles.redText}> {days} </Text>
-                        دن ہو چکے ہیں۔ تاہم پھول آنے سے قبل کھاد ڈالی جا سکتی ہے۔
-                    </Text>
-                </Animated.View>
-            );
-        }
+        return (
+            <StatusMessage>
+                تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے
+                <Text style={styles.redText}> {days} </Text>
+                دن ہو چکے ہیں۔ تاہم پھول آنے سے قبل کھاد ڈالی جا سکتی ہے۔
+            </StatusMessage>
+        );
     };
 
     const isButtonsDisabled = validationState.state === 'early' || validationState.state === 'idle';
@@ -198,9 +179,7 @@ export default function NitrogenCalculatorScreen() {
                         </>
                     )}
 
-
-                    {id === "rice" && renderMessage()}
-                    {id === "wheat" && riceRenderMessage()}
+                    {renderValidationMessage()}
 
                     {/* Buttons */}
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={[styles.buttonContainer, isButtonsDisabled && styles.disabledContainer]}>
