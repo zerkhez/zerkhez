@@ -92,17 +92,8 @@ frontend/ios/.xcode.env.local
 *.temp
 *.log
 
-# Lock files (optional - uncomment if you want to ignore them)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
-
-# Assets (if you have large assets you don't want in repo)
-# assets/videos/
-# assets/large-files/
 
 # Backend (Flask)
-
 # Python virtual environment
 backend/venv/
 backend/.env
