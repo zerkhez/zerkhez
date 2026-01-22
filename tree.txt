@@ -1,0 +1,89 @@
+.
+├── README.md
+├── backend
+│   ├── __pycache__
+│   │   └── app.cpython-313.pyc
+│   ├── app.py
+│   ├── images
+│   │   ├── aam.jpg
+│   │   └── kaafi.jpg
+│   ├── requirements.txt
+│   └── test_api_manual.py
+├── expo-env.d.ts
+├── frontend
+│   ├── app
+│   │   ├── _layout.tsx
+│   │   ├── analysis-results.tsx
+│   │   ├── crop-stages
+│   │   │   ├── maize.tsx
+│   │   │   ├── rice.tsx
+│   │   │   └── wheat.tsx
+│   │   ├── crop-types.tsx
+│   │   ├── fertilizer-selection.tsx
+│   │   ├── gobh-instructions.tsx
+│   │   ├── home.tsx
+│   │   ├── image-analysis.tsx
+│   │   ├── index.tsx
+│   │   ├── instruction-nitrogen.tsx
+│   │   ├── instructions.tsx
+│   │   ├── nitrogen-calculator.tsx
+│   │   ├── pre-planting-instructions.tsx
+│   │   ├── results.tsx
+│   │   ├── selection.tsx
+│   │   ├── sprout-instructions.tsx
+│   │   └── video-tutorial.tsx
+│   ├── app.json
+│   ├── assets
+│   │   ├── fonts
+│   │   │   ├── NotoNastaliqUrdu-Bold.ttf
+│   │   │   └── NotoNastaliqUrdu-Regular.ttf
+│   │   ├── icons
+│   │   │   └── mic.png
+│   │   └── images
+│   │       ├── android-icon-background.png
+│   │       ├── android-icon-foreground.png
+│   │       ├── android-icon-monochrome.png
+│   │       ├── corn.png
+│   │       ├── favicon.png
+│   │       ├── icon.png
+│   │       ├── logo.png
+│   │       ├── partial-react-logo.png
+│   │       ├── react-logo.png
+│   │       ├── react-logo@2x.png
+│   │       ├── react-logo@3x.png
+│   │       ├── rice.png
+│   │       ├── splash-icon.png
+│   │       ├── welcome.jpg
+│   │       └── wheat.png
+│   ├── components
+│   │   ├── external-link.tsx
+│   │   ├── haptic-tab.tsx
+│   │   ├── hello-wave.tsx
+│   │   ├── parallax-scroll-view.tsx
+│   │   ├── themed-text.tsx
+│   │   ├── themed-view.tsx
+│   │   └── ui
+│   │       ├── collapsible.tsx
+│   │       ├── icon-symbol.ios.tsx
+│   │       └── icon-symbol.tsx
+│   ├── constants
+│   │   └── theme.ts
+│   ├── constants.tsx
+│   ├── eas.json
+│   ├── eslint.config.js
+│   ├── expo-env.d.ts
+│   ├── hooks
+│   │   ├── use-color-scheme.ts
+│   │   ├── use-color-scheme.web.ts
+│   │   └── use-theme-color.ts
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── scripts
+│   │   └── reset-project.js
+│   ├── tree.txt
+│   └── tsconfig.json
+├── github_labels_guide.md
+├── project_details.md
+└── tree.txt
+
+16 directories, 71 files
