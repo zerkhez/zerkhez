@@ -11,9 +11,11 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
+import Header from '@/components/header';
+import { commonStyles } from '@/styles/common';
 
 // Placeholder data for fertilizers
 const GROUP_1_FERTILIZERS = [
@@ -117,39 +119,35 @@ export default function FertilizerSelectionScreen() {
     );
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Text style={styles.backIcon}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>کھاد کا انتخاب</Text>
-                <View style={{ width: 40 }} />
-            </Animated.View>
+            <Header text="کھاد کا انتخاب" />
 
-            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                <Animated.View entering={FadeInUp.delay(200).springify()}>
-                    {renderGroup(1, 'گروپ - 1 (نائٹروجن)', group1, setGroup1)}
-                </Animated.View>
+            <View style={commonStyles.contentContainer}>
+                <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
+                    <Animated.View entering={FadeInUp.delay(200).springify()}>
+                        {renderGroup(1, 'گروپ - 1 (نائٹروجن)', group1, setGroup1)}
+                    </Animated.View>
 
-                <Animated.View entering={FadeInUp.delay(300).springify()}>
-                    {renderGroup(2, 'گروپ - 2 (فاسفورس)', group2, setGroup2)}
-                </Animated.View>
+                    <Animated.View entering={FadeInUp.delay(300).springify()}>
+                        {renderGroup(2, 'گروپ - 2 (فاسفورس)', group2, setGroup2)}
+                    </Animated.View>
 
-                <Animated.View entering={FadeInUp.delay(400).springify()}>
-                    {renderGroup(3, 'گروپ - 3 (پوٹاش)', group3, setGroup3)}
-                </Animated.View>
+                    <Animated.View entering={FadeInUp.delay(400).springify()}>
+                        {renderGroup(3, 'گروپ - 3 (پوٹاش)', group3, setGroup3)}
+                    </Animated.View>
 
-                <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={styles.calculateButton}
-                        onPress={handleCalculate}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={styles.calculateButtonText}>حساب لگائیں</Text>
-                    </TouchableOpacity>
-                </Animated.View>
-            </ScrollView>
+                    <Animated.View entering={FadeInUp.delay(500).springify()} style={commonStyles.buttonContainer}>
+                        <TouchableOpacity
+                            style={commonStyles.actionButton}
+                            onPress={handleCalculate}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={commonStyles.actionButtonText}>حساب لگائیں</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </ScrollView>
+            </View>
 
             {/* Custom Dropdown Modal */}
             <Modal
@@ -190,39 +188,6 @@ export default function FertilizerSelectionScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: THEME_COLOR,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-    },
-    backButton: {
-        padding: 5,
-    },
-    backIcon: {
-        fontSize: 28,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 24,
-        color: 'white',
-        textAlign: 'center',
-    },
-    scrollContent: {
-        padding: 20,
-        paddingBottom: 50,
-        backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        minHeight: '100%',
-    },
     groupContainer: {
         marginBottom: 25,
         backgroundColor: '#c2e7bdff',
@@ -284,30 +249,6 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         fontSize: 16,
     },
-    buttonContainer: {
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    calculateButton: {
-        backgroundColor: '#b5d985',
-        paddingVertical: 15,
-        paddingHorizontal: 50,
-        borderRadius: 25,
-        width: '100%',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
-        elevation: 4,
-        borderWidth: 1,
-        borderColor: '#a3c970',
-    },
-    calculateButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 20,
-        color: 'black',
-    },
     // Modal Styles
     modalOverlay: {
         flex: 1,
@@ -355,3 +296,4 @@ const styles = StyleSheet.create({
         textAlign: 'right',
     },
 });
+

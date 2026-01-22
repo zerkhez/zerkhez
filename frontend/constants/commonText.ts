@@ -27,7 +27,10 @@ export const commonTexts = {
     atTimeOf: "بوقت کاشت",
     ofFertilizers: "کی کھادیں",
 }
-
+export const sproutInstructions = {
+    title: "شاخیں پھوٹنے کے مرحلہ پر کھاد کا استعمال",
+    description: "لاب لگانے کے 25 تا 30 دن بعد دھان کی فصل کو 40 کلوگرام یوریا، یا 70 کلوگرام کین، یا 85 کلوگرام امونیم سلفیٹ ڈالیں۔"
+}
 export const imageAnalysisTexts = {
     analyzeBothImages: "دونوں تصاویر کا تجزیہ کریں",
     analyzing: "تجزیہ ہو رہا ہے...",

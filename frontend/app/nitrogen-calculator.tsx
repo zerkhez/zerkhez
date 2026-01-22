@@ -1,13 +1,13 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { THEME_COLOR } from '@/constants/theme';
 import Microphone from '@/components/microphone';
 import { commonTexts } from '@/constants/commonText';
 import Header from '@/components/header';
+import { commonStyles } from '@/styles/common';
 
 const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
     'سونا سپر باسمتی - 282': { min: 47, max: 60 },
@@ -139,23 +139,23 @@ export default function NitrogenCalculatorScreen() {
     const isButtonsDisabled = validationState.state === 'early' || validationState.state === 'idle';
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
             <Header text={commonTexts.calculateNitrogenFertilizer} />
 
             {/* Content Container */}
-            <View style={styles.contentContainer}>
+            <View style={commonStyles.contentContainer}>
                 <ScrollView
-                    contentContainerStyle={styles.scrollContent}
+                    contentContainerStyle={commonStyles.scrollContent}
                     showsVerticalScrollIndicator={false}
                 >
                     {id !== "maize" && (
                         <>
                             <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
                                 {id === "rice" ? (
-                                    <Text style={styles.pageTitle}>لاب لگانے کی تاریخ منتخب کریں:</Text>
+                                    <Text style={commonStyles.titleText}>لاب لگانے کی تاریخ منتخب کریں:</Text>
                                 ) : (
-                                    <Text style={styles.pageTitle}>بیج لگانے کی تاریخ منتخب کریں:</Text>
+                                    <Text style={commonStyles.titleText}>بیج لگانے کی تاریخ منتخب کریں:</Text>
                                 )}
                             </Animated.View>
 
@@ -203,21 +203,21 @@ export default function NitrogenCalculatorScreen() {
                     {/* Buttons */}
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={[styles.buttonContainer, isButtonsDisabled && styles.disabledContainer]}>
                         <TouchableOpacity
-                            style={[styles.actionButton, isButtonsDisabled && styles.disabledButton]}
+                            style={[commonStyles.actionButton, isButtonsDisabled && styles.disabledButton]}
                             onPress={() => handleSelectionMode(true)}
                             activeOpacity={0.8}
                             disabled={isButtonsDisabled}
                         >
-                            <Text style={styles.actionButtonText}>کیمرا سے تصویر لیں</Text>
+                            <Text style={commonStyles.actionButtonText}>کیمرا سے تصویر لیں</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.actionButton, styles.secondaryButton, isButtonsDisabled && styles.disabledButton]}
+                            style={[commonStyles.actionButton, styles.secondaryButton, isButtonsDisabled && styles.disabledButton]}
                             onPress={() => { handleSelectionMode(false); }}
                             activeOpacity={0.8}
                             disabled={isButtonsDisabled}
                         >
-                            <Text style={styles.actionButtonText}>پہلے سے لی گئی تصویر منتخب کریں</Text>
+                            <Text style={commonStyles.actionButtonText}>پہلے سے لی گئی تصویر منتخب کریں</Text>
                         </TouchableOpacity>
                     </Animated.View>
                 </ScrollView>
@@ -230,52 +230,10 @@ export default function NitrogenCalculatorScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: THEME_COLOR,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-    },
-    backButton: {
-        padding: 5,
-    },
-    backIcon: {
-        fontSize: 28,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 22,
-        color: 'white',
-        textAlign: 'center',
-    },
-    contentContainer: {
-        flex: 1,
-        backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        overflow: 'hidden', // Ensure content doesn't bleed out
-    },
-    scrollContent: {
-        padding: 20,
-        alignItems: 'center',
-        paddingBottom: 100, // Extra space for Mic button
-    },
     titleContainer: {
         marginTop: 20,
         marginBottom: 20,
-    },
-    pageTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 20,
-        color: 'black',
-        textAlign: 'right',
+        width: '100%',
     },
     calendarContainer: {
         width: '100%',
@@ -300,21 +258,6 @@ const styles = StyleSheet.create({
     disabledContainer: {
         opacity: 0.5,
     },
-    actionButton: {
-        backgroundColor: '#b5d985',
-        paddingVertical: 15,
-        paddingHorizontal: 30,
-        borderRadius: 25,
-        width: '100%',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
-        elevation: 4,
-        borderWidth: 1,
-        borderColor: '#a3c970',
-    },
     disabledButton: {
         backgroundColor: '#e0e0e0',
         borderColor: '#ccc',
@@ -322,42 +265,9 @@ const styles = StyleSheet.create({
     secondaryButton: {
         backgroundColor: '#b5d985',
     },
-    actionButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 12,
-        color: 'black',
-        textAlign: 'center',
-    },
-    micContainer: {
-        position: 'absolute',
-        bottom: 30,
-        left: 30,
-    },
-    micButton: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: '#6a8a2c',
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-    },
-    micIcon: {
-        width: 30,
-        height: 30,
-        tintColor: 'white',
-    },
     messageContainer: {
         width: '100%',
         padding: 15,
-        // backgroundColor: '#f8f9fa',
-        // borderRadius: 10,
-        // borderWidth: 1,
-        // borderColor: '#ddd',
         marginBottom: 10,
         alignItems: 'center',
     },
@@ -388,3 +298,4 @@ const styles = StyleSheet.create({
         color: 'black',
     }
 });
+
