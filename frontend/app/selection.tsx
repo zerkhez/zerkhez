@@ -31,7 +31,7 @@ export default function SelectionScreen() {
         "maize": "مکئی"
     };
 
-    const displayFieldName = fields[id] || '';
+    const displayFieldName = Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : '';
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
@@ -55,7 +55,7 @@ export default function SelectionScreen() {
                                     params: {
                                         id,
                                         name,
-                                        typeName: `${fields[id]} کی فصل`,
+                                        typeName: `${Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : ''} کی فصل`,
                                     },
                                 });
                             }}

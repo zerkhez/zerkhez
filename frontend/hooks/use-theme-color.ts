@@ -23,6 +23,9 @@ export function useThemeColor(props: Props, colorName: ColorName) {
     return colorFromProps;
   } else {
     // Safe indexing into Colors object
-    return Colors[theme][colorName];
+    const themeColors = Colors[theme];
+    return Object.prototype.hasOwnProperty.call(themeColors, colorName)
+      ? themeColors[colorName]
+      : themeColors.text; // Fallback to a guaranteed color
   }
 }

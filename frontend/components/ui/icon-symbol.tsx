@@ -41,7 +41,7 @@ export function IconSymbol({
     <MaterialIcons
       color={color}
       size={size}
-      name={MAPPING[name]}
+      name={Object.prototype.hasOwnProperty.call(MAPPING, name) ? MAPPING[name] : 'help'}
       style={style}
     />
   );

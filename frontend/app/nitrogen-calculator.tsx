@@ -43,7 +43,9 @@ export default function NitrogenCalculatorScreen() {
         if (!typeName) return { state: 'idle', days: 0 };
 
         const cropName = Array.isArray(typeName) ? typeName[0] : typeName;
-        const config = CROP_DAT_CONFIG[cropName];
+        const config = cropName && Object.prototype.hasOwnProperty.call(CROP_DAT_CONFIG, cropName)
+            ? CROP_DAT_CONFIG[cropName]
+            : null;
 
         if (!config) return { state: 'idle', days: 0 };
 
