@@ -1,3 +1,5 @@
+// Purpose: Display home page, fetch location and weather information if failed on index.ts.
+// Author:
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
@@ -64,7 +66,7 @@ export default function HomeScreen() {
             });
             return;
         }
-
+        // fetch the user location
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
@@ -80,7 +82,7 @@ export default function HomeScreen() {
     const fetchWeather = async (lat: number, lon: number) => {
         try {
 
-            // directly using api for now handle it later
+            // fetch the weather information to show on home page
             const response = await fetch(
                 `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPEN_WEATHER_API_URL}`
             );

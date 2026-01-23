@@ -1,12 +1,11 @@
+// Purpose: Get images as input from user and call the api to upload images to do analysis.
+// 
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
-import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
 import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
 import { THEME_COLOR } from '@/constants/theme';
@@ -87,16 +86,16 @@ export default function ImageAnalysisScreen() {
 
         try {
             const formData = new FormData();
-
+            // if running on web application
             if (Platform.OS === 'web') {
-                // 🔥 WEB: convert image URI → Blob
+                // WEB: convert image URI → Blob
                 const kaafiBlob = await (await fetch(sufficientPlotImage)).blob();
                 const aamBlob = await (await fetch(commonPlotImage)).blob();
 
                 formData.append('kaafi_image', kaafiBlob, 'kaafi.jpg');
                 formData.append('aam_image', aamBlob, 'aam.jpg');
             } else {
-                // 📱 MOBILE (Android / iOS)
+                // MOBILE (Android / iOS)
                 formData.append('kaafi_image', {
                     uri: sufficientPlotImage,
                     name: 'kaafi.jpg',

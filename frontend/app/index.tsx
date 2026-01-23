@@ -1,3 +1,5 @@
+// Purpose: Show the first starting screen to user.
+// Author: 
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -17,15 +19,18 @@ export default function WelcomeScreen() {
 
   useEffect(() => {
     (async () => {
+      // check whether user permissions allowed or not
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         return;
       }
 
+      // get user current location
       let location = await Location.getCurrentPositionAsync({});
       const apiKey = process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY || "fddbdfd48ce21911399a167863770702";
 
       try {
+        // Get weather information of user location
         const response = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=metric&appid=${apiKey}`
         );

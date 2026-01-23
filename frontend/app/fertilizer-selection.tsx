@@ -1,3 +1,5 @@
+// Purpose: Use to create a customize pacakage for fertlizers
+// Author: 
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {

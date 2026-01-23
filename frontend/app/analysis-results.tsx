@@ -1,6 +1,5 @@
 // Purpose: To show the final results on screen after calculating amount of fertilizer.
 // Author: 
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
@@ -51,9 +50,7 @@ export default function AnalysisResultsScreen() {
                             {resultTexts.recommendedNitrogenRate} <Text style={styles.summaryValue}>{n_rate || '-'}</Text> {resultTexts.perHectare}
                         </Text>
                     </Animated.View>
-
                 </ScrollView>
-
                 {/* Microphone Icon */}
                 <Microphone />
             </View>
