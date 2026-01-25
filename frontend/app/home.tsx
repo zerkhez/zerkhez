@@ -3,6 +3,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
+import * as Network from 'expo-network';
 import { OPEN_WEATHER_API_URL } from '@/constants';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
@@ -68,6 +69,17 @@ export default function HomeScreen() {
         }
         // fetch the user location
         (async () => {
+            const networkState = await Network.getNetworkStateAsync();
+            if (!networkState.isConnected) {
+                setWeather(prev => ({ 
+                    ...prev, 
+                    location: 'No Internet', 
+                    temp: '--', 
+                    condition: 'Unknown' 
+                }));
+                return;
+            }
+
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setWeather(prev => ({ ...prev, location: 'Permission Denied' }));

@@ -9,6 +9,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { zerkhezAppTitle, motto, commonTexts } from '@/constants/commonText';
 import { forwardButtonIcon } from '@/constants/constants';
+import * as Network from 'expo-network';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -22,6 +23,18 @@ export default function WelcomeScreen() {
       // check whether user permissions allowed or not
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
+        return;
+      }
+
+      // Check internet connection
+      const networkState = await Network.getNetworkStateAsync();
+      if (!networkState.isConnected) {
+        alert("No Internet Connection. Please connect to the internet.");
+        setWeatherData({
+          temp: "--",
+          condition: "Unknown",
+          location: "No Internet"
+        });
         return;
       }
 

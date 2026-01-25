@@ -8,6 +8,7 @@ import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
+import * as Network from 'expo-network';
 import { THEME_COLOR } from '@/constants/theme';
 import { commonTexts, VARIETY_MAPPING, imageAnalysisTexts } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
@@ -71,6 +72,12 @@ export default function ImageAnalysisScreen() {
     };
 
     const handleAnalyze = async () => {
+        const networkState = await Network.getNetworkStateAsync();
+        if (!networkState.isConnected) {
+            Alert.alert("No Internet Connection", "Please connect to the internet and try again.");
+            return;
+        }
+
         if (!sufficientPlotImage || !commonPlotImage) {
             Alert.alert("Images Required", "Please select both Plot images.");
             return;
