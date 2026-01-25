@@ -1,63 +1,87 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { THEME_COLOR } from '@/constants/theme';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
+import { commonTexts } from '@/constants/commonText';
+import { commonStyles } from '@/styles/common';
 
 export default function SelectionScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { id, name } = params;
+
+    // Normalize params to strings
+    const id = (Array.isArray(params.id) ? params.id[0] : params.id) || '';
+    const name = (Array.isArray(params.name) ? params.name[0] : params.name) || '';
+
     let pathName: "/crop-types" | "/crop-stages" = "/crop-types";
     let btnText = "دھان کی قسم کا انتخاب";
     let typeName = "";
+
     if (id === "wheat") {
         btnText = "مرحلہ کا انتخاب کریں";
         pathName = "/crop-stages";
         typeName = " گندم کی فصل";
     }
-    const fields = { "wheat": "گندم", "rice": "چاول", "maize": "مکئی" }
+
+    const fields: Record<string, string> = {
+        "wheat": "گندم",
+        "rice": "چاول",
+        "maize": "مکئی"
+    };
+
+    const displayFieldName = Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : '';
+
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
             <Header text={`${name} کی فصل`} />
 
             {/* Content Container */}
-            <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
+            <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
 
                 <View style={styles.buttonsContainer}>
-                    <Animated.View entering={FadeInUp.delay(300).springify()} style={{ width: '100%' }}>
+                    <Animated.View entering={FadeInUp.delay(300).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={styles.optionButton}
+                            style={commonStyles.actionButton}
                             onPress={() => {
+                                if (id !== 'rice' && id !== 'wheat' && id !== 'maize') {
+                                    return;
+                                }
+
                                 router.push({
                                     pathname: `/crop-stages/${id}`,
-                                    params: { id, name, typeName: `${fields[id]} کی فصل` }
+                                    params: {
+                                        id,
+                                        name,
+                                        typeName: `${Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : ''} کی فصل`,
+                                    },
                                 });
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.optionButtonText}>بوقت کاشت {fields[id]} کی کھادیں</Text>
+                            <Text style={commonStyles.actionButtonText}>
+                                {commonTexts.atTimeOf} {displayFieldName} {commonTexts.ofFertilizers}
+                            </Text>
                         </TouchableOpacity>
                     </Animated.View>
 
-                    <Animated.View entering={FadeInUp.delay(400).springify()} style={{ width: '100%' }}>
+                    <Animated.View entering={FadeInUp.delay(400).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={styles.optionButton}
+                            style={commonStyles.actionButton}
                             onPress={() => {
                                 router.push({ pathname: '/video-tutorial', params: { id, name } });
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.optionButtonText}>{fields[id]} کی تصویر لینے کا طریقہ</Text>
+                            <Text style={commonStyles.actionButtonText}>{displayFieldName} {commonTexts.wayOfImage}</Text>
                         </TouchableOpacity>
                     </Animated.View>
 
-                    <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%' }}>
+                    <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={styles.optionButton}
+                            style={commonStyles.actionButton}
                             onPress={() => {
                                 router.push({
                                     pathname: '/instruction-nitrogen',
@@ -66,13 +90,13 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.optionButtonText}>ہدایات برائے کافی نائٹروجن پلاٹ</Text>
+                            <Text style={commonStyles.actionButtonText}>ہدایات برائے کافی نائٹروجن پلاٹ</Text>
                         </TouchableOpacity>
                     </Animated.View>
 
-                    <Animated.View entering={FadeInUp.delay(600).springify()} style={{ width: '100%' }}>
+                    <Animated.View entering={FadeInUp.delay(600).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={styles.optionButton}
+                            style={commonStyles.actionButton}
                             onPress={() => {
                                 router.push({
                                     pathname: '/crop-types',
@@ -85,7 +109,7 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.optionButtonText}>تصویر سے نائٹروجن کی کمی معلوم کریں</Text>
+                            <Text style={commonStyles.actionButtonText}>تصویر سے نائٹروجن کی کمی معلوم کریں</Text>
                         </TouchableOpacity>
                     </Animated.View>
 
@@ -94,94 +118,17 @@ export default function SelectionScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Microphone/>
+            <Microphone />
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: THEME_COLOR,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-    },
-    backButton: {
-        padding: 5,
-    },
-    backIcon: {
-        fontSize: 28,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 24,
-        color: 'white',
-        textAlign: 'center',
-    },
-    contentContainer: {
-        flex: 1,
-        backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        paddingTop: 50,
-        paddingHorizontal: 20,
-        alignItems: 'center',
-    },
     buttonsContainer: {
         width: '100%',
         gap: 20,
         alignItems: 'center',
         marginTop: 50,
     },
-    optionButton: {
-        backgroundColor: '#b5d985',
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        borderRadius: 20,
-        width: '100%',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 3,
-        borderWidth: 1,
-        borderColor: '#a3c970',
-    },
-    optionButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 12,
-        color: 'black',
-        textAlign: 'center',
-    },
-    micContainer: {
-        position: 'absolute',
-        bottom: 30,
-        left: 30,
-    },
-    micButton: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: '#6a8a2c',
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-    },
-    micIcon: {
-        width: 30,
-        height: 30,
-        tintColor: 'white',
-    },
 });
+

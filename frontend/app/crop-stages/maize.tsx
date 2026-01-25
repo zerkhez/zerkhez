@@ -21,7 +21,7 @@ export default function PrePlantingInstructionsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={`${name} ${commonTexts.ofCrop}`}/>
+            <Header text={`${name} ${commonTexts.ofCrop}`} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
@@ -52,7 +52,7 @@ export default function PrePlantingInstructionsScreen() {
                             onPress={() => {
                                 // Navigate to crop-types for now as the next logical step or a placeholder
                                 router.push({
-                                    pathname: '/fertilizer-selection' as any,
+                                    pathname: '/fertilizer-selection',
                                     params: { id, name }
                                 });
                             }}
@@ -65,7 +65,7 @@ export default function PrePlantingInstructionsScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Microphone/>
+            <Microphone />
         </SafeAreaView>
     );
 }

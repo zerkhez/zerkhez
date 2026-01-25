@@ -19,13 +19,18 @@ export const commonTexts = {
     chooseCommonNitrogenPlot: "عام پلاٹ منتخب کریں",
     commonNitrogenPlot: "عام پلاٹ",
     start: "شروع کریں",
-    instructionsForNitrogenPlot:"ہدایات برائے کافی نائٹروجن پلاٹ",
-    videos:"ویڈیو ٹیوٹوریلز",
-    moreInfo:"مزید معلومات کے لیے یہ ویڈیوز دیکھیں",
+    instructionsForNitrogenPlot: "ہدایات برائے کافی نائٹروجن پلاٹ",
+    videos: "ویڈیو ٹیوٹوریلز",
+    moreInfo: "مزید معلومات کے لیے یہ ویڈیوز دیکھیں",
     watchVideo: "کی فصل کی تصویر لینے کا درست طریقہ جاننے کے لیے ویڈیو دیکھیں:",
-    wayOfImage:"کی تصویر لینے کا طریقہ"
+    wayOfImage: "کی تصویر لینے کا طریقہ",
+    atTimeOf: "بوقت کاشت",
+    ofFertilizers: "کی کھادیں",
 }
-
+export const sproutInstructions = {
+    title: "شاخیں پھوٹنے کے مرحلہ پر کھاد کا استعمال",
+    description: "لاب لگانے کے 25 تا 30 دن بعد دھان کی فصل کو 40 کلوگرام یوریا، یا 70 کلوگرام کین، یا 85 کلوگرام امونیم سلفیٹ ڈالیں۔"
+}
 export const imageAnalysisTexts = {
     analyzeBothImages: "دونوں تصاویر کا تجزیہ کریں",
     analyzing: "تجزیہ ہو رہا ہے...",

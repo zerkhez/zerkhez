@@ -10,11 +10,11 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 
-const root = process.cwd();
+const root = path.resolve(process.cwd());
 const oldDirs = ["app", "components", "hooks", "constants", "scripts"];
 const exampleDir = "app-example";
 const newAppDir = "app";
-const exampleDirPath = path.join(root, exampleDir);
+const exampleDirPath = path.resolve(root, exampleDir);
 
 const indexContent = `import { Text, View } from "react-native";
 
@@ -55,10 +55,17 @@ const moveDirectories = async (userInput) => {
 
     // Move old directories to new app-example directory or delete them
     for (const dir of oldDirs) {
-      const oldDirPath = path.join(root, dir);
+      // Security: Resolve the path and ensure it's still within the root
+      const oldDirPath = path.resolve(root, dir);
+
+      if (!oldDirPath.startsWith(root + path.sep) && oldDirPath !== root) {
+        console.warn(`⚠️ Security skip: ${dir} is not a valid subdirectory.`);
+        continue;
+      }
+
       if (fs.existsSync(oldDirPath)) {
         if (userInput === "y") {
-          const newDirPath = path.join(root, exampleDir, dir);
+          const newDirPath = path.resolve(root, exampleDir, dir);
           await fs.promises.rename(oldDirPath, newDirPath);
           console.log(`➡️ /${dir} moved to /${exampleDir}/${dir}.`);
         } else {
@@ -71,26 +78,25 @@ const moveDirectories = async (userInput) => {
     }
 
     // Create new /app directory
-    const newAppDirPath = path.join(root, newAppDir);
+    const newAppDirPath = path.resolve(root, newAppDir);
     await fs.promises.mkdir(newAppDirPath, { recursive: true });
     console.log("\n📁 New /app directory created.");
 
     // Create index.tsx
-    const indexPath = path.join(newAppDirPath, "index.tsx");
+    const indexPath = path.resolve(newAppDirPath, "index.tsx");
     await fs.promises.writeFile(indexPath, indexContent);
     console.log("📄 app/index.tsx created.");
 
     // Create _layout.tsx
-    const layoutPath = path.join(newAppDirPath, "_layout.tsx");
+    const layoutPath = path.resolve(newAppDirPath, "_layout.tsx");
     await fs.promises.writeFile(layoutPath, layoutContent);
     console.log("📄 app/_layout.tsx created.");
 
     console.log("\n✅ Project reset complete. Next steps:");
     console.log(
-      `1. Run \`npx expo start\` to start a development server.\n2. Edit app/index.tsx to edit the main screen.${
-        userInput === "y"
-          ? `\n3. Delete the /${exampleDir} directory when you're done referencing it.`
-          : ""
+      `1. Run \`npx expo start\` to start a development server.\n2. Edit app/index.tsx to edit the main screen.${userInput === "y"
+        ? `\n3. Delete the /${exampleDir} directory when you're done referencing it.`
+        : ""
       }`
     );
   } catch (error) {

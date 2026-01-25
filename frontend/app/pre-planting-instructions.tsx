@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {commonStyles} from '@/styles/common';
+import { commonStyles } from '@/styles/common';
 import { ricePlantingInstructions } from '@/constants/riceText';
 import { pacakagesUrdu, commonTexts } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
@@ -50,7 +50,7 @@ export default function PrePlantingInstructionsScreen() {
                             onPress={() => {
                                 // Navigate to crop-types for now as the next logical step or a placeholder
                                 router.push({
-                                    pathname: '/fertilizer-selection' as any,
+                                    pathname: '/fertilizer-selection',
                                     params: { id, name }
                                 });
                             }}
@@ -64,7 +64,7 @@ export default function PrePlantingInstructionsScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Microphone/>
+            <Microphone />
         </SafeAreaView>
     );
 }

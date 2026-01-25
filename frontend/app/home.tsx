@@ -301,7 +301,7 @@ export default function HomeScreen() {
                             ]}
                             onPress={() => {
                                 router.push({
-                                    pathname: '/selection' as any,
+                                    pathname: '/selection',
                                     params: { id: crop.id, name: crop.name }
                                 });
                             }}

@@ -43,17 +43,17 @@ export default function CropStagesScreen() {
                                     console.log(`Selected stage: ${stage}`);
                                     if (index === 0) {
                                         router.push({
-                                            pathname: '/pre-planting-instructions' as any,
+                                            pathname: '/pre-planting-instructions',
                                             params: { id: typeName, name: typeName, stage: stages[0] } // Passing typeName as id/name for context
                                         });
                                     } else if (index === 1) {
                                         router.push({
-                                            pathname: '/sprout-instructions' as any,
+                                            pathname: '/sprout-instructions',
                                             params: { typeName: typeName }
                                         });
                                     } else if (index === 2) {
                                         router.push({
-                                            pathname: '/gobh-instructions' as any,
+                                            pathname: '/gobh-instructions',
                                             params: { typeName: typeName }
                                         });
                                     } else {
@@ -70,7 +70,7 @@ export default function CropStagesScreen() {
             </Animated.View>
 
             {/* Mic Button */}
-            <Microphone/>
+            <Microphone />
         </SafeAreaView>
     );
 }

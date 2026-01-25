@@ -16,7 +16,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export default function WelcomeScreen() {
   const router = useRouter();
   const scale = useSharedValue(1);
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherData, setWeatherData] = useState<Record<string, string>>({});
 
   useEffect(() => {
     (async () => {
@@ -40,7 +40,9 @@ export default function WelcomeScreen() {
 
       // get user current location
       let location = await Location.getCurrentPositionAsync({});
-      const apiKey = process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY || "fddbdfd48ce21911399a167863770702";
+      const apiKey =
+        process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY ||
+        'fddbdfd48ce21911399a167863770702';
 
       try {
         // Get weather information of user location
@@ -58,8 +60,12 @@ export default function WelcomeScreen() {
       } catch (e) {
         console.log("Error fetching weather in index", e);
       }
-    })();
+    };
+
+    fetchWeather().catch((err) => console.log('Error fetching weather in index', err));
   }, []);
+
+
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

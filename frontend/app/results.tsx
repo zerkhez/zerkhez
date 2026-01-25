@@ -1,31 +1,25 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { THEME_COLOR } from '@/constants/theme';
 import Microphone from '@/components/microphone';
+import Header from '@/components/header';
+import { commonStyles } from '@/styles/common';
 
 export default function ResultsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>چاول کی فصل</Text>
-                <View style={{ width: 28 }} />
-            </Animated.View>
+            <Header text="چاول کی فصل" />
 
-            <View style={styles.contentContainer}>
-                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <View style={commonStyles.contentContainer}>
+                <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
                     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
-                        <Text style={styles.pageTitle}>نتائج</Text>
+                        <Text style={commonStyles.titleText}>نتائج</Text>
                     </Animated.View>
 
                     {/* Result Boxes */}
@@ -44,54 +38,16 @@ export default function ResultsScreen() {
                 </ScrollView>
 
                 {/* Microphone Icon */}
-                <Microphone/>
+                <Microphone />
             </View>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: THEME_COLOR,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        backgroundColor: THEME_COLOR,
-    },
-    backButton: {
-        padding: 5,
-    },
-    headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 24,
-        color: 'white',
-        textAlign: 'center',
-    },
-    contentContainer: {
-        flex: 1,
-        backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        overflow: 'hidden',
-    },
-    scrollContent: {
-        padding: 20,
-        alignItems: 'center',
-    },
     titleContainer: {
         marginTop: 20,
         marginBottom: 30,
-    },
-    pageTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 32,
-        color: 'black',
-        textAlign: 'center',
     },
     resultBox: {
         width: '100%',
@@ -102,22 +58,5 @@ const styles = StyleSheet.create({
         borderColor: '#81c784', // Green border
         marginBottom: 20,
     },
-    micContainer: {
-        position: 'absolute',
-        bottom: 30,
-        left: 30, // Positioned on the left as per screenshot (RTL layout might make it look right, but screenshot shows it on left)
-    },
-    micButton: {
-        backgroundColor: '#7cb342', // Light green button color
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 5,
-    },
 });
+

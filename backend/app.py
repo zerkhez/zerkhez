@@ -1,11 +1,22 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from app.routes.rice_routes import rice_bp
 from app.routes.wheat_routes import wheat_bp
+from datetime import datetime
 
 def create_app():
     app = Flask(__name__)
     CORS(app)
+
+    # Health check route
+    @app.route('/health', methods=['GET'])
+    def health_check():
+        return jsonify({
+            'status': 'healthy',
+            'message': 'Nitrogen Calculator API is running',
+            'timestamp': datetime.utcnow().isoformat(),
+            'service': 'nitrogen-backend'
+        }), 200
 
     # Register Blueprints
     app.register_blueprint(rice_bp, url_prefix='/api')
@@ -16,4 +27,4 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
