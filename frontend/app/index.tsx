@@ -19,7 +19,7 @@ export default function WelcomeScreen() {
   const [weatherData, setWeatherData] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    (async () => {
+    const fetchWeather = async () => {
       // check whether user permissions allowed or not
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
