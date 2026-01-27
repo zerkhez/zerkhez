@@ -126,7 +126,7 @@ export default function FertilizerSelectionScreen() {
             <Header text="کھاد کا انتخاب" />
 
             <View style={commonStyles.contentContainer}>
-                <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     <Animated.View entering={FadeInUp.delay(200).springify()}>
                         {renderGroup(1, 'گروپ - 1 (نائٹروجن)', group1, setGroup1)}
                     </Animated.View>
@@ -139,7 +139,7 @@ export default function FertilizerSelectionScreen() {
                         {renderGroup(3, 'گروپ - 3 (پوٹاش)', group3, setGroup3)}
                     </Animated.View>
 
-                    <Animated.View entering={FadeInUp.delay(500).springify()} style={commonStyles.buttonContainer}>
+                    <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%', alignItems: 'center', marginTop: verticalScale(20) }}>
                         <TouchableOpacity
                             style={commonStyles.actionButton}
                             onPress={handleCalculate}
@@ -190,20 +190,26 @@ export default function FertilizerSelectionScreen() {
 }
 
 const styles = StyleSheet.create({
+    scrollContent: {
+        paddingHorizontal: horizontalScale(25),
+        paddingTop: verticalScale(20),
+        paddingBottom: verticalScale(100),
+        width: '100%',
+    },
     groupContainer: {
-        marginBottom: verticalScale(25),
+        marginBottom: verticalScale(15),
         backgroundColor: '#c2e7bdff',
-        padding: moderateScale(15),
+        padding: moderateScale(12),
         borderRadius: moderateScale(15),
         borderWidth: 1,
         borderColor: '#eee',
     },
     groupLabel: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(16),
         color: THEME_COLOR,
         textAlign: 'right',
-        marginBottom: verticalScale(10),
+        marginBottom: verticalScale(8),
     },
     dropdownButton: {
         flexDirection: 'row',
@@ -213,8 +219,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: moderateScale(10),
-        padding: moderateScale(12),
-        marginBottom: verticalScale(15),
+        padding: moderateScale(10),
+        marginBottom: verticalScale(12),
     },
     dropdownText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',

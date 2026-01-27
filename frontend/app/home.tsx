@@ -71,11 +71,11 @@ export default function HomeScreen() {
         (async () => {
             const networkState = await Network.getNetworkStateAsync();
             if (!networkState.isConnected) {
-                setWeather(prev => ({ 
-                    ...prev, 
-                    location: 'No Internet', 
-                    temp: '--', 
-                    condition: 'Unknown' 
+                setWeather(prev => ({
+                    ...prev,
+                    location: 'No Internet',
+                    temp: '--',
+                    condition: 'Unknown'
                 }));
                 return;
             }
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
         fontFamily: 'NotoNastaliqUrdu-Regular',
         fontSize: moderateScale(14),
         color: 'rgba(255,255,255,0.9)',
-        marginTop: 0,
+        marginTop: -10,
         textAlign: 'right',
     },
     weatherCard: {
@@ -425,8 +425,10 @@ const styles = StyleSheet.create({
         marginBottom: verticalScale(10),
     },
     weatherLocation: {
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(16),
         fontWeight: '600',
+        flex: 1,
+        marginRight: horizontalScale(10),
     },
     weatherIcon: {
         justifyContent: 'center',

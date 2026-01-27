@@ -31,7 +31,7 @@ export default function CropTypesScreen() {
                         <Animated.View
                             key={index}
                             entering={FadeInUp.delay(400 + index * 60).springify()}
-                            style={{ width: '100%' }}
+                            style={{ width: '100%', alignItems: 'center' }}
                         >
                             <TouchableOpacity
                                 style={styles.typeButton}
@@ -87,15 +87,16 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingBottom: verticalScale(100), // Space for mic button
         gap: verticalScale(15),
-        alignItems: 'center',
     },
     typeButton: {
         backgroundColor: '#b5d985', // Light green color from image
         paddingVertical: verticalScale(4),
-        paddingHorizontal: horizontalScale(40),
+        paddingHorizontal: horizontalScale(10),
         borderRadius: moderateScale(20),
-        width: '100%',
+        width: horizontalScale(280),
+        minHeight: verticalScale(40),
         alignItems: 'center',
+        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.1,

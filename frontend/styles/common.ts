@@ -108,7 +108,7 @@ export const commonStyles = StyleSheet.create({
         shadowRadius: moderateScale(4),
         elevation: 5,
     },
-    micButtonSecColor:{
+    micButtonSecColor: {
         backgroundColor: '#6a8a2c'
     },
     micIcon: {
@@ -116,8 +116,8 @@ export const commonStyles = StyleSheet.create({
         height: horizontalScale(30),
         tintColor: 'white',
     },
-    midViewWidth:{
-        width:horizontalScale(40)
+    midViewWidth: {
+        width: horizontalScale(40)
     },
     textRight: {
         textAlign: 'right',
@@ -134,7 +134,7 @@ export const commonStyles = StyleSheet.create({
 
     titleText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(22),
+        fontSize: moderateScale(18),
         color: 'black',
         textAlign: 'center',
         marginBottom: verticalScale(20),
@@ -181,11 +181,13 @@ export const commonStyles = StyleSheet.create({
     },
     actionButton: {
         backgroundColor: '#b5d985',
-        paddingVertical: verticalScale(12),
+        paddingVertical: verticalScale(16),
         paddingHorizontal: horizontalScale(40),
         borderRadius: moderateScale(25),
-        width: '80%',
+        width: '85%',
+        minHeight: verticalScale(60),
         alignItems: 'center',
+        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.2,
@@ -196,7 +198,9 @@ export const commonStyles = StyleSheet.create({
     },
     actionButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: moderateScale(16),
+        fontSize: moderateScale(15),
         color: 'black',
+        textAlign: 'center',
+        lineHeight: moderateScale(30),
     },
 });
