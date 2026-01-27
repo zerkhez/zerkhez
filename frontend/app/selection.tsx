@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { commonTexts } from '@/constants/commonText';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, verticalScale } from '@/styles/common';
 
 export default function SelectionScreen() {
     const router = useRouter();
@@ -126,9 +126,9 @@ export default function SelectionScreen() {
 const styles = StyleSheet.create({
     buttonsContainer: {
         width: '100%',
-        gap: 20,
+        gap: verticalScale(20),
         alignItems: 'center',
-        marginTop: 50,
+        marginTop: verticalScale(50),
     },
 });
 

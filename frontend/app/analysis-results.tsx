@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { commonTexts, nameOfFertilizers, resultTexts } from '@/constants/commonText';
 import React from 'react';
 import Microphone from '@/components/microphone';
@@ -20,7 +20,7 @@ export default function AnalysisResultsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header viewSize={28} text={commonTexts.fertilizerAmount}/>
+            <Header viewSize={moderateScale(28)} text={commonTexts.fertilizerAmount}/>
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -65,34 +65,34 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#F1F8E9',
-        borderRadius: 50,
+        borderRadius: moderateScale(50),
         borderWidth: 1,
         borderColor: '#C5E1A5',
-        paddingVertical: 15,
-        paddingHorizontal: 30,
-        marginBottom: 20,
+        paddingVertical: verticalScale(15),
+        paddingHorizontal: horizontalScale(30),
+        marginBottom: verticalScale(20),
         ...commonStyles.shadowSmall,
     },
     resultLabel: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: '#33691E',
         textAlign: 'right',
         flex: 1,
     },
     resultValue: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 20,
+        fontSize: moderateScale(20),
         color: 'black',
         fontWeight: 'bold',
     },
     summaryBox: {
         width: '100%',
         backgroundColor: '#DCEDC8',
-        borderRadius: 20,
-        paddingVertical: 20,
-        paddingHorizontal: 20,
-        marginTop: 20,
+        borderRadius: moderateScale(20),
+        paddingVertical: verticalScale(20),
+        paddingHorizontal: horizontalScale(20),
+        marginTop: verticalScale(20),
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#AED581',
@@ -100,10 +100,10 @@ const styles = StyleSheet.create({
     },
     summaryText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: '#33691E',
         textAlign: 'center',
-        lineHeight: 30,
+        lineHeight: verticalScale(30),
     },
     summaryValue: {
         fontWeight: 'bold',

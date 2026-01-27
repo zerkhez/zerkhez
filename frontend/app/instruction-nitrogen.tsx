@@ -7,7 +7,7 @@ import { THEME_COLOR } from '@/constants/theme';
 import { wheatNitrgenInstructions } from '@/constants/wheatText';
 import { maizeNitrogenInstructions } from '@/constants/maizeText';
 import { riceNitrogenInstructions } from '@/constants/riceText';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { commonTexts } from '@/constants/commonText';
 import Header from '@/components/header';
 
@@ -43,49 +43,49 @@ export default function NitrogenInstructionScreen() {
 
 const styles = StyleSheet.create({
     backButton: {
-        padding: 5,
+        padding: moderateScale(5),
     },
     backIcon: {
-        fontSize: 28,
+        fontSize: moderateScale(28),
         color: 'white',
         fontWeight: 'bold',
     },
     contentContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        paddingTop: 30,
-        paddingHorizontal: 20,
+        borderTopLeftRadius: moderateScale(30),
+        borderTopRightRadius: moderateScale(30),
+        paddingTop: verticalScale(30),
+        paddingHorizontal: horizontalScale(20),
     },
     scrollContent: {
-        paddingBottom: 30,
+        paddingBottom: verticalScale(30),
     },
     titleText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 22,
+        fontSize: moderateScale(22),
         color: THEME_COLOR,
         textAlign: 'right',
-        marginBottom: 20,
-        marginTop: 10,
+        marginBottom: verticalScale(20),
+        marginTop: verticalScale(10),
     },
     card: {
         backgroundColor: '#f9f9f9',
-        borderRadius: 15,
-        padding: 20,
+        borderRadius: moderateScale(15),
+        padding: moderateScale(20),
         borderWidth: 1,
         borderColor: '#e0e0e0',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: { width: 0, height: verticalScale(1) },
         shadowOpacity: 0.05,
-        shadowRadius: 2,
+        shadowRadius: moderateScale(2),
         elevation: 2,
     },
     instructionText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: '#333',
-        lineHeight: 32,
+        lineHeight: verticalScale(32),
         textAlign: 'right',
     },
 });

@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Microphone from '@/components/microphone';
 import { commonTexts } from '@/constants/commonText';
 import Header from '@/components/header';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { THEME_COLOR } from '@/constants/theme';
 
 const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
     'سونا سپر باسمتی - 282': { min: 47, max: 60 },
@@ -162,16 +163,16 @@ export default function NitrogenCalculatorScreen() {
                                         textDisabledColor: '#d9e1e8',
                                         dotColor: '#00adf5',
                                         selectedDotColor: '#ffffff',
-                                        arrowColor: 'orange',
+                                        arrowColor: THEME_COLOR,
                                         disabledArrowColor: '#d9e1e8',
                                         monthTextColor: 'black',
                                         indicatorColor: 'blue',
                                         textDayFontWeight: '200',
                                         textMonthFontWeight: 'bold',
                                         textDayHeaderFontWeight: '300',
-                                        textDayFontSize: 16,
-                                        textMonthFontSize: 16,
-                                        textDayHeaderFontSize: 16
+                                        textDayFontSize: moderateScale(16),
+                                        textMonthFontSize: moderateScale(16),
+                                        textDayHeaderFontSize: moderateScale(16)
                                     }}
                                     style={styles.calendar}
                                 />
@@ -212,29 +213,29 @@ export default function NitrogenCalculatorScreen() {
 
 const styles = StyleSheet.create({
     titleContainer: {
-        marginTop: 20,
-        marginBottom: 20,
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(20),
         width: '100%',
     },
     calendarContainer: {
         width: '100%',
-        marginBottom: 20, // Reduced margin
-        borderRadius: 15,
+        marginBottom: verticalScale(20), // Reduced margin
+        borderRadius: moderateScale(15),
         overflow: 'hidden',
         elevation: 3,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: moderateScale(3),
     },
     calendar: {
-        borderRadius: 15,
+        borderRadius: moderateScale(15),
     },
     buttonContainer: {
         width: '100%',
         alignItems: 'center',
-        gap: 15,
-        marginTop: 20,
+        gap: verticalScale(15),
+        marginTop: verticalScale(20),
     },
     disabledContainer: {
         opacity: 0.5,
@@ -248,34 +249,34 @@ const styles = StyleSheet.create({
     },
     messageContainer: {
         width: '100%',
-        padding: 15,
-        marginBottom: 10,
+        padding: moderateScale(15),
+        marginBottom: verticalScale(10),
         alignItems: 'center',
     },
     messageText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 16,
+        fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'center',
-        lineHeight: 28,
+        lineHeight: verticalScale(28),
     },
     redText: {
         color: 'red',
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: moderateScale(18),
     },
     returnButton: {
-        marginTop: 10,
-        paddingVertical: 8,
-        paddingHorizontal: 20,
+        marginTop: verticalScale(10),
+        paddingVertical: verticalScale(8),
+        paddingHorizontal: horizontalScale(20),
         backgroundColor: '#eee',
-        borderRadius: 5,
+        borderRadius: moderateScale(5),
         borderWidth: 1,
         borderColor: '#ccc',
     },
     returnButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 14,
+        fontSize: moderateScale(14),
         color: 'black',
     }
 });

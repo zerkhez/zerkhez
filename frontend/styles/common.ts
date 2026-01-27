@@ -1,6 +1,15 @@
-import { StyleSheet, Platform } from 'react-native';
 import { THEME_COLOR } from '@/constants/theme';
+import { Dimensions, StyleSheet } from 'react-native';
 
+const { width, height } = Dimensions.get('window');
+
+// Guideline sizes are based on standard ~5" screen mobile device
+const guidelineBaseWidth = 375;
+const guidelineBaseHeight = 812;
+
+export const horizontalScale = (size: number) => (width / guidelineBaseWidth) * size;
+export const verticalScale = (size: number) => (height / guidelineBaseHeight) * size;
+export const moderateScale = (size: number, factor = 0.5) => size + (horizontalScale(size) - size) * factor;
 
 export const commonStyles = StyleSheet.create({
     container: {
@@ -19,96 +28,96 @@ export const commonStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingHorizontal: horizontalScale(20),
+        paddingVertical: verticalScale(15),
         backgroundColor: THEME_COLOR,
     },
     headerTitle: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 24,
+        fontSize: moderateScale(24),
         color: 'white',
         textAlign: 'center',
     },
     headerTitleSmall: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 20,
+        fontSize: moderateScale(20),
         color: 'white',
         textAlign: 'center',
     },
     backButton: {
-        padding: 5,
+        padding: moderateScale(5),
         justifyContent: 'center',
         alignItems: 'center',
     },
     backButtonText: {
         color: 'white', // Default, can be overridden
-        fontSize: 28,
+        fontSize: moderateScale(28),
     },
     contentContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
+        borderTopLeftRadius: moderateScale(30),
+        borderTopRightRadius: moderateScale(30),
         overflow: 'hidden',
     },
     scrollContent: {
-        padding: 20,
+        padding: horizontalScale(20),
         alignItems: 'center',
-        paddingBottom: 100,
+        paddingBottom: verticalScale(100),
     },
     shadowSmall: {
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: verticalScale(2),
         },
         shadowOpacity: 0.1,
-        shadowRadius: 3.84,
+        shadowRadius: moderateScale(3.84),
         elevation: 3,
     },
     shadowMedium: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.3,
-        shadowRadius: 4,
+        shadowRadius: moderateScale(4),
         elevation: 5,
     },
     card: {
         width: '100%',
         backgroundColor: 'white',
-        borderRadius: 20,
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        marginBottom: 20,
+        borderRadius: moderateScale(20),
+        paddingVertical: verticalScale(15),
+        paddingHorizontal: horizontalScale(20),
+        marginBottom: verticalScale(20),
     },
     micContainer: {
         position: 'absolute',
-        bottom: 30,
-        left: 30,
+        bottom: verticalScale(30),
+        left: horizontalScale(30),
     },
     micButton: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        width: horizontalScale(60),
+        height: horizontalScale(60),
+        borderRadius: horizontalScale(30),
         backgroundColor: '#7cb342', // Default green
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.3,
-        shadowRadius: 4,
+        shadowRadius: moderateScale(4),
         elevation: 5,
     },
     micButtonSecColor:{
         backgroundColor: '#6a8a2c'
     },
     micIcon: {
-        width: 30,
-        height: 30,
+        width: horizontalScale(30),
+        height: horizontalScale(30),
         tintColor: 'white',
     },
     midViewWidth:{
-        width:40
+        width:horizontalScale(40)
     },
     textRight: {
         textAlign: 'right',
@@ -125,46 +134,46 @@ export const commonStyles = StyleSheet.create({
 
     titleText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 22,
+        fontSize: moderateScale(22),
         color: 'black',
         textAlign: 'center',
-        marginBottom: 20,
+        marginBottom: verticalScale(20),
     },
     descriptionText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 16,
+        fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'right',
-        marginBottom: 20,
-        lineHeight: 28,
+        marginBottom: verticalScale(20),
+        lineHeight: verticalScale(28),
     },
     packageContainer: {
         width: '100%',
-        marginBottom: 15,
+        marginBottom: verticalScale(15),
         alignItems: 'flex-end',
     },
     packageTitle: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: 'black',
         textAlign: 'right',
-        marginBottom: 5,
+        marginBottom: verticalScale(5),
     },
     packageText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 16,
+        fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'right',
-        lineHeight: 26,
+        lineHeight: verticalScale(26),
     },
     noteText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 15,
+        fontSize: moderateScale(15),
         color: 'black',
         textAlign: 'right',
-        marginTop: 20,
-        marginBottom: 30,
-        lineHeight: 26,
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(30),
+        lineHeight: verticalScale(26),
     },
     buttonContainer: {
         width: '100%',
@@ -172,22 +181,22 @@ export const commonStyles = StyleSheet.create({
     },
     actionButton: {
         backgroundColor: '#b5d985',
-        paddingVertical: 12,
-        paddingHorizontal: 40,
-        borderRadius: 25,
+        paddingVertical: verticalScale(12),
+        paddingHorizontal: horizontalScale(40),
+        borderRadius: moderateScale(25),
         width: '80%',
         alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.2,
-        shadowRadius: 3,
+        shadowRadius: moderateScale(3),
         elevation: 4,
         borderWidth: 1,
         borderColor: '#a3c970',
     },
     actionButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 18,
+        fontSize: moderateScale(16),
         color: 'black',
     },
 });

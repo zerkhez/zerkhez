@@ -1,5 +1,3 @@
-// Purpose: Show the first starting screen to user.
-// Author: 
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -10,6 +8,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { zerkhezAppTitle, motto, commonTexts } from '@/constants/commonText';
 import { forwardButtonIcon } from '@/constants/constants';
 import * as Network from 'expo-network';
+import { horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -154,8 +153,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    paddingVertical: 60,
-    paddingHorizontal: 20,
+    paddingVertical: verticalScale(60),
+    paddingHorizontal: horizontalScale(20),
   },
   logoContainer: {
     alignItems: 'flex-end',
@@ -165,11 +164,11 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    paddingHorizontal: 20,
+    paddingHorizontal: horizontalScale(20),
   },
   logoImage: {
-    width: 70,
-    height: 70,
+    width: horizontalScale(70),
+    height: horizontalScale(70),
     opacity: 1,
     transform: [{ rotate: '0deg' }],
     alignSelf: 'flex-end',
@@ -183,8 +182,8 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'NotoNastaliqUrdu-Bold',
     fontStyle: 'normal',
-    fontSize: 35,
-    lineHeight: 80,
+    fontSize: moderateScale(35),
+    lineHeight: verticalScale(80),
     letterSpacing: -1.32,
     color: '#1a5217',
     textAlign: 'right',
@@ -194,8 +193,8 @@ const styles = StyleSheet.create({
     fontFamily: 'NotoNastaliqUrdu-Regular',
     fontWeight: '400',
     fontStyle: 'normal',
-    fontSize: 15,
-    lineHeight: 30,
+    fontSize: moderateScale(15),
+    lineHeight: verticalScale(30),
     letterSpacing: -0.4,
     color: 'white',
     textAlign: 'right',
@@ -203,35 +202,34 @@ const styles = StyleSheet.create({
   },
   getStartedWrapper: {
     position: 'absolute',
-    bottom: 40,
+    bottom: verticalScale(40),
     alignSelf: 'center',
-    borderRadius: 50, // Made more round/oval
+    borderRadius: moderateScale(50), // Made more round/oval
     overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: moderateScale(3.84),
   },
   getStartedButton: {
     flexDirection: 'row',
-    paddingVertical: 14,
-    paddingHorizontal: 30, // Increased padding for better oval shape
+    paddingVertical: verticalScale(14),
+    paddingHorizontal: horizontalScale(30), // Increased padding for better oval shape
     alignItems: 'center',
-    gap: 10,
+    gap: horizontalScale(10),
     backgroundColor: 'rgba(0, 0, 0, 0.01)',
-    height: 60, // Slightly increased height
+    height: verticalScale(60), // Slightly increased height
   },
   buttonText: {
     fontFamily: 'NotoNastaliqUrdu-Bold',
     color: '#303b12ff',
-    fontSize: 14, // Slightly larger font
+    fontSize: moderateScale(14), // Slightly larger font
     fontWeight: '600',
-
   },
   buttonArrow: {
     color: '#303b12ff',
-    fontSize: 25,
+    fontSize: moderateScale(25),
     fontWeight: '600',
   },
 });

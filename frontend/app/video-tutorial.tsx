@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { commonTexts } from '@/constants/commonText';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, verticalScale, horizontalScale, moderateScale } from '@/styles/common';
 
 
 export default function RiceTutorialScreen() {
@@ -48,8 +48,8 @@ export default function RiceTutorialScreen() {
 const styles = StyleSheet.create({
   videoContainer: {
     width: '100%',
-    height: 200,
-    borderRadius: 10,
+    height: verticalScale(200),
+    borderRadius: moderateScale(10),
     overflow: 'hidden',
     backgroundColor: 'black',
     justifyContent: 'center',
@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   playButtonCircle: {
-    width: 60,
-    height: 50,
-    borderRadius: 10,
+    width: horizontalScale(60),
+    height: verticalScale(50),
+    borderRadius: moderateScale(10),
     borderWidth: 2,
     borderColor: 'white',
     justifyContent: 'center',
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
   },
   playButtonIcon: {
     color: 'white',
-    fontSize: 24,
+    fontSize: moderateScale(24),
   },
 });

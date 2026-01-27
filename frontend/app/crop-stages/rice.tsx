@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, verticalScale, horizontalScale, moderateScale } from '@/styles/common';
 import { stagesOfRice } from '@/constants/riceText';
 import { commonTexts } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
@@ -20,7 +20,7 @@ export default function CropStagesScreen() {
             {/* Header */}
             <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                    <Ionicons name="arrow-back" size={28} color="white" />
+                    <Ionicons name="arrow-back" size={moderateScale(28)} color="white" />
                 </TouchableOpacity>
                 <Text style={commonStyles.headerTitle}>{typeName}</Text>
                 <View style={commonStyles.midViewWidth} />
@@ -30,7 +30,7 @@ export default function CropStagesScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
                 <Text style={styles.instructionText}>{commonTexts.selectStage}</Text>
 
-                <ScrollView contentContainerStyle={[commonStyles.scrollContent, { gap: 15 }]} showsVerticalScrollIndicator={false}>
+                <ScrollView contentContainerStyle={[commonStyles.scrollContent, { gap: verticalScale(15) }]} showsVerticalScrollIndicator={false}>
                     {stages.map((stage, index) => (
                         <Animated.View
                             key={index}
@@ -78,29 +78,29 @@ export default function CropStagesScreen() {
 const styles = StyleSheet.create({
     instructionText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: 'black',
-        marginBottom: 20,
+        marginBottom: verticalScale(20),
         textAlign: 'center',
     },
     typeButton: {
         backgroundColor: '#b5d985', // Light green color from image
-        paddingVertical: 15, // Increased padding for better touch area
-        paddingHorizontal: 20,
-        borderRadius: 20,
+        paddingVertical: verticalScale(15), // Increased padding for better touch area
+        paddingHorizontal: horizontalScale(20),
+        borderRadius: moderateScale(20),
         width: '100%',
         alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: moderateScale(3),
         elevation: 3,
         borderWidth: 1,
         borderColor: '#a3c970',
     },
     typeButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 16, // Slightly larger font for readability
+        fontSize: moderateScale(16), // Slightly larger font for readability
         color: 'black',
         textAlign: 'center',
     },

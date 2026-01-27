@@ -23,7 +23,7 @@ import Animated, {
 import Svg, { Path } from 'react-native-svg';
 import { THEME_COLOR } from '@/constants/theme';
 import { commonTexts, urduDays, urduMonths, urduNumbers } from '@/constants/commonText';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { bellIcon, forwardButtonIcon, wheatIcon, riceIcon, maizeIcon } from '@/constants/constants';
 
 
@@ -224,7 +224,7 @@ export default function HomeScreen() {
             >
                 {/* SVG Curve */}
                 <Svg
-                    height="200"
+                    height={verticalScale(200)}
                     width="100%"
                     style={styles.svg}
                     viewBox="0 0 375 200"
@@ -366,7 +366,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     headerContainer: {
-        height: 200,
+        height: verticalScale(200),
         position: 'relative',
     },
     svg: {
@@ -380,17 +380,17 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        paddingTop: 30,
-        paddingHorizontal: 20,
+        paddingTop: verticalScale(30),
+        paddingHorizontal: horizontalScale(20),
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
     },
     bellIcon: {
-        padding: 5,
+        padding: moderateScale(5),
     },
     bellText: {
-        fontSize: 20,
+        fontSize: moderateScale(20),
         color: 'white',
     },
     headerTextContainer: {
@@ -398,23 +398,23 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 20,
+        fontSize: moderateScale(20),
         color: 'white',
         textAlign: 'right',
     },
     headerDate: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 14,
+        fontSize: moderateScale(14),
         color: 'rgba(255,255,255,0.9)',
         marginTop: 0,
         textAlign: 'right',
     },
     weatherCard: {
         backgroundColor: 'white',
-        marginHorizontal: 30,
-        marginTop: -60,
-        padding: 20,
-        borderRadius: 20,
+        marginHorizontal: horizontalScale(30),
+        marginTop: -verticalScale(60),
+        padding: moderateScale(20),
+        borderRadius: moderateScale(20),
         borderWidth: 1,
         borderColor: '#e0e0e0',
     },
@@ -422,10 +422,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: verticalScale(10),
     },
     weatherLocation: {
-        fontSize: 18,
+        fontSize: moderateScale(18),
         fontWeight: '600',
     },
     weatherIcon: {
@@ -433,62 +433,62 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     weatherIconText: {
-        fontSize: 32,
+        fontSize: moderateScale(32),
     },
     weatherBottom: {
-        gap: 5,
+        gap: verticalScale(5),
     },
     weatherTemp: {
-        fontSize: 48,
+        fontSize: moderateScale(48),
         fontWeight: 'bold',
     },
     weatherCondition: {
-        fontSize: 14,
+        fontSize: moderateScale(14),
         color: '#666',
         letterSpacing: 1,
     },
     weatherDescription: {
-        fontSize: 12,
+        fontSize: moderateScale(12),
         color: '#888',
         textTransform: 'capitalize',
     },
     cropsContainer: {
         flex: 1,
-        paddingTop: 50,
-        gap: 30,
+        paddingTop: verticalScale(50),
+        gap: verticalScale(30),
     },
     cropCard: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 10,
-        paddingHorizontal: 32,
-        borderRadius: 25,
-        height: 74,
+        padding: moderateScale(10),
+        paddingHorizontal: horizontalScale(32),
+        borderRadius: moderateScale(25),
+        height: verticalScale(74),
         width: '75%',
     },
     cropCardLeft: {
         alignSelf: 'flex-start',
-        marginLeft: -20,
+        marginLeft: -horizontalScale(20),
     },
     cropCardRight: {
         alignSelf: 'flex-end',
-        marginRight: -20,
+        marginRight: -horizontalScale(20),
     },
     cropName: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 22,
+        fontSize: moderateScale(22),
         fontWeight: '300',
         color: 'white',
-        lineHeight: 55,
+        lineHeight: verticalScale(55),
     },
 
     bottomNav: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 15,
-        paddingHorizontal: 20,
+        paddingVertical: verticalScale(15),
+        paddingHorizontal: horizontalScale(20),
         backgroundColor: 'white',
         borderTopWidth: 1,
         borderTopColor: '#e0e0e0',
@@ -497,40 +497,40 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     voiceButton: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+        width: horizontalScale(50),
+        height: horizontalScale(50),
+        borderRadius: horizontalScale(25),
         justifyContent: 'center',
         alignItems: 'center',
     },
     navIconImage: {
-        width: 24,
-        height: 24,
+        width: horizontalScale(24),
+        height: horizontalScale(24),
     },
     navButtonRight: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 5,
+        gap: horizontalScale(5),
     },
     navTextRight: {
-        fontSize: 16,
+        fontSize: moderateScale(16),
         color: '#333',
         fontWeight: '800',
     },
     navArrow: {
-        fontSize: 20,
+        fontSize: moderateScale(20),
         color: '#333',
     },
     cropImagePlaceholder: {
-        width: 60,
-        height: 60,
-        borderRadius: 10,
+        width: horizontalScale(60),
+        height: horizontalScale(60),
+        borderRadius: moderateScale(10),
     },
     cropImage: {
-        width: 80,
-        height: 80,
-        marginLeft: -20,
-        marginRight: 20,
-        marginTop: -40,
+        width: horizontalScale(80),
+        height: horizontalScale(80),
+        marginLeft: -horizontalScale(20),
+        marginRight: horizontalScale(20),
+        marginTop: -verticalScale(40),
     },
 });

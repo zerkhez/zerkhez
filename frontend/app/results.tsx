@@ -4,7 +4,7 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, verticalScale, moderateScale } from '@/styles/common';
 
 export default function ResultsScreen() {
     const router = useRouter();
@@ -46,17 +46,17 @@ export default function ResultsScreen() {
 
 const styles = StyleSheet.create({
     titleContainer: {
-        marginTop: 20,
-        marginBottom: 30,
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(30),
     },
     resultBox: {
         width: '100%',
-        height: 80, // Approximate height from screenshot
+        height: verticalScale(80), // Approximate height from screenshot
         backgroundColor: '#e8f5e9', // Light green
-        borderRadius: 15,
+        borderRadius: moderateScale(15),
         borderWidth: 1,
         borderColor: '#81c784', // Green border
-        marginBottom: 20,
+        marginBottom: verticalScale(20),
     },
 });
 

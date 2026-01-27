@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { commonTexts, cropTypesData } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
@@ -70,43 +70,43 @@ const styles = StyleSheet.create({
     contentContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        paddingTop: 30,
-        paddingHorizontal: 20,
+        borderTopLeftRadius: moderateScale(30),
+        borderTopRightRadius: moderateScale(30),
+        paddingTop: verticalScale(30),
+        paddingHorizontal: horizontalScale(20),
         alignItems: 'center',
     },
     instructionText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: 'black',
-        marginBottom: 20,
+        marginBottom: verticalScale(20),
         textAlign: 'center',
     },
     listContainer: {
         width: '100%',
-        paddingBottom: 100, // Space for mic button
-        gap: 15,
+        paddingBottom: verticalScale(100), // Space for mic button
+        gap: verticalScale(15),
         alignItems: 'center',
     },
     typeButton: {
         backgroundColor: '#b5d985', // Light green color from image
-        paddingVertical: 4,
-        paddingHorizontal: 40,
-        borderRadius: 20,
+        paddingVertical: verticalScale(4),
+        paddingHorizontal: horizontalScale(40),
+        borderRadius: moderateScale(20),
         width: '100%',
         alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: verticalScale(2) },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: moderateScale(3),
         elevation: 3,
         borderWidth: 1,
         borderColor: '#a3c970',
     },
     typeButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 15,
+        fontSize: moderateScale(15),
         color: 'black',
         textAlign: 'center',
     },

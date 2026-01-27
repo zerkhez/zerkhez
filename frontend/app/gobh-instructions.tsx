@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, verticalScale, moderateScale } from '@/styles/common';
 import { gobhInstructions } from '@/constants/riceText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
@@ -39,18 +39,18 @@ export default function GobhInstructionsScreen() {
 
 const styles = StyleSheet.create({
     titleContainer: {
-        marginTop: 20,
-        marginBottom: 30,
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(30),
     },
     textContainer: {
-        marginBottom: 20,
+        marginBottom: verticalScale(20),
         width: '100%',
     },
     instructionText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: 'black',
         textAlign: 'center',
-        lineHeight: 30,
+        lineHeight: verticalScale(30),
     }
 });

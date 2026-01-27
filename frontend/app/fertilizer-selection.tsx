@@ -17,7 +17,7 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
 import Header from '@/components/header';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 
 // Placeholder data for fertilizers
 const GROUP_1_FERTILIZERS = [
@@ -191,19 +191,19 @@ export default function FertilizerSelectionScreen() {
 
 const styles = StyleSheet.create({
     groupContainer: {
-        marginBottom: 25,
+        marginBottom: verticalScale(25),
         backgroundColor: '#c2e7bdff',
-        padding: 15,
-        borderRadius: 15,
+        padding: moderateScale(15),
+        borderRadius: moderateScale(15),
         borderWidth: 1,
         borderColor: '#eee',
     },
     groupLabel: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: THEME_COLOR,
         textAlign: 'right',
-        marginBottom: 10,
+        marginBottom: verticalScale(10),
     },
     dropdownButton: {
         flexDirection: 'row',
@@ -212,13 +212,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 10,
-        padding: 12,
-        marginBottom: 15,
+        borderRadius: moderateScale(10),
+        padding: moderateScale(12),
+        marginBottom: verticalScale(15),
     },
     dropdownText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 16,
+        fontSize: moderateScale(16),
         color: 'black',
         flex: 1,
         textAlign: 'right',
@@ -227,18 +227,18 @@ const styles = StyleSheet.create({
         color: '#999',
     },
     dropdownIcon: {
-        fontSize: 12,
+        fontSize: moderateScale(12),
         color: '#666',
-        marginRight: 10,
+        marginRight: horizontalScale(10),
     },
     inputContainer: {
         flexDirection: 'row-reverse', // Right to left layout
         alignItems: 'center',
-        gap: 10,
+        gap: horizontalScale(10),
     },
     inputLabel: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 16,
+        fontSize: moderateScale(16),
         color: '#333',
     },
     input: {
@@ -246,10 +246,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 10,
-        padding: 10,
+        borderRadius: moderateScale(10),
+        padding: moderateScale(10),
         textAlign: 'right',
-        fontSize: 16,
+        fontSize: moderateScale(16),
     },
     // Modal Styles
     modalOverlay: {
@@ -257,43 +257,43 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
+        padding: moderateScale(20),
     },
     modalContent: {
         backgroundColor: 'white',
-        borderRadius: 20,
+        borderRadius: moderateScale(20),
         width: '100%',
         maxHeight: '60%',
-        padding: 20,
+        padding: moderateScale(20),
         elevation: 5,
     },
     modalHeader: {
         flexDirection: 'row-reverse',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 15,
+        marginBottom: verticalScale(15),
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
-        paddingBottom: 10,
+        paddingBottom: verticalScale(10),
     },
     modalTitle: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: 18,
+        fontSize: moderateScale(18),
         color: THEME_COLOR,
     },
     closeButton: {
-        fontSize: 24,
+        fontSize: moderateScale(24),
         color: '#999',
-        padding: 5,
+        padding: moderateScale(5),
     },
     modalItem: {
-        paddingVertical: 15,
+        paddingVertical: verticalScale(15),
         borderBottomWidth: 1,
         borderBottomColor: '#f0f0f0',
     },
     modalItemText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: 16,
+        fontSize: moderateScale(16),
         color: '#333',
         textAlign: 'right',
     },

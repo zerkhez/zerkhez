@@ -1,3 +1,7 @@
+import Header from "@/components/header";
+import { commonTexts } from "@/constants/commonText";
+import { THEME_COLOR } from "@/constants/theme";
+import { commonStyles, horizontalScale, verticalScale, moderateScale } from "@/styles/common";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import {
@@ -9,19 +13,13 @@ import {
   View,
 } from "react-native";
 import Animated, {
-  FadeIn,
   FadeInDown,
-  FadeInLeft,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming,
+  withTiming
 } from "react-native-reanimated";
-import { commonStyles } from "@/styles/common";
-import { commonTexts } from "@/constants/commonText";
-import { THEME_COLOR } from "@/constants/theme";
-import Header from "@/components/header";
 
 export default function InstructionsScreen() {
   const router = useRouter();
@@ -145,75 +143,75 @@ export default function InstructionsScreen() {
 
 const styles = StyleSheet.create({
   placeholder: {
-    width: 40,
+    width: horizontalScale(40),
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: horizontalScale(20),
   },
   sectionTitle: {
     fontFamily: "NotoNastaliqUrdu-Bold",
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: verticalScale(8),
     textAlign: "right",
   },
   sectionSubtitle: {
     fontFamily: "NotoNastaliqUrdu-Regular",
-    fontSize: 16,
+    fontSize: moderateScale(16),
     color: "#666",
-    marginBottom: 24,
+    marginBottom: verticalScale(24),
     textAlign: "right",
   },
   videosContainer: {
-    gap: 20,
+    gap: verticalScale(20),
   },
   videoCard: {
     backgroundColor: "white",
-    borderRadius: 16,
+    borderRadius: moderateScale(16),
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "#e0e0e0",
   },
   videoThumbnail: {
-    height: 200,
+    height: verticalScale(200),
     backgroundColor: THEME_COLOR,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },
   thumbnailEmoji: {
-    fontSize: 64,
+    fontSize: moderateScale(64),
     opacity: 0.3,
   },
   playButton: {
     position: "absolute",
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: horizontalScale(70),
+    height: horizontalScale(70),
+    borderRadius: horizontalScale(35),
     backgroundColor: "rgba(255,255,255,0.9)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
   },
   playIcon: {
-    fontSize: 32,
+    fontSize: moderateScale(32),
     color: THEME_COLOR,
-    marginLeft: 4,
+    marginLeft: horizontalScale(4),
   },
   videoInfo: {
-    padding: 20,
+    padding: horizontalScale(20),
   },
   videoTitle: {
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontWeight: "600",
     color: "#333",
-    marginBottom: 4,
+    marginBottom: verticalScale(4),
     textAlign: "right",
   },
   videoTitleEng: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     color: "#666",
     textAlign: "right",
   },

@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, verticalScale } from '@/styles/common';
 import { sproutInstructions } from '@/constants/commonText';
 
 export default function SproutInstructionsScreen() {
@@ -39,12 +39,12 @@ export default function SproutInstructionsScreen() {
 
 const styles = StyleSheet.create({
     titleContainer: {
-        marginTop: 20,
-        marginBottom: 30,
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(30),
         width: '100%',
     },
     textContainer: {
-        marginBottom: 20,
+        marginBottom: verticalScale(20),
         width: '100%',
     },
 });
