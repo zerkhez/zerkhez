@@ -1,7 +1,7 @@
 // Purpose: Get images as input from user and call the api to upload images to do analysis.
 // 
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ import { commonTexts, VARIETY_MAPPING, imageAnalysisTexts } from '@/constants/co
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ImageAnalysisScreen() {
     const router = useRouter();
@@ -26,6 +27,8 @@ export default function ImageAnalysisScreen() {
     const [sufficientPlotImage, setSufficientPlotImage] = useState<string | null>(null);
     const [commonPlotImage, setCommonPlotImage] = useState<string | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     const handleImageSelection = async (target: 'sufficient' | 'common') => {
         const useCamera = mode === 'camera';
@@ -70,6 +73,27 @@ export default function ImageAnalysisScreen() {
             console.log('Error selecting image:', error);
             Alert.alert("Error", "An error occurred while selecting the image.");
         }
+    };
+
+    const handleDeleteImage = (target: 'sufficient' | 'common') => {
+        Alert.alert(
+            "تصویر ہٹائیں؟",
+            "کیا آپ واقعی اس تصویر کو ہٹانا چاہتے ہیں؟ آپ کو دوبارہ تصویر منتخب کرنی ہوگی۔",
+            [
+                { text: "نہیں", style: "cancel" },
+                { 
+                    text: "ہٹائیں", 
+                    style: "destructive", 
+                    onPress: () => {
+                        if (target === 'sufficient') {
+                            setSufficientPlotImage(null);
+                        } else {
+                            setCommonPlotImage(null);
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const handleAnalyze = async () => {
@@ -129,21 +153,31 @@ export default function ImageAnalysisScreen() {
             );
             const data = await response.json();
 
-            if (data && data.recommendations_kg_acre) {
-                const recs = data.recommendations_kg_acre;
-                const calcs = data.calculations;
-                router.push({
-                    pathname: '/analysis-results',
-                    params: {
-                        urea: recs.Urea,
-                        can: recs.CAN,
-                        ammonium_sulfate: recs.Ammonium_Sulfate,
-                        n_rate: calcs?.N_rate_kg_ha ? Math.round(calcs.N_rate_kg_ha) : 0
-                    }
-                });
-            } else {
-                Alert.alert("Error", "Invalid response from server");
-                console.log("Invalid Response:", data);
+            if (data) {
+                // Specific check for Maize or future crops that return this flag
+                if (data.giveFertilizer === false) {
+                    console.log("Urea", data);
+                    setAlertMessage(data.message || "آپ کی فصل کو اس وقت کھاد کی ضرورت نہیں ہے! لہذا، براہ کرم 10 دن بعد دوبارہ کوشش کریں۔");
+                    setAlertVisible(true);
+                    return;
+                }
+
+                if (data.recommendations_kg_acre) {
+                    const recs = data.recommendations_kg_acre;
+                    const calcs = data.calculations;
+                    router.push({
+                        pathname: '/analysis-results',
+                        params: {
+                            urea: recs.Urea,
+                            can: recs.CAN,
+                            ammonium_sulfate: recs.Ammonium_Sulfate,
+                            n_rate: calcs?.N_rate_kg_ha ? Math.round(calcs.N_rate_kg_ha) : 0
+                        }
+                    });
+                } else {
+                    Alert.alert("Error", "Invalid response from server");
+                    console.log("Invalid Response:", data);
+                }
             }
 
 
@@ -177,6 +211,13 @@ export default function ImageAnalysisScreen() {
                         {sufficientPlotImage && (
                             <Animated.View entering={ZoomIn.springify()} style={styles.previewContainer}>
                                 <Image source={{ uri: sufficientPlotImage }} style={styles.previewImage} />
+                                <TouchableOpacity 
+                                    style={styles.deleteButton} 
+                                    onPress={() => handleDeleteImage('sufficient')}
+                                >
+                                    <Ionicons name="close" size={16} color="white" />
+                                </TouchableOpacity>
+
                                 <Text style={styles.previewText}>{commonTexts.chooseSufficientNitrogenPlot}</Text>
                             </Animated.View>
                         )}
@@ -195,6 +236,13 @@ export default function ImageAnalysisScreen() {
                         {commonPlotImage && (
                             <Animated.View entering={ZoomIn.springify()} style={styles.previewContainer}>
                                 <Image source={{ uri: commonPlotImage }} style={styles.previewImage} />
+                                <TouchableOpacity 
+                                    style={styles.deleteButton} 
+                                    onPress={() => handleDeleteImage('common')}
+                                >
+                                    <Ionicons name="close" size={16} color="white" />
+                                </TouchableOpacity>
+
                                 <Text style={styles.previewText}>{commonTexts.chooseCommonNitrogenPlot}</Text>
                             </Animated.View>
                         )}
@@ -219,6 +267,31 @@ export default function ImageAnalysisScreen() {
                 {/* Mic Button */}
                 <Microphone/>
             </View>
+
+            {/* Custom Alert Modal */}
+            <Modal
+                transparent={true}
+                visible={alertVisible}
+                animationType="fade"
+                onRequestClose={() => setAlertVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <Animated.View entering={ZoomIn.springify()} style={styles.modalContent}>
+                        <View style={styles.iconContainer}>
+                            <Ionicons name="leaf" size={40} color="white" />
+                        </View>
+                        <Text style={styles.modalTitle}>کھاد کی ضرورت نہیں</Text>
+                        <Text style={styles.modalMessage}>{alertMessage}</Text>
+                        
+                        <TouchableOpacity 
+                            style={styles.closeButton} 
+                            onPress={() => setAlertVisible(false)}
+                        >
+                            <Text style={styles.closeButtonText}>ٹھیک ہے</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -301,6 +374,18 @@ const styles = StyleSheet.create({
         borderRadius: moderateScale(10),
         marginBottom: verticalScale(5),
     },
+    deleteButton: {
+        position: 'absolute',
+        top: verticalScale(5),
+        right: horizontalScale(5),
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: moderateScale(15),
+        width: moderateScale(24),
+        height: moderateScale(24),
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10,
+    },
     previewText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
         fontSize: moderateScale(14),
@@ -328,5 +413,60 @@ const styles = StyleSheet.create({
         width: horizontalScale(30),
         height: horizontalScale(30),
         tintColor: 'white',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '85%',
+        backgroundColor: 'white',
+        borderRadius: moderateScale(20),
+        padding: moderateScale(30),
+        alignItems: 'center',
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: verticalScale(4) },
+        shadowOpacity: 0.3,
+        shadowRadius: moderateScale(10),
+    },
+    iconContainer: {
+        width: moderateScale(80),
+        height: moderateScale(80),
+        borderRadius: moderateScale(40),
+        backgroundColor: THEME_COLOR,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: verticalScale(20),
+        elevation: 5,
+    },
+    modalTitle: {
+        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontSize: moderateScale(22),
+        color: THEME_COLOR,
+        marginBottom: verticalScale(10),
+        textAlign: 'center',
+    },
+    modalMessage: {
+        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontSize: moderateScale(16),
+        color: '#555',
+        textAlign: 'center',
+        marginBottom: verticalScale(30),
+        lineHeight: verticalScale(24),
+    },
+    closeButton: {
+        backgroundColor: THEME_COLOR,
+        paddingVertical: verticalScale(12),
+        paddingHorizontal: horizontalScale(40),
+        borderRadius: moderateScale(25),
+        elevation: 3,
+    },
+    closeButtonText: {
+        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontSize: moderateScale(16),
+        color: 'white',
     },
 });

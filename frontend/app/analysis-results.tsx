@@ -50,6 +50,14 @@ export default function AnalysisResultsScreen() {
                             {resultTexts.recommendedNitrogenRate} <Text style={styles.summaryValue}>{n_rate || '-'}</Text> {resultTexts.perHectare}
                         </Text>
                     </Animated.View>
+
+                    {/* Home Button */}
+                    <TouchableOpacity 
+                        style={styles.homeButton} 
+                        onPress={() => router.replace('/home')}
+                    >
+                        <Text style={styles.homeButtonText}>ہوم پیج پر جائیں</Text>
+                    </TouchableOpacity>
                 </ScrollView>
                 {/* Microphone Icon */}
                 <Microphone />
@@ -108,6 +116,21 @@ const styles = StyleSheet.create({
     summaryValue: {
         fontWeight: 'bold',
         color: 'black',
+    },
+    homeButton: {
+        width: '100%',
+        backgroundColor: '#33691E',
+        borderRadius: moderateScale(50),
+        paddingVertical: verticalScale(15),
+        alignItems: 'center',
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(40), // Extra margin for scrolling
+        ...commonStyles.shadowSmall,
+    },
+    homeButtonText: {
+        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontSize: moderateScale(18),
+        color: 'white',
     },
 });
 

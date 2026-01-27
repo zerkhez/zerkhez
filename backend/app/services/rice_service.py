@@ -1,3 +1,5 @@
+# Purpose: Logic to calculate fertilzer for rice
+# Author: 
 from ..services.image_processing import process_image
 from ..services.gi_calculator import calculate_gi
 from ..rules import rice_rules
