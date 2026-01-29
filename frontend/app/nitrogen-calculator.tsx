@@ -214,7 +214,7 @@ export default function NitrogenCalculatorScreen() {
 const styles = StyleSheet.create({
     titleContainer: {
         marginTop: verticalScale(20),
-        marginBottom: verticalScale(20),
+        marginBottom: verticalScale(10),
         width: '100%',
     },
     calendarContainer: {

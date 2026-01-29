@@ -49,8 +49,10 @@
     "extra": {
       "router": {},
       "eas": {
+        "owner": "zerkhez",
         "projectId": "38f496a8-fd7b-40eb-91b3-7296ec4f1cd5"
       }
-    }
+    },
+    "owner": "zerkhez"
   }
 }

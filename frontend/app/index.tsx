@@ -220,16 +220,20 @@ const styles = StyleSheet.create({
     gap: horizontalScale(10),
     backgroundColor: 'rgba(0, 0, 0, 0.01)',
     height: verticalScale(60), // Slightly increased height
+    width: horizontalScale(150),
   },
   buttonText: {
     fontFamily: 'NotoNastaliqUrdu-Bold',
     color: '#303b12ff',
-    fontSize: moderateScale(14), // Slightly larger font
+    fontSize: moderateScale(12), // Slightly larger font
     fontWeight: '600',
   },
   buttonArrow: {
     color: '#303b12ff',
-    fontSize: moderateScale(25),
-    fontWeight: '600',
+    fontSize: moderateScale(30),
+    fontWeight: '900',
+    paddingVertical: verticalScale(-15),
+    marginVertical: verticalScale(-15),
+    paddingHorizontal: horizontalScale(10),
   },
 });

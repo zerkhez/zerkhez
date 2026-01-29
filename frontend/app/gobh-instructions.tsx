@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, verticalScale, moderateScale, horizontalScale } from '@/styles/common';
 import { gobhInstructions } from '@/constants/riceText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
@@ -17,7 +17,7 @@ export default function GobhInstructionsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={typeName}/>
+            <Header text={typeName} />
 
             {/* Content Container */}
             <View style={commonStyles.contentContainer}>
@@ -31,7 +31,7 @@ export default function GobhInstructionsScreen() {
                     </Text>
                 </Animated.View>
                 {/* Mic Button */}
-                <Microphone/>
+                <Microphone />
             </View>
         </SafeAreaView>
     );
@@ -45,12 +45,14 @@ const styles = StyleSheet.create({
     textContainer: {
         marginBottom: verticalScale(20),
         width: '100%',
+        paddingHorizontal: verticalScale(10),
+        paddingVertical: verticalScale(20),
     },
     instructionText: {
         fontFamily: 'NotoNastaliqUrdu-Regular',
         fontSize: moderateScale(18),
         color: 'black',
         textAlign: 'center',
-        lineHeight: verticalScale(30),
+        lineHeight: verticalScale(50),
     }
 });
