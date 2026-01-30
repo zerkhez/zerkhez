@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
         fontFamily: 'NotoNastaliqUrdu-Regular',
         fontSize: moderateScale(14),
         color: 'rgba(255,255,255,0.9)',
-        marginTop: -10,
+        marginTop: -12,
         textAlign: 'right',
     },
     weatherCard: {

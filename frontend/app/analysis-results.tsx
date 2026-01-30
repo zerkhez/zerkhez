@@ -83,14 +83,14 @@ const styles = StyleSheet.create({
     },
     resultLabel: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(13),
         color: '#33691E',
         textAlign: 'right',
         flex: 1,
     },
     resultValue: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(20),
+        fontSize: moderateScale(16),
         color: 'black',
         fontWeight: 'bold',
     },
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     },
     summaryText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(15),
         color: '#33691E',
         textAlign: 'center',
         lineHeight: verticalScale(30),
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     },
     homeButtonText: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(16),
         color: 'white',
     },
 });

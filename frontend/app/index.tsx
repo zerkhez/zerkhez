@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   },
   getStartedWrapper: {
     position: 'absolute',
-    bottom: verticalScale(40),
+    bottom: verticalScale(70),
     alignSelf: 'center',
     borderRadius: moderateScale(50), // Made more round/oval
     overflow: 'hidden',
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     gap: horizontalScale(10),
     backgroundColor: 'rgba(0, 0, 0, 0.01)',
     height: verticalScale(60), // Slightly increased height
-    width: horizontalScale(150),
+    width: horizontalScale(170),
   },
   buttonText: {
     fontFamily: 'NotoNastaliqUrdu-Bold',

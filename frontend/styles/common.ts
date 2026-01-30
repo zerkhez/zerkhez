@@ -34,7 +34,6 @@ export const commonStyles = StyleSheet.create({
     },
     headerTitle: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(24),
         color: 'white',
         textAlign: 'center',
     },
@@ -92,8 +91,8 @@ export const commonStyles = StyleSheet.create({
     },
     micContainer: {
         position: 'absolute',
-        bottom: verticalScale(30),
-        left: horizontalScale(30),
+        bottom: verticalScale(50),
+        left: horizontalScale(20),
     },
     micButton: {
         width: horizontalScale(60),
