@@ -223,9 +223,9 @@ const styles = StyleSheet.create({
     width: horizontalScale(150),
   },
   buttonText: {
-    fontFamily: 'NotoNastaliqUrdu-Bold',
+    fontFamily: 'NotoSansArabic-Bold',
     color: '#303b12ff',
-    fontSize: moderateScale(12), // Slightly larger font
+    fontSize: moderateScale(12),
     fontWeight: '600',
   },
   buttonArrow: {

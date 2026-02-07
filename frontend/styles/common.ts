@@ -126,21 +126,21 @@ export const commonStyles = StyleSheet.create({
         textAlign: 'center',
     },
     fontBold: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
     },
     fontRegular: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
     },
 
     titleText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(18),
         color: 'black',
         textAlign: 'center',
         marginBottom: verticalScale(20),
     },
     descriptionText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'right',
@@ -160,14 +160,14 @@ export const commonStyles = StyleSheet.create({
         marginBottom: verticalScale(5),
     },
     packageText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'right',
         lineHeight: verticalScale(26),
     },
     noteText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(15),
         color: 'black',
         textAlign: 'right',
@@ -197,7 +197,7 @@ export const commonStyles = StyleSheet.create({
         borderColor: '#a3c970',
     },
     actionButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(15),
         color: 'black',
         textAlign: 'center',

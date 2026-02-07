@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     instructionText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(18),
         color: '#333',
         lineHeight: verticalScale(32),

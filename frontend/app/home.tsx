@@ -396,6 +396,12 @@ const styles = StyleSheet.create({
     headerTextContainer: {
         alignItems: 'flex-end',
     },
+    weatherText: {
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(16),
+        color: 'white',
+        textAlign: 'right',
+    },
     headerTitle: {
         fontFamily: 'NotoNastaliqUrdu-Bold',
         fontSize: moderateScale(20),
@@ -478,7 +484,7 @@ const styles = StyleSheet.create({
         marginRight: -horizontalScale(20),
     },
     cropName: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         fontWeight: '300',
         color: 'white',

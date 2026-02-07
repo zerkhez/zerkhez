@@ -77,9 +77,10 @@ export default function CropStagesScreen() {
 
 const styles = StyleSheet.create({
     instructionText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
-        fontSize: moderateScale(18),
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(22),
         color: 'black',
+        marginTop: verticalScale(20),
         marginBottom: verticalScale(20),
         textAlign: 'center',
     },
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
         borderColor: '#a3c970',
     },
     typeButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16), // Slightly larger font for readability
         color: 'black',
         textAlign: 'center',
