@@ -403,13 +403,13 @@ const styles = StyleSheet.create({
         textAlign: 'right',
     },
     headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(20),
         color: 'white',
         textAlign: 'right',
     },
     headerDate: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(14),
         color: 'rgba(255,255,255,0.9)',
         marginTop: -12,

@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     padding: horizontalScale(20),
   },
   sectionTitle: {
-    fontFamily: "NotoNastaliqUrdu-Bold",
+    fontFamily: "NotoSansArabic-Bold",
     fontSize: moderateScale(24),
     fontWeight: "bold",
     color: "#333",
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   sectionSubtitle: {
-    fontFamily: "NotoNastaliqUrdu-Regular",
+    fontFamily: "NotoSansArabic-Regular",
     fontSize: moderateScale(16),
     color: "#666",
     marginBottom: verticalScale(24),

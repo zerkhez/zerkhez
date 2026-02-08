@@ -16,7 +16,7 @@ export default function RiceTutorialScreen() {
   return (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       {/* Header */}
-      <Header text={`${name} ${commonTexts.wayOfImage}`} />
+      <Header text={`${name} ${commonTexts.wayOfImage}`} textSize={moderateScale(20)} />
       {/* Content Container */}
       <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
         <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>

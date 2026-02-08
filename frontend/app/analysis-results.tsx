@@ -20,7 +20,7 @@ export default function AnalysisResultsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header viewSize={moderateScale(28)} text={commonTexts.fertilizerAmount} />
+            <Header viewSize={moderateScale(25)} text={commonTexts.fertilizerAmount} textSize={moderateScale(20)} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     },
     resultLabel: {
         fontFamily: 'NotoSansArabic-Bold',
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'right',
         flex: 1,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     },
     resultValue: {
         fontFamily: 'NotoSansArabic-Bold',
-        fontSize: moderateScale(20),
+        fontSize: moderateScale(18),
         color: 'black',
         fontWeight: 'bold',
     },
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
         ...commonStyles.shadowSmall,
     },
     summaryText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(15),
         color: '#33691E',
         textAlign: 'center',
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     },
     homeButtonText: {
         fontFamily: 'NotoSansArabic-Bold',
-        fontSize: moderateScale(18),
+        fontSize: moderateScale(16),
         color: 'white',
     },
 });

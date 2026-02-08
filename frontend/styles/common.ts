@@ -33,12 +33,12 @@ export const commonStyles = StyleSheet.create({
         backgroundColor: THEME_COLOR,
     },
     headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         color: 'white',
         textAlign: 'center',
     },
     headerTitleSmall: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(20),
         color: 'white',
         textAlign: 'center',
@@ -152,7 +152,7 @@ export const commonStyles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     packageTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(18),
         color: 'black',
         textAlign: 'right',

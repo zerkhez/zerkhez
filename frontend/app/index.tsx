@@ -174,13 +174,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   titleContainer: {
-    fontFamily: 'NotoNastaliqUrdu-Bold',
+    fontFamily: 'NotoSansArabic-Bold',
     alignItems: 'flex-end',
     flexShrink: 1,
   },
 
   title: {
-    fontFamily: 'NotoNastaliqUrdu-Bold',
+    fontFamily: 'NotoSansArabic-Bold',
     fontStyle: 'normal',
     fontSize: moderateScale(35),
     lineHeight: verticalScale(80),
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     fontVariant: ['small-caps'],
   },
   subtitle: {
-    fontFamily: 'NotoNastaliqUrdu-Regular',
+    fontFamily: 'NotoSansArabic-Regular',
     fontWeight: '400',
     fontStyle: 'normal',
     fontSize: moderateScale(15),

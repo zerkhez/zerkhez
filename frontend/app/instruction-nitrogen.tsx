@@ -19,7 +19,7 @@ export default function NitrogenInstructionScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={commonTexts.instructionsForNitrogenPlot} textSize={20} />
+            <Header text={commonTexts.instructionsForNitrogenPlot} textSize={moderateScale(18)}  />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         paddingBottom: verticalScale(30),
     },
     titleText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         color: THEME_COLOR,
         textAlign: 'right',

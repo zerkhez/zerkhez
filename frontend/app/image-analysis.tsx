@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
         padding: moderateScale(5),
     },
     headerTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         color: 'white',
         textAlign: 'center',
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     modalTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         color: THEME_COLOR,
         marginBottom: verticalScale(10),
