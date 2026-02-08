@@ -14,6 +14,8 @@ export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     'NotoNastaliqUrdu-Regular': require('../assets/fonts/NotoNastaliqUrdu-Regular.ttf'),
     'NotoNastaliqUrdu-Bold': require('../assets/fonts/NotoNastaliqUrdu-Bold.ttf'),
+    'NotoSansArabic-Regular': require('../assets/fonts/NotoSansArabic-Regular.ttf'),
+    'NotoSansArabic-Bold': require('../assets/fonts/NotoSansArabic-Bold.ttf'),
   });
 
   useEffect(() => {

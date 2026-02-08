@@ -254,10 +254,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     messageText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'center',
+        marginTop: verticalScale(20),
         lineHeight: verticalScale(28),
     },
     redText: {
@@ -275,9 +276,8 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
     returnButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(14),
-        color: 'black',
-    }
+        color: 'white',
+    },
 });
-

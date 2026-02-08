@@ -20,7 +20,7 @@ export default function AnalysisResultsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header viewSize={moderateScale(28)} text={commonTexts.fertilizerAmount}/>
+            <Header viewSize={moderateScale(28)} text={commonTexts.fertilizerAmount} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -52,8 +52,8 @@ export default function AnalysisResultsScreen() {
                     </Animated.View>
 
                     {/* Home Button */}
-                    <TouchableOpacity 
-                        style={styles.homeButton} 
+                    <TouchableOpacity
+                        style={styles.homeButton}
                         onPress={() => router.replace('/home')}
                     >
                         <Text style={styles.homeButtonText}>ہوم پیج پر جائیں</Text>
@@ -82,15 +82,16 @@ const styles = StyleSheet.create({
         ...commonStyles.shadowSmall,
     },
     resultLabel: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(13),
-        color: '#33691E',
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(18),
+        color: 'black',
         textAlign: 'right',
         flex: 1,
+        marginBottom: verticalScale(5),
     },
     resultValue: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(16),
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(20),
         color: 'black',
         fontWeight: 'bold',
     },
@@ -128,9 +129,8 @@ const styles = StyleSheet.create({
         ...commonStyles.shadowSmall,
     },
     homeButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
-        fontSize: moderateScale(16),
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(18),
         color: 'white',
     },
 });
-

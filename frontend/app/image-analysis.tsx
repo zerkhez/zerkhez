@@ -81,9 +81,9 @@ export default function ImageAnalysisScreen() {
             "کیا آپ واقعی اس تصویر کو ہٹانا چاہتے ہیں؟ آپ کو دوبارہ تصویر منتخب کرنی ہوگی۔",
             [
                 { text: "نہیں", style: "cancel" },
-                { 
-                    text: "ہٹائیں", 
-                    style: "destructive", 
+                {
+                    text: "ہٹائیں",
+                    style: "destructive",
                     onPress: () => {
                         if (target === 'sufficient') {
                             setSufficientPlotImage(null);
@@ -193,8 +193,8 @@ export default function ImageAnalysisScreen() {
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
-            <Header text={commonTexts.calculateNitrogenFertilizer} viewSize={28}/>
-            
+            <Header text={commonTexts.calculateNitrogenFertilizer} viewSize={28} />
+
             <View style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
@@ -211,8 +211,8 @@ export default function ImageAnalysisScreen() {
                         {sufficientPlotImage && (
                             <Animated.View entering={ZoomIn.springify()} style={styles.previewContainer}>
                                 <Image source={{ uri: sufficientPlotImage }} style={styles.previewImage} />
-                                <TouchableOpacity 
-                                    style={styles.deleteButton} 
+                                <TouchableOpacity
+                                    style={styles.deleteButton}
                                     onPress={() => handleDeleteImage('sufficient')}
                                 >
                                     <Ionicons name="close" size={16} color="white" />
@@ -236,8 +236,8 @@ export default function ImageAnalysisScreen() {
                         {commonPlotImage && (
                             <Animated.View entering={ZoomIn.springify()} style={styles.previewContainer}>
                                 <Image source={{ uri: commonPlotImage }} style={styles.previewImage} />
-                                <TouchableOpacity 
-                                    style={styles.deleteButton} 
+                                <TouchableOpacity
+                                    style={styles.deleteButton}
                                     onPress={() => handleDeleteImage('common')}
                                 >
                                     <Ionicons name="close" size={16} color="white" />
@@ -265,7 +265,7 @@ export default function ImageAnalysisScreen() {
                 </ScrollView>
 
                 {/* Mic Button */}
-                <Microphone/>
+                <Microphone />
             </View>
 
             {/* Custom Alert Modal */}
@@ -282,9 +282,9 @@ export default function ImageAnalysisScreen() {
                         </View>
                         <Text style={styles.modalTitle}>کھاد کی ضرورت نہیں</Text>
                         <Text style={styles.modalMessage}>{alertMessage}</Text>
-                        
-                        <TouchableOpacity 
-                            style={styles.closeButton} 
+
+                        <TouchableOpacity
+                            style={styles.closeButton}
                             onPress={() => setAlertVisible(false)}
                         >
                             <Text style={styles.closeButtonText}>ٹھیک ہے</Text>
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
         marginTop: verticalScale(20),
     },
     actionButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(12),
         color: 'black',
         textAlign: 'center',
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
         zIndex: 10,
     },
     previewText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(14),
         color: '#333',
     },
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     modalMessage: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: '#555',
         textAlign: 'center',
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     closeButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(16),
         color: 'white',
     },

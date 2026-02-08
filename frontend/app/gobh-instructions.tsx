@@ -49,10 +49,11 @@ const styles = StyleSheet.create({
         paddingVertical: verticalScale(20),
     },
     instructionText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(18),
         color: 'black',
-        textAlign: 'center',
+        textAlign: 'right',
+        marginBottom: verticalScale(20),
         lineHeight: verticalScale(50),
-    }
+    },
 });

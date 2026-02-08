@@ -1,25 +1,37 @@
 import requests
 
-# We will need to have the server running. 
-# Since I cannot spawn the server and run this script in the same immediate turn easily without background processes, 
-# I will use this script structure for the user or subsequent steps.
+# url = "https://zerkhez-backend.onrender.com/api/calculate_fertilizer/rice"
+url = "http://13.220.97.126:5000/api/calculate_fertilizer/rice"
+# or if testing locally:
+# url = "http://127.0.0.1:5000/api/calculate_fertilizer/rice"
 
-url = "http://127.0.0.1:5000/api/calculate_fertilizer/rice"
-
-# These should be valid file paths on the system
 files = {
-    'kaafi_image': open('d:/FYP/zerkhez/backend/images/kaafi.jpg', 'rb'),
-    'aam_image': open('d:/FYP/zerkhez/backend/images/aam.jpg', 'rb')
+    "kaafi_image": ("kaafi.jpg", open("d:/FYP/zerkhez/backend/images/kaafi.jpg", "rb"), "image/jpeg"),
+    "aam_image": ("aam.jpg", open("d:/FYP/zerkhez/backend/images/aam.jpg", "rb"), "image/jpeg"),
 }
+
 data = {
-    'variety': 'Super Basmati',
-    'dat': '55'
+    "variety": "Super Basmati",
+    "dat": "55"
 }
 
-response = requests.post(url, files=files, data=data)
-print("Status Code:", response.status_code)
-print("Response Text:", response.text)
+try:
+    response = requests.post(url, files=files, data=data, timeout=100)
 
-# Only do this if response is JSON
-if response.headers.get("Content-Type") == "application/json":
-    print(response.json())
+    print("Status Code:", response.status_code)
+    print("Headers:", response.headers)
+    print("Raw Response:", response.text)
+
+    # Safely try JSON
+    try:
+        print("JSON Response:", response.json())
+    except ValueError:
+        print("Response is not JSON")
+
+except requests.exceptions.RequestException as e:
+    print("Request failed:", e)
+
+finally:
+    # Close files
+    files["kaafi_image"][1].close()
+    files["aam_image"][1].close()

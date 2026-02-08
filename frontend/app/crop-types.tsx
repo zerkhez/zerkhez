@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     instructionText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(18),
         color: 'black',
         marginBottom: verticalScale(20),
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
         borderColor: '#a3c970',
     },
     typeButtonText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(15),
         color: 'black',
         textAlign: 'center',

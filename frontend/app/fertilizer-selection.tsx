@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
         borderColor: '#eee',
     },
     groupLabel: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(16),
         color: THEME_COLOR,
         textAlign: 'right',
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
         marginBottom: verticalScale(12),
     },
     dropdownText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: 'black',
         flex: 1,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
         gap: horizontalScale(10),
     },
     inputLabel: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: '#333',
     },
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
         paddingBottom: verticalScale(10),
     },
     modalTitle: {
-        fontFamily: 'NotoNastaliqUrdu-Bold',
+        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(18),
         color: THEME_COLOR,
     },
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#f0f0f0',
     },
     modalItemText: {
-        fontFamily: 'NotoNastaliqUrdu-Regular',
+        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: '#333',
         textAlign: 'right',
