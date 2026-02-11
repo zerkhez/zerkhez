@@ -4,31 +4,27 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { commonStyles, verticalScale, horizontalScale, moderateScale } from '@/styles/common';
-import { stagesOfRice } from '@/constants/riceText';
-import { commonTexts } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
+import Header from '@/components/header';
+import { useTranslation } from 'react-i18next';
 
 export default function CropStagesScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { typeName } = params;
+    const { t, i18n } = useTranslation();
 
-    const stages = stagesOfRice;
+    // Get stages from translation files based on current language
+    const stages = t('rice.stages', { returnObjects: true }) as string[];
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Animated.View entering={FadeInDown.duration(600).springify()} style={commonStyles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                    <Ionicons name="arrow-back" size={moderateScale(28)} color="white" />
-                </TouchableOpacity>
-                <Text style={commonStyles.headerTitle}>{typeName}</Text>
-                <View style={commonStyles.midViewWidth} />
-            </Animated.View>
+            <Header text={t("common.ofCrop", { cropName: typeName })} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
-                <Text style={styles.instructionText}>{commonTexts.selectStage}</Text>
+                <Text style={styles.instructionText}>{t("common.selectStage")}</Text>
 
                 <ScrollView contentContainerStyle={[commonStyles.scrollContent, { gap: verticalScale(15) }]} showsVerticalScrollIndicator={false}>
                     {stages.map((stage, index) => (

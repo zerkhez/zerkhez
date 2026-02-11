@@ -4,8 +4,8 @@
         "motto": "Increase your crop yield with accurate nitrogen advice!"
     },
     "packages": {
-        "package1": "Package Number 1:",
-        "package2": "Package Number 2:"
+        "package1": "Package 1",
+        "package2": "Package 2"
     },
     "common": {
         "ofCrop": "{{cropName}} crop",

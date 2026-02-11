@@ -5,21 +5,21 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { commonStyles } from '@/styles/common';
-import { commonTexts, pacakagesUrdu } from '@/constants/commonText';
-import { wheatPlantingInstructions } from '@/constants/wheatText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
 
 export default function PrePlantingInstructionsScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const params = useLocalSearchParams();
-    const { id, name } = params;
+    const { id, name, typeName } = params;
 
     const packages = [
-        { title: pacakagesUrdu.package1, text: wheatPlantingInstructions.package1 },
-        { title: pacakagesUrdu.package2, text: wheatPlantingInstructions.package2 },
+        { title: t("packages.package1"), text: t("wheat.plantingInstructions.package1") },
+        { title: t("packages.package2"), text: t("wheat.plantingInstructions.package2") },
     ];
 
     const cropName = Array.isArray(name) ? name[0] : name || '';
@@ -27,13 +27,15 @@ export default function PrePlantingInstructionsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={`${cropName} ${commonTexts.ofCrop}`} />
+            <Header text={t("common.ofCrop", { cropName: typeName })} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                    <Text style={commonStyles.packageText}>{wheatPlantingInstructions.packageText}</Text>
+                    <Text style={commonStyles.packageInstruction}>
+                        {t("wheat.plantingInstructions.packageText")}
+                    </Text>
 
                     {packages.map((pkg, index) => (
                         <View key={index} style={commonStyles.packageContainer}>
@@ -42,7 +44,9 @@ export default function PrePlantingInstructionsScreen() {
                         </View>
                     ))}
 
-                    <Text style={commonStyles.noteText}>{wheatPlantingInstructions.note}</Text>
+                    <Text style={commonStyles.noteText}>
+                        {t("wheat.plantingInstructions.note")}
+                    </Text>
 
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={commonStyles.buttonContainer}>
                         <TouchableOpacity
@@ -55,7 +59,9 @@ export default function PrePlantingInstructionsScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>{commonTexts.createPackage}</Text>
+                            <Text style={commonStyles.actionButtonText}>
+                                {t("common.createPackage")}
+                            </Text>
                         </TouchableOpacity>
                     </Animated.View>
 

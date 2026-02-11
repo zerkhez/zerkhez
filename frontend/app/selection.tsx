@@ -56,7 +56,7 @@ export default function SelectionScreen() {
                                     params: {
                                         id,
                                         name,
-                                        typeName: `${Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : ''} ${t("common.ofCrop")}`,
+                                        typeName: `${Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : ''}`,
                                     },
                                 });
                             }}
