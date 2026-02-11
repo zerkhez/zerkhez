@@ -4,25 +4,37 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { Calendar } from 'react-native-calendars';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Microphone from '@/components/microphone';
-import { commonTexts } from '@/constants/commonText';
 import Header from '@/components/header';
 import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { THEME_COLOR } from '@/constants/theme';
 
-const CROP_DAT_CONFIG: Record<string, { min: number; max: number }> = {
-    'سونا سپر باسمتی - 282': { min: 47, max: 60 },
-    'کسان باسمتی': { min: 30, max: 43 },
-    'سپر باسمتی': { min: 54, max: 65 },
-    'باسمتی - 515': { min: 49, max: 61 },
-    'پی کے خوشبودار - 1121': { min: 55, max: 70 },
-    'پی کے خوشبودار - 2021': { min: 50, max: 65 },
-};
+
+// Index-based DAT configuration for rice varieties (matches order in locale files)
+const RICE_DAT_CONFIG = [
+    { min: 47, max: 60 }, // Index 0: Sona Super Basmati - 282
+    { min: 30, max: 43 }, // Index 1: Kisan Basmati
+    { min: 54, max: 65 }, // Index 2: Super Basmati
+    { min: 49, max: 61 }, // Index 3: Basmati - 515
+    { min: 55, max: 70 }, // Index 4: PK Aromatic - 1121
+    { min: 50, max: 65 }, // Index 5: PK Aromatic - 2021
+];
 
 export default function NitrogenCalculatorScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t, i18n } = useTranslation();
     const { id, name } = params;
+
+    const isRTL = i18n.language === 'ur';
+
+    // Get crop type index from params
+    const cropTypeIndex = useMemo(() => {
+        const rawIndex = params.cropTypeIndex;
+        const index = Array.isArray(rawIndex) ? parseInt(rawIndex[0]) : parseInt(rawIndex as string);
+        return isNaN(index) ? -1 : index;
+    }, [params.cropTypeIndex]);
 
     // Normalize typeName to a single string
     const cropName = useMemo(() => {
@@ -51,11 +63,9 @@ export default function NitrogenCalculatorScreen() {
             return { state: 'valid', days: diffDays };
         }
 
-        if (!cropName) return { state: 'idle', days: 0 };
+        if (!cropName || cropTypeIndex === -1) return { state: 'idle', days: 0 };
 
-        const config = Object.prototype.hasOwnProperty.call(CROP_DAT_CONFIG, cropName)
-            ? CROP_DAT_CONFIG[cropName]
-            : null;
+        const config = RICE_DAT_CONFIG[cropTypeIndex] || null;
 
         if (!config) return { state: 'idle', days: 0 };
 
@@ -63,7 +73,7 @@ export default function NitrogenCalculatorScreen() {
         if (diffDays > config.max) return { state: 'late', days: diffDays, config };
 
         return { state: 'valid', days: diffDays };
-    }, [selectedDate, cropName, id]);
+    }, [selectedDate, cropName, cropTypeIndex, id]);
 
     const handleSelectionMode = (useCamera: boolean) => {
         router.push({
@@ -92,30 +102,36 @@ export default function NitrogenCalculatorScreen() {
             if (state === 'early') {
                 return (
                     <StatusMessage>
-                        گندم کی فصل کو بالائی کھاد دو دفعہ یعنی بوائی کے 30 سے 40 دن بعد تک اور بوائی کے 50 سے 70 دن بعد تک ڈالی جا سکتی ہے۔ تصویر کے ذریعے بالائی کھاد معلوم کرنے کے لیے گندم کی قسم کا انتخاب کریں
+                        {t('nitrogenCalculator.wheatEarlyMessage')}
                     </StatusMessage>
                 );
             }
             return (
-                <StatusMessage>آپ کی گندم کی فصل کو نائٹروجنی کھاد ڈالنے کا وقت گزر چکا ہے۔</StatusMessage>
+                <StatusMessage>{t('nitrogenCalculator.wheatLateMessage')}</StatusMessage>
             );
         }
 
         if (state === 'early') {
             return (
                 <StatusMessage>
-                    تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے ابھی
-                    <Text style={styles.redText}> {days} </Text>
-                    دن ہوئے ہیں۔
+                    {t('nitrogenCalculator.riceEarlyMessage', {
+                        cropName,
+                        min: config?.min,
+                        max: config?.max,
+                        days
+                    })}
                 </StatusMessage>
             );
         }
 
         return (
             <StatusMessage>
-                تصویر کے ذریعے {cropName} کو کھاد ڈالنے کا مناسب وقت لاب لگانے کے {config?.min} تا {config?.max} دن تک ہے جبکہ آپ کی فصل کے
-                <Text style={styles.redText}> {days} </Text>
-                دن ہو چکے ہیں۔ تاہم پھول آنے سے قبل کھاد ڈالی جا سکتی ہے۔
+                {t('nitrogenCalculator.riceLateMessage', {
+                    cropName,
+                    min: config?.min,
+                    max: config?.max,
+                    days
+                })}
             </StatusMessage>
         );
     };
@@ -125,7 +141,7 @@ export default function NitrogenCalculatorScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={commonTexts.calculateNitrogenFertilizer} />
+            <Header text={t('common.calculateNitrogenFertilizer')} />
 
             {/* Content Container */}
             <View style={commonStyles.contentContainer}>
@@ -137,9 +153,9 @@ export default function NitrogenCalculatorScreen() {
                         <>
                             <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
                                 {id === "rice" ? (
-                                    <Text style={commonStyles.titleText}>لاب لگانے کی تاریخ منتخب کریں:</Text>
+                                    <Text style={commonStyles.titleText}>{t('nitrogenCalculator.selectTransplantDate')}</Text>
                                 ) : (
-                                    <Text style={commonStyles.titleText}>بیج لگانے کی تاریخ منتخب کریں:</Text>
+                                    <Text style={commonStyles.titleText}>{t('nitrogenCalculator.selectPlantingDate')}</Text>
                                 )}
                             </Animated.View>
 
@@ -190,7 +206,7 @@ export default function NitrogenCalculatorScreen() {
                             activeOpacity={0.8}
                             disabled={isButtonsDisabled}
                         >
-                            <Text style={commonStyles.actionButtonText}>کیمرا سے تصویر لیں</Text>
+                            <Text style={commonStyles.actionButtonText}>{t('nitrogenCalculator.takePictureWithCamera')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -199,7 +215,7 @@ export default function NitrogenCalculatorScreen() {
                             activeOpacity={0.8}
                             disabled={isButtonsDisabled}
                         >
-                            <Text style={commonStyles.actionButtonText}>پہلے سے لی گئی تصویر منتخب کریں</Text>
+                            <Text style={commonStyles.actionButtonText}>{t('nitrogenCalculator.selectExistingPicture')}</Text>
                         </TouchableOpacity>
                     </Animated.View>
                 </ScrollView>

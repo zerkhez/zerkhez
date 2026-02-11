@@ -3,37 +3,36 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { THEME_COLOR } from '@/constants/theme';
-import { wheatNitrgenInstructions } from '@/constants/wheatText';
-import { maizeNitrogenInstructions } from '@/constants/maizeText';
-import { riceNitrogenInstructions } from '@/constants/riceText';
 import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
-import { commonTexts } from '@/constants/commonText';
 import Header from '@/components/header';
 
 export default function NitrogenInstructionScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
     const { id, name } = params;
+
+    const cropId = Array.isArray(id) ? id[0] : id || '';
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={commonTexts.instructionsForNitrogenPlot} textSize={moderateScale(18)}  />
+            <Header text={t('common.instructionsForNitrogenPlot')} textSize={moderateScale(18)} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     <View style={styles.card}>
-                        {
-                            id === 'wheat' ? (
-                                <Text style={styles.instructionText}>{wheatNitrgenInstructions}</Text>
-                            ) : id === 'maize' ? (
-                                <Text style={styles.instructionText}>{maizeNitrogenInstructions}</Text>
-                            ) : (
-                                <Text style={styles.instructionText}>{riceNitrogenInstructions}</Text>
-                            )
-                        }
+                        <Text style={styles.instructionText}>
+                            {cropId === 'wheat'
+                                ? t('wheat.nitrogenInstructions')
+                                : cropId === 'maize'
+                                    ? t('maize.nitrogenInstructions')
+                                    : t('rice.nitrogenInstructions')
+                            }
+                        </Text>
                     </View>
                 </ScrollView>
             </Animated.View>
@@ -86,6 +85,6 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(18),
         color: '#333',
         lineHeight: verticalScale(32),
-        textAlign: 'right',
+        // textAlign: 'right',
     },
 });

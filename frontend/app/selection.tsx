@@ -72,7 +72,7 @@ export default function SelectionScreen() {
                         <TouchableOpacity
                             style={commonStyles.actionButton}
                             onPress={() => {
-                                router.push({ pathname: '/video-tutorial', params: { id, name } });
+                                router.push({ pathname: '/video-tutorial', params: { id, displayFieldName } });
                             }}
                             activeOpacity={0.8}
                         >
@@ -108,6 +108,7 @@ export default function SelectionScreen() {
                                     params: {
                                         id: id,
                                         name: name,
+                                        displayFieldName: displayFieldName,
                                         nextRoute: '/nitrogen-calculator'
                                     }
                                 });

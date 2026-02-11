@@ -2,27 +2,30 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonTexts } from '@/constants/commonText';
 import { commonStyles, verticalScale, horizontalScale, moderateScale } from '@/styles/common';
 
 
 export default function RiceTutorialScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { name } = params;
+  const { t } = useTranslation();
+  const { displayFieldName } = params;
+
+  const cropName = Array.isArray(displayFieldName) ? displayFieldName[0] : displayFieldName || '';
 
   return (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       {/* Header */}
-      <Header text={`${name} ${commonTexts.wayOfImage}`} textSize={moderateScale(20)} />
+      <Header text={t('common.wayOfImage', { cropName })} textSize={moderateScale(18)} />
       {/* Content Container */}
       <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
         <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
           <Text style={commonStyles.descriptionText}>
-            {name} {commonTexts.watchVideo}
+            {cropName} {t('common.watchVideo')}
           </Text>
 
           {/* Video Placeholder */}

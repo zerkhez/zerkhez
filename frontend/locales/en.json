@@ -12,7 +12,7 @@
         "createPackage": "Create Fertilizer Package",
         "selectStage": "Select Stage:",
         "fertilizerAmount": "Fertilizer Amount (Kilograms per Acre)",
-        "chooseType": "Select Type of:",
+        "chooseType": "Select Type",
         "instructions": "Instructions",
         "welcomeFarmer": "Welcome, Farmer",
         "calculateNitrogenFertilizer": "Calculate Nitrogen Fertilizer",
@@ -39,6 +39,16 @@
         "group1": "Group - 1 (Nitrogen)",
         "group2": "Group - 2 (Phosphorus)",
         "group3": "Group - 3 (Potash)"
+    },
+    "nitrogenCalculator": {
+        "selectTransplantDate": "Select transplanting date:",
+        "selectPlantingDate": "Select planting date:",
+        "takePictureWithCamera": "Take Picture with Camera",
+        "selectExistingPicture": "Select Existing Picture",
+        "wheatEarlyMessage": "Wheat crop can be given top dressing fertilizer twice, i.e., 30 to 40 days after sowing and 50 to 70 days after sowing. To determine top dressing fertilizer through image, select wheat variety",
+        "wheatLateMessage": "The time to apply nitrogen fertilizer to your wheat crop has passed.",
+        "riceEarlyMessage": "The appropriate time to apply fertilizer to {{cropName}} through image is {{min}} to {{max}} days after transplanting, while your crop is only {{days}} days old.",
+        "riceLateMessage": "The appropriate time to apply fertilizer to {{cropName}} through image is {{min}} to {{max}} days after transplanting, while your crop is already {{days}} days old. However, fertilizer can be applied before flowering."
     },
     "cropNames": {
         "wheat": "Wheat",

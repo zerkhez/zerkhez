@@ -4,26 +4,31 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
-import { commonTexts, cropTypesData } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
 export default function CropTypesScreen() {
     const router = useRouter();
     const searchParams = useLocalSearchParams();
-    const { id, name, nextRoute } = searchParams;
+    const { t } = useTranslation();
+    const { id, name, nextRoute, displayFieldName } = searchParams;
 
-    const currentCropTypes = cropTypesData[id as string] || [];
+    const cropName = Array.isArray(displayFieldName) ? displayFieldName[0] : displayFieldName || '';
+    const cropId = Array.isArray(id) ? id[0] : id || '';
+
+    // Load crop types from locale files based on selected language
+    const currentCropTypes = t(`cropTypes.${cropId}`, { returnObjects: true }) as string[] || [];
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={`${name} ${commonTexts.ofCrop}`} />
+            <Header text={t('common.ofCrop', { cropName })} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
-                <Text style={styles.instructionText}>{name}{commonTexts.chooseType}</Text>
+                <Text style={styles.instructionText}>{t('common.chooseType', { cropName })}</Text>
 
                 <ScrollView contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false}>
                     {/* display the sub-types of crop */}
@@ -36,12 +41,12 @@ export default function CropTypesScreen() {
                             <TouchableOpacity
                                 style={styles.typeButton}
                                 onPress={() => {
-                                    const params: any = { typeName: type, name, id };
+                                    const params: any = { typeName: type, name, id, cropTypeIndex: index };
                                     if (nextRoute) {
                                         // If nextRoute is passed, navigate there
                                         router.push({
                                             pathname: nextRoute as string,
-                                            params: { typeName: type, id, name }
+                                            params: { typeName: type, id, name, cropTypeIndex: index }
                                         });
                                     } else {
                                         // Default behavior
