@@ -2,6 +2,7 @@
 // Author: 
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     FlatList,
     Modal,
@@ -46,10 +47,18 @@ interface SelectionGroup {
 
 export default function FertilizerSelectionScreen() {
     const router = useRouter();
+    const { t, i18n } = useTranslation();
+
+    const isRTL = i18n.language === 'ur';
 
     const [group1, setGroup1] = useState<SelectionGroup>({ fertilizer: null, amount: '' });
     const [group2, setGroup2] = useState<SelectionGroup>({ fertilizer: null, amount: '' });
     const [group3, setGroup3] = useState<SelectionGroup>({ fertilizer: null, amount: '' });
+
+    // Expansion state for collapsible cards
+    const [expandedGroup1, setExpandedGroup1] = useState(false);
+    const [expandedGroup2, setExpandedGroup2] = useState(false);
+    const [expandedGroup3, setExpandedGroup3] = useState(false);
 
     // Modal state
     const [modalVisible, setModalVisible] = useState(false);
@@ -88,55 +97,72 @@ export default function FertilizerSelectionScreen() {
         groupNum: 1 | 2 | 3,
         title: string,
         state: SelectionGroup,
-        setState: (val: SelectionGroup) => void
+        setState: (val: SelectionGroup) => void,
+        isExpanded: boolean,
+        setExpanded: (val: boolean) => void
     ) => (
         <View style={styles.groupContainer}>
-            <Text style={styles.groupLabel}>{title}</Text>
-
-            {/* Dropdown Trigger */}
+            {/* Header - Always visible */}
             <TouchableOpacity
-                style={styles.dropdownButton}
-                onPress={() => { openModal(groupNum) }}
+                style={styles.groupHeader}
+                onPress={() => setExpanded(!isExpanded)}
                 activeOpacity={0.7}
             >
-                <Text style={[styles.dropdownText, !state.fertilizer && styles.placeholderText]}>
-                    {state.fertilizer ? state.fertilizer.name : 'کھاد کا انتخاب کریں'}
+                <Text style={styles.groupLabel}>{title}</Text>
+                <Text style={[styles.chevronIcon, isExpanded && styles.chevronExpanded]}>
+                    ▼
                 </Text>
-                <Text style={styles.dropdownIcon}>▼</Text>
             </TouchableOpacity>
 
-            {/* Amount Input */}
-            <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>مقدار (کلوگرام):</Text>
-                <TextInput
-                    style={styles.input}
-                    keyboardType="numeric"
-                    value={state.amount}
-                    onChangeText={(text) => { setState({ ...state, amount: text }) }}
-                    placeholder="0"
-                    placeholderTextColor="#999"
-                />
-            </View>
+            {/* Collapsible Content */}
+            {isExpanded && (
+                <View style={styles.groupContent}>
+                    {/* Dropdown Trigger */}
+                    <TouchableOpacity
+                        style={styles.dropdownButton}
+                        onPress={() => { openModal(groupNum) }}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={[styles.dropdownText, !state.fertilizer && styles.placeholderText, !isRTL && styles.textLeft]}>
+                            {state.fertilizer ? state.fertilizer.name : t('fertilizerSelection.selectFertilizer')}
+                        </Text>
+                        <Text style={styles.dropdownIcon}>▼</Text>
+                    </TouchableOpacity>
+
+                    {/* Amount Input */}
+                    <View style={styles.inputContainer}>
+                        <Text style={[styles.inputLabel, !isRTL && styles.textLeft]}>{t('fertilizerSelection.amountLabel')}</Text>
+                        <TextInput
+                            style={[styles.input, !isRTL && styles.textLeft]}
+                            keyboardType="numeric"
+                            value={state.amount}
+                            onChangeText={(text) => { setState({ ...state, amount: text }) }}
+                            placeholder="0"
+                            placeholderTextColor="#999"
+                        />
+                    </View>
+                </View>
+            )}
         </View>
     );
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text="کھاد کا انتخاب" />
+            <Header text={t('fertilizerSelection.header')} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     <Animated.View entering={FadeInUp.delay(200).springify()}>
-                        {renderGroup(1, 'گروپ - 1 (نائٹروجن)', group1, setGroup1)}
+                        {renderGroup(1, t('fertilizerSelection.group1'), group1, setGroup1, expandedGroup1, setExpandedGroup1)}
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(300).springify()}>
-                        {renderGroup(2, 'گروپ - 2 (فاسفورس)', group2, setGroup2)}
+                        {renderGroup(2, t('fertilizerSelection.group2'), group2, setGroup2, expandedGroup2, setExpandedGroup2)}
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(400).springify()}>
-                        {renderGroup(3, 'گروپ - 3 (پوٹاش)', group3, setGroup3)}
+                        {renderGroup(3, t('fertilizerSelection.group3'), group3, setGroup3, expandedGroup3, setExpandedGroup3)}
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%', alignItems: 'center', marginTop: verticalScale(20) }}>
@@ -145,7 +171,7 @@ export default function FertilizerSelectionScreen() {
                             onPress={handleCalculate}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>حساب لگائیں</Text>
+                            <Text style={commonStyles.actionButtonText}>{t('fertilizerSelection.calculate')}</Text>
                         </TouchableOpacity>
                     </Animated.View>
                 </ScrollView>
@@ -163,7 +189,7 @@ export default function FertilizerSelectionScreen() {
                         <TouchableWithoutFeedback>
                             <View style={styles.modalContent}>
                                 <View style={styles.modalHeader}>
-                                    <Text style={styles.modalTitle}>کھاد کا انتخاب کریں</Text>
+                                    <Text style={styles.modalTitle}>{t('fertilizerSelection.selectFertilizer')}</Text>
                                     <TouchableOpacity onPress={() => { setModalVisible(false); }}>
                                         <Text style={styles.closeButton}>✕</Text>
                                     </TouchableOpacity>
@@ -176,7 +202,7 @@ export default function FertilizerSelectionScreen() {
                                             style={styles.modalItem}
                                             onPress={() => { selectFertilizer(item); }}
                                         >
-                                            <Text style={styles.modalItemText}>{item.name}</Text>
+                                            <Text style={[styles.modalItemText, !isRTL && styles.textLeft]}>{item.name}</Text>
                                         </TouchableOpacity>
                                     )}
                                 />
@@ -191,36 +217,61 @@ export default function FertilizerSelectionScreen() {
 
 const styles = StyleSheet.create({
     scrollContent: {
-        paddingHorizontal: horizontalScale(25),
+        paddingHorizontal: horizontalScale(20),
         paddingTop: verticalScale(20),
         paddingBottom: verticalScale(100),
         width: '100%',
     },
     groupContainer: {
         marginBottom: verticalScale(15),
-        backgroundColor: '#c2e7bdff',
-        padding: moderateScale(12),
-        borderRadius: moderateScale(15),
-        borderWidth: 1,
-        borderColor: '#eee',
+        backgroundColor: 'white',
+        padding: moderateScale(16),
+        borderRadius: moderateScale(20),
+        borderWidth: 2,
+        borderColor: THEME_COLOR,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: verticalScale(4) },
+        shadowOpacity: 0.15,
+        shadowRadius: moderateScale(8),
+        elevation: 6,
+    },
+    groupHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: verticalScale(4),
     },
     groupLabel: {
         fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(18),
+        color: THEME_COLOR,
+        flex: 1,
+        textAlign: 'center',
+    },
+    chevronIcon: {
         fontSize: moderateScale(16),
         color: THEME_COLOR,
-        textAlign: 'right',
-        marginBottom: verticalScale(8),
+        fontWeight: 'bold',
+        transform: [{ rotate: '-90deg' }],
+    },
+    chevronExpanded: {
+        transform: [{ rotate: '0deg' }],
+    },
+    groupContent: {
+        marginTop: verticalScale(12),
     },
     dropdownButton: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: moderateScale(10),
-        padding: moderateScale(10),
-        marginBottom: verticalScale(12),
+        backgroundColor: '#f8f9fa',
+        borderWidth: 2,
+        borderColor: '#e0e0e0',
+        borderRadius: moderateScale(15),
+        paddingVertical: moderateScale(16),
+        paddingHorizontal: moderateScale(15),
+        marginBottom: verticalScale(15),
+        minHeight: verticalScale(55),
     },
     dropdownText: {
         fontFamily: 'NotoSansArabic-Regular',
@@ -228,34 +279,40 @@ const styles = StyleSheet.create({
         color: 'black',
         flex: 1,
         textAlign: 'right',
+        paddingRight: horizontalScale(10),
     },
     placeholderText: {
         color: '#999',
     },
     dropdownIcon: {
-        fontSize: moderateScale(12),
-        color: '#666',
-        marginRight: horizontalScale(10),
+        fontSize: moderateScale(14),
+        color: THEME_COLOR,
+        fontWeight: 'bold',
     },
     inputContainer: {
-        flexDirection: 'row-reverse', // Right to left layout
-        alignItems: 'center',
-        gap: horizontalScale(10),
+        width: '100%',
     },
     inputLabel: {
         fontFamily: 'NotoSansArabic-Regular',
-        fontSize: moderateScale(16),
-        color: '#333',
+        fontSize: moderateScale(15),
+        color: '#555',
+        marginBottom: verticalScale(8),
+        textAlign: 'right',
     },
     input: {
-        flex: 1,
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: moderateScale(10),
-        padding: moderateScale(10),
+        width: '100%',
+        backgroundColor: '#f8f9fa',
+        borderWidth: 2,
+        borderColor: '#e0e0e0',
+        borderRadius: moderateScale(15),
+        paddingVertical: moderateScale(14),
+        paddingHorizontal: moderateScale(15),
         textAlign: 'right',
         fontSize: moderateScale(16),
+        fontFamily: 'NotoSansArabic-Regular',
+    },
+    textLeft: {
+        textAlign: 'left',
     },
     // Modal Styles
     modalOverlay: {

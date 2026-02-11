@@ -31,6 +31,15 @@
         "determineNitrogenDeficiency": "تصویر سے نائٹروجن کی کمی معلوم کریں",
         "fertilizerAtPlanting": "بوقت کاشت {{cropName}} کی کھادیں"
     },
+    "fertilizerSelection": {
+        "header": "کھاد کا انتخاب",
+        "selectFertilizer": "کھاد کا انتخاب کریں",
+        "amountLabel": "مقدار (کلوگرام):",
+        "calculate": "حساب لگائیں",
+        "group1": "گروپ - 1 (نائٹروجن)",
+        "group2": "گروپ - 2 (فاسفورس)",
+        "group3": "گروپ - 3 (پوٹاش)"
+    },
     "cropNames": {
         "wheat": "گندم",
         "rice": "چاول",

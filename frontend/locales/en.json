@@ -31,6 +31,15 @@
         "determineNitrogenDeficiency": "Determine Nitrogen Deficiency from Image",
         "fertilizerAtPlanting": "{{cropName}} Fertilizer Application at Planting"
     },
+    "fertilizerSelection": {
+        "header": "Fertilizer Selection",
+        "selectFertilizer": "Select Fertilizer",
+        "amountLabel": "Amount (Kilograms):",
+        "calculate": "Calculate",
+        "group1": "Group - 1 (Nitrogen)",
+        "group2": "Group - 2 (Phosphorus)",
+        "group3": "Group - 3 (Potash)"
+    },
     "cropNames": {
         "wheat": "Wheat",
         "rice": "Rice",

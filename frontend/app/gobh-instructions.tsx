@@ -4,30 +4,33 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { commonStyles, verticalScale, moderateScale, horizontalScale } from '@/styles/common';
-import { gobhInstructions } from '@/constants/riceText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
 export default function GobhInstructionsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
     const { typeName } = params;
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={typeName} />
+            <Header text={t("common.ofCrop", { cropName: typeName })} />
 
             {/* Content Container */}
             <View style={commonStyles.contentContainer}>
                 <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
-                    <Text style={commonStyles.titleText}>{gobhInstructions.titleText}</Text>
+                    <Text style={commonStyles.titleText}>
+                        {t("rice.gobhInstructions.titleText")}
+                    </Text>
                 </Animated.View>
 
                 <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.textContainer}>
-                    <Text style={styles.instructionText}>
-                        {gobhInstructions.instructionText}
+                    <Text style={commonStyles.descriptionText}>
+                        {t("rice.gobhInstructions.instructionText")}
                     </Text>
                 </Animated.View>
                 {/* Mic Button */}
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
         fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(18),
         color: 'black',
-        textAlign: 'right',
+        // textAlign: 'right', // Removed to support both English and Urdu
         marginBottom: verticalScale(20),
         lineHeight: verticalScale(50),
     },
