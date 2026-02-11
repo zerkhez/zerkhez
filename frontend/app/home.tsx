@@ -21,15 +21,18 @@ import Animated, {
     withTiming
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { THEME_COLOR } from '@/constants/theme';
 import { commonTexts, urduDays, urduMonths, urduNumbers } from '@/constants/commonText';
 import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { bellIcon, forwardButtonIcon, wheatIcon, riceIcon, maizeIcon } from '@/constants/constants';
 
 
+
 export default function HomeScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t, i18n } = useTranslation();
 
     const [weather, setWeather] = useState({
         temp: params.temp ? params.temp as string : "Loading...",
@@ -252,7 +255,7 @@ export default function HomeScreen() {
                         entering={FadeInRight.delay(300).springify()}
                         style={styles.headerTextContainer}
                     >
-                        <Text style={styles.headerTitle}>{commonTexts.welcomeFarmer}</Text>
+                        <Text style={styles.headerTitle}>{t("common.welcomeFarmer")}</Text>
                         <Text style={styles.headerDate}>{currentDate}</Text>
                     </Animated.View>
                 </View>
