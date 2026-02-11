@@ -4,22 +4,25 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { commonStyles } from '@/styles/common';
-import { ricePlantingInstructions } from '@/constants/riceText';
-import { pacakagesUrdu, commonTexts } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
 export default function PrePlantingInstructionsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
     // getting id and name from the params to know which crop is selected
-    const { id, name, stage } = params;
+    // const { id, name, stage } = params;
+    const name = (Array.isArray(params.name) ? params.name[0] : params.name) || '';
+    const stage = (Array.isArray(params.stage) ? params.stage[0] : params.stage) || '';
+    const id = (Array.isArray(params.id) ? params.id[0] : params.id) || '';
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={name} />
+            <Header text={t("common.ofCrop", { cropName: name })} />
 
             {/* Content Container */}
             {/* show the instructions text in urdu */}
@@ -28,20 +31,26 @@ export default function PrePlantingInstructionsScreen() {
 
                     <Text style={commonStyles.titleText}>{stage}</Text>
 
-                    <Text style={commonStyles.descriptionText}>{ricePlantingInstructions.packageText}</Text>
+                    <Text style={commonStyles.packageInstruction}>
+                        {t("rice.plantingInstructions.packageText")}
+                    </Text>
 
                     <View style={commonStyles.packageContainer}>
-                        <Text style={commonStyles.packageTitle}>{pacakagesUrdu.package1}</Text>
-                        <Text style={commonStyles.packageText}>{ricePlantingInstructions.package1}</Text>
+                        <Text style={commonStyles.packageTitle}>{t("packages.package1")}</Text>
+                        <Text style={commonStyles.packageText}>
+                            {t("rice.plantingInstructions.package1")}
+                        </Text>
                     </View>
 
                     <View style={commonStyles.packageContainer}>
-                        <Text style={commonStyles.packageTitle}>{pacakagesUrdu.package2}</Text>
-                        <Text style={commonStyles.packageText}>{ricePlantingInstructions.package2}</Text>
+                        <Text style={commonStyles.packageTitle}>{t("packages.package2")}</Text>
+                        <Text style={commonStyles.packageText}>
+                            {t("rice.plantingInstructions.package2")}
+                        </Text>
                     </View>
 
                     <Text style={commonStyles.noteText}>
-                        {ricePlantingInstructions.note}
+                        {t("rice.plantingInstructions.note")}
                     </Text>
 
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={commonStyles.buttonContainer}>
@@ -56,7 +65,9 @@ export default function PrePlantingInstructionsScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>{commonTexts.createPackage}</Text>
+                            <Text style={commonStyles.actionButtonText}>
+                                {t("common.createPackage")}
+                            </Text>
                         </TouchableOpacity>
                     </Animated.View>
 
