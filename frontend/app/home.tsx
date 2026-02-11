@@ -59,7 +59,27 @@ export default function HomeScreen() {
         return `${month} ${toUrduNumber(day)}، ${dayName}، ${toUrduNumber(year)}`;
     };
 
-    const [currentDate, setCurrentDate] = useState(getCurrentUrduDate())
+    const getCurrentEnglishDate = () => {
+        const now = new Date();
+        const options: Intl.DateTimeFormatOptions = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        return now.toLocaleDateString('en-US', options);
+    };
+
+    const getCurrentDate = () => {
+        return i18n.language === 'ur' ? getCurrentUrduDate() : getCurrentEnglishDate();
+    };
+
+    const [currentDate, setCurrentDate] = useState(getCurrentDate())
+
+    // Update date when language changes
+    useEffect(() => {
+        setCurrentDate(getCurrentDate());
+    }, [i18n.language]);
 
     useEffect(() => {
         // If weather data was passed via params, we don't need to fetch again immediately
@@ -333,7 +353,9 @@ export default function HomeScreen() {
                             {/* Text on inside edge, image placeholder on outside edge */}
                             {index % 2 === 0 ? (
                                 <>
-                                    <Text style={styles.cropName}>{crop.name}</Text>
+                                    <Text style={styles.cropName}>
+                                        {i18n.language === 'ur' ? crop.name : crop.nameEng}
+                                    </Text>
                                     <View style={styles.cropImagePlaceholder}>
                                         <Image
                                             source={crop.image}
@@ -351,7 +373,9 @@ export default function HomeScreen() {
                                             resizeMode="contain"
                                         />
                                     </View>
-                                    <Text style={styles.cropName}>{crop.name}</Text>
+                                    <Text style={styles.cropName}>
+                                        {i18n.language === 'ur' ? crop.name : crop.nameEng}
+                                    </Text>
                                 </>
                             )}
                         </TouchableOpacity>
@@ -379,7 +403,7 @@ export default function HomeScreen() {
                     style={styles.navButtonRight}
                     onPress={() => router.push('/instructions')}
                 >
-                    <Text style={styles.navTextRight}>{commonTexts.instructions}</Text>
+                    <Text style={styles.navTextRight}>{t("common.instructions")}</Text>
                     <Text style={styles.navArrow}>{forwardButtonIcon}</Text>
                 </TouchableOpacity>
             </Animated.View>
