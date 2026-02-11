@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { commonTexts } from '@/constants/commonText';
@@ -10,7 +11,7 @@ import { commonStyles, verticalScale } from '@/styles/common';
 export default function SelectionScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-
+    const { t, i18n } = useTranslation();
     // Normalize params to strings
     const id = (Array.isArray(params.id) ? params.id[0] : params.id) || '';
     const name = (Array.isArray(params.name) ? params.name[0] : params.name) || '';
@@ -26,9 +27,9 @@ export default function SelectionScreen() {
     }
 
     const fields: Record<string, string> = {
-        "wheat": "گندم",
-        "rice": "چاول",
-        "maize": "مکئی"
+        "wheat": t("cropNames.wheat"),
+        "rice": t("cropNames.rice"),
+        "maize": t("cropNames.maize")
     };
 
     const displayFieldName = Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : '';
@@ -36,7 +37,7 @@ export default function SelectionScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={`${name} کی فصل`} />
+            <Header text={t("common.ofCrop", { cropName: displayFieldName })} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
@@ -55,14 +56,14 @@ export default function SelectionScreen() {
                                     params: {
                                         id,
                                         name,
-                                        typeName: `${Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : ''} کی فصل`,
+                                        typeName: `${Object.prototype.hasOwnProperty.call(fields, id) ? fields[id] : ''} ${t("common.ofCrop")}`,
                                     },
                                 });
                             }}
                             activeOpacity={0.8}
                         >
                             <Text style={commonStyles.actionButtonText}>
-                                {commonTexts.atTimeOf} {displayFieldName} {commonTexts.ofFertilizers}
+                                {t("common.fertilizerAtPlanting", { cropName: displayFieldName })}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -75,7 +76,9 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>{displayFieldName} {commonTexts.wayOfImage}</Text>
+                            <Text style={commonStyles.actionButtonText}>
+                                {t("common.wayOfImage", { cropName: displayFieldName })}
+                            </Text>
                         </TouchableOpacity>
                     </Animated.View>
 
@@ -90,7 +93,9 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>ہدایات برائے کافی نائٹروجن پلاٹ</Text>
+                            <Text style={commonStyles.actionButtonText}>
+                                {t("common.instructionsForNitrogenPlot")}
+                            </Text>
                         </TouchableOpacity>
                     </Animated.View>
 
@@ -109,7 +114,9 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>تصویر سے نائٹروجن کی کمی معلوم کریں</Text>
+                            <Text style={commonStyles.actionButtonText}>
+                                {t("common.determineNitrogenDeficiency")}
+                            </Text>
                         </TouchableOpacity>
                     </Animated.View>
 

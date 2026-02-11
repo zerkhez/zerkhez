@@ -8,7 +8,7 @@
         "package2": "پیکچ نمبر 2:"
     },
     "common": {
-        "ofCrop": "کی فصل",
+        "ofCrop": "{{cropName}} کی فصل",
         "createPackage": "کھاد کا  پیکچ بنائیں",
         "selectStage": "مرحلہ کا انتخاب کریں:",
         "fertilizerAmount": "کھاد کی مقدار (کلوگرام فی ایکڑ)",
@@ -25,9 +25,16 @@
         "videos": "ویڈیو ٹیوٹوریلز",
         "moreInfo": "مزید معلومات کے لیے یہ ویڈیوز دیکھیں",
         "watchVideo": "کی فصل کی تصویر لینے کا درست طریقہ جاننے کے لیے ویڈیو دیکھیں:",
-        "wayOfImage": "کی تصویر لینے کا طریقہ",
+        "wayOfImage": "{{cropName}} کی تصویر لینے کا طریقہ",
         "atTimeOf": "بوقت کاشت",
-        "ofFertilizers": "کی کھادیں"
+        "ofFertilizers": "کی کھادیں",
+        "determineNitrogenDeficiency": "تصویر سے نائٹروجن کی کمی معلوم کریں",
+        "fertilizerAtPlanting": "بوقت کاشت {{cropName}} کی کھادیں"
+    },
+    "cropNames": {
+        "wheat": "گندم",
+        "rice": "چاول",
+        "maize": "مکئی"
     },
     "sproutInstructions": {
         "title": "شاخیں پھوٹنے کے مرحلہ پر کھاد کا استعمال",

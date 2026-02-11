@@ -8,13 +8,13 @@
         "package2": "Package Number 2:"
     },
     "common": {
-        "ofCrop": "of crop",
+        "ofCrop": "{{cropName}} crop",
         "createPackage": "Create Fertilizer Package",
         "selectStage": "Select Stage:",
         "fertilizerAmount": "Fertilizer Amount (Kilograms per Acre)",
         "chooseType": "Select Type of:",
         "instructions": "Instructions",
-        "welcomeFarmer": "Welcome Farmer",
+        "welcomeFarmer": "Welcome, Farmer",
         "calculateNitrogenFertilizer": "Calculate Nitrogen Fertilizer",
         "sufficientNitrogenPlot": "Sufficient Nitrogen Plot",
         "chooseSufficientNitrogenPlot": "Select Sufficient Nitrogen Plot",
@@ -25,9 +25,16 @@
         "videos": "Video Tutorials",
         "moreInfo": "Watch videos for more information",
         "watchVideo": "Watch the video to learn the correct way to take a picture of the crop:",
-        "wayOfImage": "How to take a picture of",
+        "wayOfImage": "How to capture {{cropName}} crop image",
         "atTimeOf": "At the time of planting",
-        "ofFertilizers": "of fertilizers"
+        "ofFertilizers": "of fertilizers",
+        "determineNitrogenDeficiency": "Determine Nitrogen Deficiency from Image",
+        "fertilizerAtPlanting": "{{cropName}} Fertilizer Application at Planting"
+    },
+    "cropNames": {
+        "wheat": "Wheat",
+        "rice": "Rice",
+        "maize": "Maize"
     },
     "sproutInstructions": {
         "title": "Fertilizer Application at Tillering Stage",
