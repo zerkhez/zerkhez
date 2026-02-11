@@ -1,0 +1,135 @@
+{
+    "app": {
+        "title": "Zerkhez",
+        "motto": "Increase your crop yield with accurate nitrogen advice!"
+    },
+    "packages": {
+        "package1": "Package Number 1:",
+        "package2": "Package Number 2:"
+    },
+    "common": {
+        "ofCrop": "of crop",
+        "createPackage": "Create Fertilizer Package",
+        "selectStage": "Select Stage:",
+        "fertilizerAmount": "Fertilizer Amount (Kilograms per Acre)",
+        "chooseType": "Select Type of:",
+        "instructions": "Instructions",
+        "welcomeFarmer": "Welcome Farmer",
+        "calculateNitrogenFertilizer": "Calculate Nitrogen Fertilizer",
+        "sufficientNitrogenPlot": "Sufficient Nitrogen Plot",
+        "chooseSufficientNitrogenPlot": "Select Sufficient Nitrogen Plot",
+        "chooseCommonNitrogenPlot": "Select Common Plot",
+        "commonNitrogenPlot": "Common Plot",
+        "start": "Start",
+        "instructionsForNitrogenPlot": "Instructions for Sufficient Nitrogen Plot",
+        "videos": "Video Tutorials",
+        "moreInfo": "Watch these videos for more information",
+        "watchVideo": "Watch the video to learn the correct way to take a picture of the crop:",
+        "wayOfImage": "How to take a picture of",
+        "atTimeOf": "At the time of planting",
+        "ofFertilizers": "of fertilizers"
+    },
+    "sproutInstructions": {
+        "title": "Fertilizer Application at Tillering Stage",
+        "description": "Apply 40 kg urea, or 70 kg CAN, or 85 kg ammonium sulfate to the rice crop 25 to 30 days after transplanting."
+    },
+    "imageAnalysis": {
+        "analyzeBothImages": "Analyze Both Images",
+        "analyzing": "Analyzing...",
+        "imagesRequired": "Images Required",
+        "pleaseSelectBothImages": "Please select both images",
+        "missingInfo": "Missing Information",
+        "varietyOrDATInfoIsMissing": "Variety or DAT information is missing",
+        "goBackAndSelectAgain": "Go back and select again"
+    },
+    "fertilizers": {
+        "ammonium_sulfate": "Ammonium Sulfate:",
+        "urea": "Urea:",
+        "can": "CAN (Calcium Ammonium Nitrate):"
+    },
+    "results": {
+        "recommendedNitrogenRate": "Recommended Nitrogen Rate:",
+        "perHectare": "Kilograms per Hectare"
+    },
+    "cropTypes": {
+        "rice": [
+            "Sona Super Basmati - 282",
+            "Kisan Basmati",
+            "Super Basmati",
+            "Basmati - 515",
+            "PK Aromatic - 1121",
+            "PK Aromatic - 2021"
+        ],
+        "wheat": [
+            "Faisalabad - 08",
+            "Punjab - 11",
+            "Ujala - 16",
+            "Akbar - 19",
+            "Dilkash - 20",
+            "Subhani - 2"
+        ],
+        "maize": [
+            "Common Variety",
+            "Hybrid Variety"
+        ]
+    },
+    "months": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ],
+    "days": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ],
+    "rice": {
+        "plantingInstructions": {
+            "packageText": "Before transplanting, Basmati rice can be given any of the following fertilizer packages.",
+            "package1": "75 kg DAP and 25 kg of any potash fertilizer",
+            "package2": "200 kg SSP, 25 kg urea and 25 kg of any potash fertilizer",
+            "note": "If you want to create another package, click the button below. When the page opens, enter 12, 35 and 12 respectively for nitrogen, phosphorus and potash, and select one fertilizer each from Group 1, Group 2 and Group 3."
+        },
+        "stages": [
+            "Fertilizer Application Before Transplanting",
+            "Fertilizer Application at Tillering Stage",
+            "Fertilizer Application at Panicle Initiation"
+        ],
+        "gobhInstructions": {
+            "titleText": "Fertilizer Application at Panicle Initiation",
+            "instructionText": "Apply 25 kg of any potash fertilizer at panicle initiation and click the button below to determine the amount of nitrogen fertilizer from the crop image."
+        },
+        "nitrogenInstructions": "To determine the amount of nitrogen fertilizer through images, it is necessary to establish a sufficient nitrogen plot. For this, after transplanting seedlings, mark a plot 10 feet wide and 10 feet long anywhere in the field and apply 150 grams of urea after transplanting, 200 grams of urea at tillering, and 200 grams of urea at panicle initiation in this plot. Urea will be applied in the specified amount in this plot while other inputs will be applied as in the normal crop. If the same rice variety is planted at the same time in more than one field on a farm, only one sufficient nitrogen plot needs to be established."
+    },
+    "wheat": {
+        "plantingInstructions": {
+            "packageText": "At the time of planting, wheat can be given any of the following fertilizer packages.",
+            "package1": "One and a half bags of DAP + one bag of potassium sulfate per acre.",
+            "package2": "Four bags of single superphosphate (18%) + one bag of potassium sulfate + 30 kg urea per acre.",
+            "note": "If you want to create another package, click the button below. When the page opens, enter 13, 36 and 25 respectively for nitrogen, phosphorus and potash, and select one fertilizer each from Group 1, Group 2 and Group 3."
+        },
+        "nitrogenInstructions": "To determine the amount of nitrogen fertilizer through images, it is necessary to establish a 'sufficient nitrogen plot'. For this, after planting wheat, mark a plot 10 feet wide and 10 feet long anywhere in the field and apply 150 grams of urea after planting, 150 grams of urea 30 days after planting, and 150 grams of urea 60 days after planting in addition to other fertilizers in this plot. Urea will be applied in the specified amount in this plot while other inputs will be applied as in the normal crop. If the same wheat variety is planted at the same time in more than one field on a farm, only one 'sufficient nitrogen plot' needs to be established."
+    },
+    "maize": {
+        "prePlantingInstructions": {
+            "packageText": "At the time of planting, maize can be given any of the following fertilizer packages.",
+            "package1": "For hybrid varieties: two and a half bags of DAP + one and a half bags of potassium sulfate per acre. For common local varieties: two bags of DAP + one and a half bags of potassium sulfate per acre.",
+            "package2": "For hybrid varieties: six and a half bags of single superphosphate (18%) + one and a half bags of potassium sulfate + one bag of urea per acre. For common local varieties: five bags of single superphosphate (18%) + one and a half bags of potassium sulfate + three-quarters bag of urea per acre.",
+            "note": "If you want to create another package, click the button below. When the page opens, enter 22, 58 and 37 for hybrid varieties, and 18, 46 and 37 for common local varieties respectively for nitrogen, phosphorus and potash, and select one fertilizer each from Group 1, Group 2 and Group 3."
+        },
+        "nitrogenInstructions": "To determine the amount of nitrogen fertilizer through images, it is necessary to establish a 'sufficient nitrogen plot'. For this, after planting maize, select a plot 10 feet wide and 10 feet long anywhere in the field and apply 150 grams of urea after planting and then with every irrigation in addition to other fertilizers in this plot. Urea will be applied in the specified amount in this plot while other inputs will be applied as in the normal crop. If the same maize variety is planted at the same time in more than one field on a farm, only one 'sufficient nitrogen plot' needs to be established."
+    }
+}
