@@ -6,6 +6,7 @@ import * as Location from 'expo-location';
 import * as Network from 'expo-network';
 import { OPEN_WEATHER_API_URL } from '@/constants';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
     FadeIn,
     FadeInLeft,
@@ -33,6 +34,7 @@ export default function HomeScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { t, i18n } = useTranslation();
+    const insets = useSafeAreaInsets();
 
     const [weather, setWeather] = useState({
         temp: params.temp ? params.temp as string : "Loading...",
@@ -240,15 +242,33 @@ export default function HomeScreen() {
                 </Svg>
 
                 {/* Header Content */}
-                <View style={styles.headerContent}>
-                    {/* Bell Icon - Top Left - Animated */}
-                    <Animated.View entering={FadeInLeft.delay(300).springify()}>
-                        <TouchableOpacity style={styles.bellIcon}>
-                            <Animated.Text style={[styles.bellText, bellAnimatedStyle]}>
-                                {bellIcon}
-                            </Animated.Text>
-                        </TouchableOpacity>
-                    </Animated.View>
+                <View style={[styles.headerContent, { paddingTop: insets.top + verticalScale(10) }]}>
+                    {/* Left Side - Bell Icon and Language Toggle */}
+                    <View style={styles.headerLeft}>
+                        <Animated.View entering={FadeInLeft.delay(300).springify()}>
+                            <TouchableOpacity style={styles.bellIcon}>
+                                <Animated.Text style={[styles.bellText, bellAnimatedStyle]}>
+                                    {bellIcon}
+                                </Animated.Text>
+                            </TouchableOpacity>
+                        </Animated.View>
+
+                        {/* Language Toggle Button */}
+                        <Animated.View entering={FadeInLeft.delay(400).springify()}>
+                            <TouchableOpacity
+                                style={styles.languageToggle}
+                                onPress={() => {
+                                    const newLang = i18n.language === 'ur' ? 'en' : 'ur';
+                                    i18n.changeLanguage(newLang);
+                                }}
+                                activeOpacity={0.7}
+                            >
+                                <Text style={styles.languageText}>
+                                    {i18n.language === 'ur' ? 'اردو' : 'English'}
+                                </Text>
+                            </TouchableOpacity>
+                        </Animated.View>
+                    </View>
 
                     {/* Title and Date - Top Right - Animated */}
                     <Animated.View
@@ -383,11 +403,15 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        paddingTop: verticalScale(30),
         paddingHorizontal: horizontalScale(20),
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
+    },
+    headerLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: horizontalScale(10),
     },
     bellIcon: {
         padding: moderateScale(5),
@@ -395,6 +419,20 @@ const styles = StyleSheet.create({
     bellText: {
         fontSize: moderateScale(20),
         color: 'white',
+    },
+    languageToggle: {
+        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        paddingHorizontal: horizontalScale(12),
+        paddingVertical: verticalScale(6),
+        borderRadius: moderateScale(15),
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.4)',
+    },
+    languageText: {
+        fontSize: moderateScale(12),
+        fontWeight: '700',
+        color: 'white',
+        letterSpacing: 0.5,
     },
     headerTextContainer: {
         alignItems: 'flex-end',
