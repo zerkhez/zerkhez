@@ -24,7 +24,7 @@ export default function AnalysisResultsScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header viewSize={moderateScale(25)} text={t('common.fertilizerAmount')} textSize={moderateScale(18)} />
+            <Header viewSize={moderateScale(25)} text={t('common.fertilizerAmount')} textSize={moderateScale(15)} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>

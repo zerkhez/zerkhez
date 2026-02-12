@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
     headerDate: {
         fontSize: moderateScale(14),
         color: 'rgba(255,255,255,0.9)',
-        marginTop: 5,
+        marginTop: 3,
         textAlign: 'right',
     },
     weatherCard: {

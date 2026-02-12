@@ -141,7 +141,7 @@ export default function NitrogenCalculatorScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={t('common.calculateNitrogenFertilizer')} textSize={moderateScale(18)} />
+            <Header text={t('common.calculateNitrogenFertilizer')} textSize={moderateScale(15)} />
 
             {/* Content Container */}
             <View style={commonStyles.contentContainer}>

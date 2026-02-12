@@ -195,7 +195,7 @@ export default function ImageAnalysisScreen() {
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
-            <Header text={t('common.calculateNitrogenFertilizer')} textSize={moderateScale(18)} />
+            <Header text={t('common.calculateNitrogenFertilizer')} textSize={moderateScale(15)} />
 
             <View style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>

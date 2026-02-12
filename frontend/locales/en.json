@@ -10,7 +10,7 @@
     "common": {
         "ofCrop": "{{cropName}} crop",
         "createPackage": "Create Fertilizer Package",
-        "selectStage": "Select Stage:",
+        "selectStage": "Select Stage",
         "fertilizerAmount": "Fertilizer Amount (Kilograms per Acre)",
         "chooseType": "Select Type",
         "instructions": "Instructions",

@@ -19,7 +19,7 @@ export default function NitrogenInstructionScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={t('common.instructionsForNitrogenPlot')} textSize={moderateScale(18)} />
+            <Header text={t('common.instructionsForNitrogenPlot')} textSize={moderateScale(15)} />
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>

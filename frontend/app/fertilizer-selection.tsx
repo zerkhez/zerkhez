@@ -149,7 +149,7 @@ export default function FertilizerSelectionScreen() {
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text={t('fertilizerSelection.header')} />
+            <Header text={t('fertilizerSelection.header')} textSize={moderateScale(15)} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>

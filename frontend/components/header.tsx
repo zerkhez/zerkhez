@@ -3,7 +3,6 @@ import { TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text } from 'react-native';
 import { commonStyles, getHeaderFont } from '@/styles/common';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { moderateScale } from '@/styles/common';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +13,7 @@ function Header({ text, viewSize, textSize, fadeDuration, arrowColor }: { text: 
     return (
         <Animated.View entering={FadeInDown.duration(fadeDuration || 600).springify()} style={commonStyles.header}>
             <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
-                <Ionicons name="arrow-back" size={28} color={arrowColor || "white"} />
+                <Text style={{ fontSize: 28, color: arrowColor || "white", fontWeight: 'bold' }}>←</Text>
             </TouchableOpacity>
             <Text style={[
                 commonStyles.headerTitle,

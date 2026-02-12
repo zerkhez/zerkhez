@@ -10,7 +10,7 @@
     "common": {
         "ofCrop": "{{cropName}} کی فصل",
         "createPackage": "کھاد کا  پیکچ بنائیں",
-        "selectStage": "مرحلہ کا انتخاب کریں:",
+        "selectStage": "مرحلہ کا انتخاب کریں",
         "fertilizerAmount": "کھاد کی مقدار (کلوگرام فی ایکڑ)",
         "chooseType": " کی قسم کا انتخاب کریں",
         "instructions": "ہدایات",
