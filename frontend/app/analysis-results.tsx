@@ -9,18 +9,20 @@ import { commonTexts, nameOfFertilizers, resultTexts } from '@/constants/commonT
 import React from 'react';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
+import { useTranslation } from 'react-i18next';
 
 
 export default function AnalysisResultsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
     // paramerts providng amount of fertilizer
     const { urea, can, ammonium_sulfate, n_rate } = params;
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header viewSize={moderateScale(25)} text={commonTexts.fertilizerAmount} textSize={moderateScale(20)} />
+            <Header viewSize={moderateScale(25)} text={t('common.fertilizerAmount')} textSize={moderateScale(20)} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -31,23 +33,23 @@ export default function AnalysisResultsScreen() {
                     {/* Result Rows */}
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{ammonium_sulfate || '-'}</Text>
-                        <Text style={styles.resultLabel}>{nameOfFertilizers.ammonium_sulfate}</Text>
+                        <Text style={styles.resultLabel}>{t('fertilizers.ammonium_sulfate')}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{urea || '-'}</Text>
-                        <Text style={styles.resultLabel}>{nameOfFertilizers.urea}</Text>
+                        <Text style={styles.resultLabel}>{t('fertilizers.urea')}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.resultRow}>
                         <Text style={styles.resultValue}>{can || '-'}</Text>
-                        <Text style={styles.resultLabel}>{nameOfFertilizers.can}</Text>
+                        <Text style={styles.resultLabel}>{t('fertilizers.can')}</Text>
                     </Animated.View>
 
                     {/* Summary Section */}
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={styles.summaryBox}>
                         <Text style={styles.summaryText}>
-                            {resultTexts.recommendedNitrogenRate} <Text style={styles.summaryValue}>{n_rate || '-'}</Text> {resultTexts.perHectare}
+                            {t('results.recommendedNitrogenRate')} <Text style={styles.summaryValue}>{n_rate || '-'}</Text> {t('results.perHectare')}
                         </Text>
                     </Animated.View>
 
@@ -56,7 +58,7 @@ export default function AnalysisResultsScreen() {
                         style={styles.homeButton}
                         onPress={() => router.replace('/home')}
                     >
-                        <Text style={styles.homeButtonText}>ہوم پیج پر جائیں</Text>
+                        <Text style={styles.homeButtonText}>{t('results.goToHomePage')}</Text>
                     </TouchableOpacity>
                 </ScrollView>
                 {/* Microphone Icon */}

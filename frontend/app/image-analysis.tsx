@@ -15,10 +15,12 @@ import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 export default function ImageAnalysisScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t } = useTranslation();
     const { mode, typeName, dat, id, name } = params;
 
 
@@ -38,7 +40,7 @@ export default function ImageAnalysisScreen() {
             if (useCamera) {
                 const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
                 if (permissionResult.granted === false) {
-                    Alert.alert("Permission Required", "Please allow access to your camera.");
+                    Alert.alert(t('imageAnalysis.permissionRequired'), t('imageAnalysis.allowCameraAccess'));
                     return;
                 }
                 result = await ImagePicker.launchCameraAsync({
@@ -50,7 +52,7 @@ export default function ImageAnalysisScreen() {
             } else {
                 const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
                 if (permissionResult.granted === false) {
-                    Alert.alert("Permission Required", "Please allow access to your photos.");
+                    Alert.alert(t('imageAnalysis.permissionRequired'), t('imageAnalysis.allowPhotosAccess'));
                     return;
                 }
                 result = await ImagePicker.launchImageLibraryAsync({
@@ -71,18 +73,18 @@ export default function ImageAnalysisScreen() {
             }
         } catch (error) {
             console.log('Error selecting image:', error);
-            Alert.alert("Error", "An error occurred while selecting the image.");
+            Alert.alert(t('imageAnalysis.error'), t('imageAnalysis.imageSelectionError'));
         }
     };
 
     const handleDeleteImage = (target: 'sufficient' | 'common') => {
         Alert.alert(
-            "تصویر ہٹائیں؟",
-            "کیا آپ واقعی اس تصویر کو ہٹانا چاہتے ہیں؟ آپ کو دوبارہ تصویر منتخب کرنی ہوگی۔",
+            t('imageAnalysis.deleteImageTitle'),
+            t('imageAnalysis.deleteImageMessage'),
             [
-                { text: "نہیں", style: "cancel" },
+                { text: t('imageAnalysis.no'), style: "cancel" },
                 {
-                    text: "ہٹائیں",
+                    text: t('imageAnalysis.delete'),
                     style: "destructive",
                     onPress: () => {
                         if (target === 'sufficient') {
@@ -99,17 +101,17 @@ export default function ImageAnalysisScreen() {
     const handleAnalyze = async () => {
         const networkState = await Network.getNetworkStateAsync();
         if (!networkState.isConnected) {
-            Alert.alert("No Internet Connection", "Please connect to the internet and try again.");
+            Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
             return;
         }
 
         if (!sufficientPlotImage || !commonPlotImage) {
-            Alert.alert("Images Required", "Please select both Plot images.");
+            Alert.alert(t('imageAnalysis.imagesRequired'), t('imageAnalysis.pleaseSelectBothImages'));
             return;
         }
 
         if (!typeName || !dat) {
-            Alert.alert("Missing Info", "Variety or DAT info is missing. Go back and select again.");
+            Alert.alert(t('imageAnalysis.missingInfo'), t('imageAnalysis.varietyOrDATInfoIsMissing'));
             return;
         }
 
@@ -157,7 +159,7 @@ export default function ImageAnalysisScreen() {
                 // Specific check for Maize or future crops that return this flag
                 if (data.giveFertilizer === false) {
                     console.log("Urea", data);
-                    setAlertMessage(data.message || "آپ کی فصل کو اس وقت کھاد کی ضرورت نہیں ہے! لہذا، براہ کرم 10 دن بعد دوبارہ کوشش کریں۔");
+                    setAlertMessage(data.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
                     setAlertVisible(true);
                     return;
                 }
@@ -175,7 +177,7 @@ export default function ImageAnalysisScreen() {
                         }
                     });
                 } else {
-                    Alert.alert("Error", "Invalid response from server");
+                    Alert.alert(t('imageAnalysis.error'), t('imageAnalysis.invalidServerResponse'));
                     console.log("Invalid Response:", data);
                 }
             }
@@ -193,7 +195,7 @@ export default function ImageAnalysisScreen() {
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
-            <Header text={commonTexts.calculateNitrogenFertilizer} viewSize={28} />
+            <Header text={t('common.calculateNitrogenFertilizer')} textSize={moderateScale(18)} />
 
             <View style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -205,7 +207,7 @@ export default function ImageAnalysisScreen() {
                             onPress={() => handleImageSelection('sufficient')}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.actionButtonText}>{commonTexts.sufficientNitrogenPlot}</Text>
+                            <Text style={styles.actionButtonText}>{t('common.sufficientNitrogenPlot')}</Text>
                         </TouchableOpacity>
 
                         {sufficientPlotImage && (
@@ -218,7 +220,7 @@ export default function ImageAnalysisScreen() {
                                     <Ionicons name="close" size={16} color="white" />
                                 </TouchableOpacity>
 
-                                <Text style={styles.previewText}>{commonTexts.chooseSufficientNitrogenPlot}</Text>
+                                <Text style={styles.previewText}>{t('common.chooseSufficientNitrogenPlot')}</Text>
                             </Animated.View>
                         )}
                     </Animated.View>
@@ -230,7 +232,7 @@ export default function ImageAnalysisScreen() {
                             onPress={() => handleImageSelection('common')}
                             activeOpacity={0.8}
                         >
-                            <Text style={styles.actionButtonText}>{commonTexts.commonNitrogenPlot}</Text>
+                            <Text style={styles.actionButtonText}>{t('common.commonNitrogenPlot')}</Text>
                         </TouchableOpacity>
 
                         {commonPlotImage && (
@@ -243,7 +245,7 @@ export default function ImageAnalysisScreen() {
                                     <Ionicons name="close" size={16} color="white" />
                                 </TouchableOpacity>
 
-                                <Text style={styles.previewText}>{commonTexts.chooseCommonNitrogenPlot}</Text>
+                                <Text style={styles.previewText}>{t('common.chooseCommonNitrogenPlot')}</Text>
                             </Animated.View>
                         )}
                     </Animated.View>
@@ -257,7 +259,7 @@ export default function ImageAnalysisScreen() {
                             disabled={isAnalyzing}
                         >
                             <Text style={styles.actionButtonText}>
-                                {isAnalyzing ? imageAnalysisTexts.analyzing : imageAnalysisTexts.analyzeBothImages}
+                                {isAnalyzing ? t('imageAnalysis.analyzing') : t('imageAnalysis.analyzeBothImages')}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -280,14 +282,14 @@ export default function ImageAnalysisScreen() {
                         <View style={styles.iconContainer}>
                             <Ionicons name="leaf" size={40} color="white" />
                         </View>
-                        <Text style={styles.modalTitle}>کھاد کی ضرورت نہیں</Text>
+                        <Text style={styles.modalTitle}>{t('imageAnalysis.noFertilizerNeeded')}</Text>
                         <Text style={styles.modalMessage}>{alertMessage}</Text>
 
                         <TouchableOpacity
                             style={styles.closeButton}
                             onPress={() => setAlertVisible(false)}
                         >
-                            <Text style={styles.closeButtonText}>ٹھیک ہے</Text>
+                            <Text style={styles.closeButtonText}>{t('imageAnalysis.okay')}</Text>
                         </TouchableOpacity>
                     </Animated.View>
                 </View>

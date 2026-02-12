@@ -63,10 +63,25 @@
         "analyzeBothImages": "دونوں تصاویر کا تجزیہ کریں",
         "analyzing": "تجزیہ ہو رہا ہے...",
         "imagesRequired": "تصاویر درکار ہیں",
-        "pleaseSelectBothImages": "براہ کرم دونوں تصاویر منتخب کریں",
+        "pleaseSelectBothImages": "براہ کرم دونوں پلاٹ کی تصاویر منتخب کریں",
         "missingInfo": "معلومات غائب",
-        "varietyOrDATInfoIsMissing": "ورائٹی یا DAT کی معلومات غائب ہے",
-        "goBackAndSelectAgain": "واپس جائیں اور دوبارہ منتخب کریں"
+        "varietyOrDATInfoIsMissing": "ورائٹی یا DAT کی معلومات غائب ہے۔ واپس جائیں اور دوبارہ منتخب کریں",
+        "goBackAndSelectAgain": "واپس جائیں اور دوبارہ منتخب کریں",
+        "permissionRequired": "اجازت درکار ہے",
+        "allowCameraAccess": "براہ کرم اپنے کیمرے تک رسائی کی اجازت دیں۔",
+        "allowPhotosAccess": "براہ کرم اپنی تصاویر تک رسائی کی اجازت دیں۔",
+        "error": "خرابی",
+        "imageSelectionError": "تصویر منتخب کرتے وقت ایک خرابی پیش آئی۔",
+        "deleteImageTitle": "تصویر ہٹائیں؟",
+        "deleteImageMessage": "کیا آپ واقعی اس تصویر کو ہٹانا چاہتے ہیں؟ آپ کو دوبارہ تصویر منتخب کرنی ہوگی۔",
+        "no": "نہیں",
+        "delete": "ہٹائیں",
+        "noInternetConnection": "انٹرنیٹ کنکشن نہیں ہے",
+        "connectToInternet": "براہ کرم انٹرنیٹ سے منسلک ہوں اور دوبارہ کوشش کریں۔",
+        "invalidServerResponse": "سرور سے غلط جواب",
+        "noFertilizerNeeded": "کھاد کی ضرورت نہیں",
+        "cropDoesNotNeedFertilizer": "آپ کی فصل کو اس وقت کھاد کی ضرورت نہیں ہے! لہذا، براہ کرم 10 دن بعد دوبارہ کوشش کریں۔",
+        "okay": "ٹھیک ہے"
     },
     "fertilizers": {
         "ammonium_sulfate": "امونیم سلفیٹ:",
@@ -75,7 +90,8 @@
     },
     "results": {
         "recommendedNitrogenRate": "تجویز کردہ نائٹروجن شرح:",
-        "perHectare": "کلوگرام فی ہیکٹر"
+        "perHectare": "کلوگرام فی ہیکٹر",
+        "goToHomePage": "ہوم پیج پر جائیں"
     },
     "cropTypes": {
         "rice": [
