@@ -37,6 +37,8 @@ export const commonStyles = StyleSheet.create({
         fontFamily: 'NotoSansArabic-Bold',
         color: 'white',
         textAlign: 'center',
+        flex: 1,
+        flexWrap: 'wrap',
     },
     headerTitleSmall: {
         fontFamily: 'NotoSansArabic-Bold',
