@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { commonTexts } from '@/constants/commonText';
-import { commonStyles, verticalScale } from '@/styles/common';
+import { commonStyles, verticalScale, getHeaderFont } from '@/styles/common';
 
 export default function SelectionScreen() {
     const router = useRouter();
@@ -62,7 +62,7 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>
+                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language)]}>
                                 {t("common.fertilizerAtPlanting", { cropName: displayFieldName })}
                             </Text>
                         </TouchableOpacity>
@@ -76,7 +76,7 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>
+                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language)]}>
                                 {t("common.wayOfImage", { cropName: displayFieldName })}
                             </Text>
                         </TouchableOpacity>
@@ -93,7 +93,7 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>
+                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language)]}>
                                 {t("common.instructionsForNitrogenPlot")}
                             </Text>
                         </TouchableOpacity>
@@ -115,7 +115,7 @@ export default function SelectionScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>
+                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language)]}>
                                 {t("common.determineNitrogenDeficiency")}
                             </Text>
                         </TouchableOpacity>

@@ -8,12 +8,14 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { zerkhezAppTitle, motto, commonTexts } from '@/constants/commonText';
 import { forwardButtonIcon } from '@/constants/constants';
 import * as Network from 'expo-network';
-import { horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
+import { useTranslation } from 'react-i18next';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const { i18n } = useTranslation();
   const scale = useSharedValue(1);
   const [weatherData, setWeatherData] = useState<Record<string, string>>({});
 
@@ -108,8 +110,8 @@ export default function WelcomeScreen() {
           </View>
 
           <View style={styles.titleContainer}>
-            <Text style={styles.title} allowFontScaling={false} >{zerkhezAppTitle}</Text>
-            <Text style={styles.subtitle} allowFontScaling={false}>{motto}</Text>
+            <Text style={[styles.title, getHeaderFont(i18n.language)]} allowFontScaling={false} >{zerkhezAppTitle}</Text>
+            <Text style={[styles.subtitle, getRegularFont(i18n.language)]} allowFontScaling={false}>{motto}</Text>
           </View>
         </View>
 
@@ -125,7 +127,7 @@ export default function WelcomeScreen() {
             onPressIn={onPressIn}
             onPressOut={onPressOut}
           >
-            <Text style={styles.buttonText}>{commonTexts.start}</Text>
+            <Text style={[styles.buttonText, getHeaderFont(i18n.language)]}>{commonTexts.start}</Text>
             <Text style={styles.buttonArrow}>{forwardButtonIcon}</Text>
           </AnimatedPressable>
         </BlurView>
@@ -174,13 +176,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   titleContainer: {
-    fontFamily: 'NotoSansArabic-Bold',
     alignItems: 'flex-end',
     flexShrink: 1,
   },
 
   title: {
-    fontFamily: 'NotoSansArabic-Bold',
     fontStyle: 'normal',
     fontSize: moderateScale(35),
     lineHeight: verticalScale(80),
@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
     fontVariant: ['small-caps'],
   },
   subtitle: {
-    fontFamily: 'NotoSansArabic-Regular',
     fontWeight: '400',
     fontStyle: 'normal',
     fontSize: moderateScale(15),
@@ -223,7 +222,6 @@ const styles = StyleSheet.create({
     width: horizontalScale(170),
   },
   buttonText: {
-    fontFamily: 'NotoSansArabic-Bold',
     color: '#303b12ff',
     fontSize: moderateScale(12),
     fontWeight: '600',

@@ -1,5 +1,6 @@
 import { THEME_COLOR } from '@/constants/theme';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet, TextStyle } from 'react-native';
+import { getFont, FontWeight } from '@/constants/fonts';
 
 const { width, height } = Dimensions.get('window');
 
@@ -212,3 +213,54 @@ export const commonStyles = StyleSheet.create({
         lineHeight: moderateScale(30),
     },
 });
+
+/**
+ * Dynamic Font Helpers
+ * Use these functions to get language-appropriate fonts in your components
+ */
+
+/**
+ * Get font family based on current language
+ * @param language - Current language code ('en' or 'ur')
+ * @param weight - Font weight to use
+ * @returns TextStyle object with fontFamily
+ */
+export const getDynamicFont = (language: string, weight: FontWeight = 'regular'): TextStyle => ({
+    fontFamily: getFont(language, weight),
+});
+
+/**
+ * Get header font style (bold) based on language
+ */
+export const getHeaderFont = (language: string): TextStyle => ({
+    fontFamily: getFont(language, 'bold'),
+});
+
+/**
+ * Get regular font style based on language
+ */
+export const getRegularFont = (language: string): TextStyle => ({
+    fontFamily: getFont(language, 'regular'),
+});
+
+/**
+ * Get medium font style based on language
+ */
+export const getMediumFont = (language: string): TextStyle => ({
+    fontFamily: getFont(language, 'medium'),
+});
+
+/**
+ * Get semi-bold font style based on language
+ */
+export const getSemiBoldFont = (language: string): TextStyle => ({
+    fontFamily: getFont(language, 'semiBold'),
+});
+
+/**
+ * Get italic font style based on language
+ */
+export const getItalicFont = (language: string): TextStyle => ({
+    fontFamily: getFont(language, 'italic'),
+});
+

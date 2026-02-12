@@ -5,13 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLOR } from '@/constants/theme';
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
 import Header from '@/components/header';
 
 export default function NitrogenInstructionScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { id, name } = params;
 
     const cropId = Array.isArray(id) ? id[0] : id || '';
@@ -25,7 +25,7 @@ export default function NitrogenInstructionScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     <View style={styles.card}>
-                        <Text style={styles.instructionText}>
+                        <Text style={[styles.instructionText, getRegularFont(i18n.language)]}>
                             {cropId === 'wheat'
                                 ? t('wheat.nitrogenInstructions')
                                 : cropId === 'maize'
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
         paddingBottom: verticalScale(30),
     },
     titleText: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         color: THEME_COLOR,
         textAlign: 'right',
@@ -81,7 +80,6 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     instructionText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(18),
         color: '#333',
         lineHeight: verticalScale(32),

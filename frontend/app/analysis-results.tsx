@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
 import { commonTexts, nameOfFertilizers, resultTexts } from '@/constants/commonText';
 import React from 'react';
 import Microphone from '@/components/microphone';
@@ -34,24 +34,24 @@ export default function AnalysisResultsScreen() {
 
                     {/* Result Rows */}
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
-                        <Text style={styles.resultValue}>{ammonium_sulfate || '-'}</Text>
-                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }]}>{t('fertilizers.ammonium_sulfate')}</Text>
+                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{ammonium_sulfate || '-'}</Text>
+                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}>{t('fertilizers.ammonium_sulfate')}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
-                        <Text style={styles.resultValue}>{urea || '-'}</Text>
-                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }]}>{t('fertilizers.urea')}</Text>
+                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{urea || '-'}</Text>
+                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}>{t('fertilizers.urea')}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
-                        <Text style={styles.resultValue}>{can || '-'}</Text>
-                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }]}>{t('fertilizers.can')}</Text>
+                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{can || '-'}</Text>
+                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}>{t('fertilizers.can')}</Text>
                     </Animated.View>
 
                     {/* Summary Section */}
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={styles.summaryBox}>
-                        <Text style={styles.summaryText}>
-                            {t('results.recommendedNitrogenRate')} <Text style={styles.summaryValue}>{n_rate || '-'}</Text> {t('results.perHectare')}
+                        <Text style={[styles.summaryText, getRegularFont(i18n.language)]}>
+                            {t('results.recommendedNitrogenRate')} <Text style={[styles.summaryValue, getHeaderFont(i18n.language)]}>{n_rate || '-'}</Text> {t('results.perHectare')}
                         </Text>
                     </Animated.View>
 
@@ -60,7 +60,7 @@ export default function AnalysisResultsScreen() {
                         style={styles.homeButton}
                         onPress={() => router.replace('/home')}
                     >
-                        <Text style={styles.homeButtonText}>{t('results.goToHomePage')}</Text>
+                        <Text style={[styles.homeButtonText, getHeaderFont(i18n.language)]}>{t('results.goToHomePage')}</Text>
                     </TouchableOpacity>
                 </ScrollView>
                 {/* Microphone Icon */}
@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
         ...commonStyles.shadowSmall,
     },
     resultLabel: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(16),
         color: 'black',
         flex: 1,
@@ -99,7 +98,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
     },
     resultValue: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(18),
         color: 'black',
         fontWeight: 'bold',
@@ -117,7 +115,6 @@ const styles = StyleSheet.create({
         ...commonStyles.shadowSmall,
     },
     summaryText: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(15),
         color: '#33691E',
         textAlign: 'center',
@@ -138,7 +135,6 @@ const styles = StyleSheet.create({
         ...commonStyles.shadowSmall,
     },
     homeButtonText: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(16),
         color: 'white',
     },

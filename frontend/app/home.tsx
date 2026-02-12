@@ -25,7 +25,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLOR } from '@/constants/theme';
 import { commonTexts, urduDays, urduMonths, urduNumbers } from '@/constants/commonText';
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
 import { bellIcon, forwardButtonIcon, wheatIcon, riceIcon, maizeIcon } from '@/constants/constants';
 
 
@@ -284,7 +284,7 @@ export default function HomeScreen() {
                                 activeOpacity={0.7}
                             >
                                 <Text style={styles.languageText}>
-                                    {i18n.language === 'ur' ? 'اردو' : 'English'}
+                                    {i18n.language === 'en' ? 'اردو' : 'English'}
                                 </Text>
                             </TouchableOpacity>
                         </Animated.View>
@@ -295,8 +295,8 @@ export default function HomeScreen() {
                         entering={FadeInRight.delay(300).springify()}
                         style={styles.headerTextContainer}
                     >
-                        <Text style={styles.headerTitle}>{t("common.welcomeFarmer")}</Text>
-                        <Text style={styles.headerDate}>{currentDate}</Text>
+                        <Text style={[styles.headerTitle, getHeaderFont(i18n.language)]}>{t("common.welcomeFarmer")}</Text>
+                        <Text style={[styles.headerDate, getRegularFont(i18n.language)]}>{currentDate}</Text>
                     </Animated.View>
                 </View>
             </Animated.View>
@@ -353,7 +353,7 @@ export default function HomeScreen() {
                             {/* Text on inside edge, image placeholder on outside edge */}
                             {index % 2 === 0 ? (
                                 <>
-                                    <Text style={styles.cropName}>
+                                    <Text style={[styles.cropName, getHeaderFont(i18n.language)]}>
                                         {i18n.language === 'ur' ? crop.name : crop.nameEng}
                                     </Text>
                                     <View style={styles.cropImagePlaceholder}>
@@ -373,7 +373,7 @@ export default function HomeScreen() {
                                             resizeMode="contain"
                                         />
                                     </View>
-                                    <Text style={styles.cropName}>
+                                    <Text style={[styles.cropName, getHeaderFont(i18n.language)]}>
                                         {i18n.language === 'ur' ? crop.name : crop.nameEng}
                                     </Text>
                                 </>
@@ -403,7 +403,7 @@ export default function HomeScreen() {
                     style={styles.navButtonRight}
                     onPress={() => router.push('/instructions')}
                 >
-                    <Text style={styles.navTextRight}>{t("common.instructions")}</Text>
+                    <Text style={[styles.navTextRight, getHeaderFont(i18n.language)]}>{t("common.instructions")}</Text>
                     <Text style={styles.navArrow}>{forwardButtonIcon}</Text>
                 </TouchableOpacity>
             </Animated.View>
@@ -468,16 +468,14 @@ const styles = StyleSheet.create({
         textAlign: 'right',
     },
     headerTitle: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(20),
         color: 'white',
         textAlign: 'right',
     },
     headerDate: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(14),
         color: 'rgba(255,255,255,0.9)',
-        marginTop: -12,
+        marginTop: 5,
         textAlign: 'right',
     },
     weatherCard: {
@@ -549,7 +547,6 @@ const styles = StyleSheet.create({
         marginRight: -horizontalScale(20),
     },
     cropName: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         fontWeight: '300',
         color: 'white',

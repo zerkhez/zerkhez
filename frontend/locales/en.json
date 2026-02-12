@@ -14,7 +14,7 @@
         "fertilizerAmount": "Fertilizer Amount (Kilograms per Acre)",
         "chooseType": "Select Type",
         "instructions": "Instructions",
-        "welcomeFarmer": "Welcome, Farmer",
+        "welcomeFarmer": "Welcome",
         "calculateNitrogenFertilizer": "Calculate Nitrogen Fertilizer",
         "sufficientNitrogenPlot": "Sufficient Nitrogen Plot",
         "chooseSufficientNitrogenPlot": "Select Sufficient Nitrogen Plot",

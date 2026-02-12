@@ -5,13 +5,13 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { commonStyles, verticalScale } from '@/styles/common';
+import { commonStyles, verticalScale, getHeaderFont, getRegularFont } from '@/styles/common';
 
 export default function SproutInstructionsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { typeName } = params;
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
@@ -22,13 +22,13 @@ export default function SproutInstructionsScreen() {
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
                     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
-                        <Text style={commonStyles.titleText}>
+                        <Text style={[commonStyles.titleText, getHeaderFont(i18n.language)]}>
                             {t("sproutInstructions.title")}
                         </Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.textContainer}>
-                        <Text style={commonStyles.descriptionText}>
+                        <Text style={[commonStyles.descriptionText, getRegularFont(i18n.language)]}>
                             {t("sproutInstructions.description")}
                         </Text>
                     </Animated.View>

@@ -5,14 +5,14 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getRegularFont } from '@/styles/common';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
 export default function CropTypesScreen() {
     const router = useRouter();
     const searchParams = useLocalSearchParams();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { id, name, nextRoute, displayFieldName } = searchParams;
 
     const cropName = Array.isArray(displayFieldName) ? displayFieldName[0] : displayFieldName || '';
@@ -58,7 +58,7 @@ export default function CropTypesScreen() {
                                 }}
                                 activeOpacity={0.8}
                             >
-                                <Text style={styles.typeButtonText}>{type}</Text>
+                                <Text style={[styles.typeButtonText, getRegularFont(i18n.language)]}>{type}</Text>
                             </TouchableOpacity>
                         </Animated.View>
                     ))}
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     instructionText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(18),
         color: 'black',
         marginBottom: verticalScale(20),
@@ -111,7 +110,6 @@ const styles = StyleSheet.create({
         borderColor: '#a3c970',
     },
     typeButtonText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(15),
         color: 'black',
         textAlign: 'center',

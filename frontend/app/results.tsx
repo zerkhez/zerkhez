@@ -4,7 +4,7 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonStyles, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, verticalScale, moderateScale, getHeaderFont } from '@/styles/common';
 import { useTranslation } from 'react-i18next';
 
 export default function ResultsScreen() {

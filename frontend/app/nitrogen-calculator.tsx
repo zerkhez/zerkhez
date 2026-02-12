@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getRegularFont, getHeaderFont } from '@/styles/common';
 import { THEME_COLOR } from '@/constants/theme';
 
 
@@ -90,7 +90,7 @@ export default function NitrogenCalculatorScreen() {
 
     const StatusMessage = ({ children }: { children: React.ReactNode }) => (
         <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
-            <Text style={styles.messageText}>{children}</Text>
+            <Text style={[styles.messageText, getRegularFont(i18n.language)]}>{children}</Text>
         </Animated.View>
     );
 
@@ -270,7 +270,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     messageText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: 'black',
         textAlign: 'center',
@@ -292,7 +291,6 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
     returnButtonText: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(14),
         color: 'white',
     },

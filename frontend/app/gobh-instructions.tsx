@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { commonStyles, verticalScale, moderateScale, horizontalScale } from '@/styles/common';
+import { commonStyles, verticalScale, moderateScale, horizontalScale, getRegularFont } from '@/styles/common';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
         paddingVertical: verticalScale(20),
     },
     instructionText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(18),
         color: 'black',
         // textAlign: 'right', // Removed to support both English and Urdu

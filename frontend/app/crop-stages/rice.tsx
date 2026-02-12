@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles, verticalScale, horizontalScale, moderateScale } from '@/styles/common';
+import { commonStyles, verticalScale, horizontalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,7 @@ export default function CropStagesScreen() {
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
-                <Text style={styles.instructionText}>{t("common.selectStage")}</Text>
+                <Text style={[styles.instructionText, getHeaderFont(i18n.language)]}>{t("common.selectStage")}</Text>
 
                 <ScrollView contentContainerStyle={[commonStyles.scrollContent, { gap: verticalScale(15) }]} showsVerticalScrollIndicator={false}>
                     {stages.map((stage, index) => (
@@ -58,7 +58,7 @@ export default function CropStagesScreen() {
                                 }}
                                 activeOpacity={0.8}
                             >
-                                <Text style={styles.typeButtonText}>{stage}</Text>
+                                <Text style={[styles.typeButtonText, getRegularFont(i18n.language)]}>{stage}</Text>
                             </TouchableOpacity>
                         </Animated.View>
                     ))}
@@ -73,7 +73,6 @@ export default function CropStagesScreen() {
 
 const styles = StyleSheet.create({
     instructionText: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         color: 'black',
         marginTop: verticalScale(20),
@@ -96,7 +95,6 @@ const styles = StyleSheet.create({
         borderColor: '#a3c970',
     },
     typeButtonText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16), // Slightly larger font for readability
         color: 'black',
         textAlign: 'center',

@@ -1,7 +1,7 @@
 import Header from "@/components/header";
 import { commonTexts } from "@/constants/commonText";
 import { THEME_COLOR } from "@/constants/theme";
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from "@/styles/common";
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from "@/styles/common";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import {
@@ -131,7 +131,7 @@ export default function InstructionsScreen() {
                   <Text style={styles.thumbnailEmoji}>{video.thumbnail}</Text>
                 </View>
                 <View style={styles.videoInfo}>
-                  <Text style={[styles.videoTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{t(`common.${video.titleKey}`)}</Text>
+                  <Text style={[styles.videoTitle, { textAlign: isRTL ? 'right' : 'left' }, getRegularFont(i18n.language)]}>{t(`common.${video.titleKey}`)}</Text>
                 </View>
               </TouchableOpacity>
             </Animated.View>
@@ -151,14 +151,12 @@ const styles = StyleSheet.create({
     padding: horizontalScale(20),
   },
   sectionTitle: {
-    fontFamily: "NotoSansArabic-Bold",
     fontSize: moderateScale(24),
     fontWeight: "bold",
     color: "#333",
     marginBottom: verticalScale(8),
   },
   sectionSubtitle: {
-    fontFamily: "NotoSansArabic-Regular",
     fontSize: moderateScale(16),
     color: "#666",
     marginBottom: verticalScale(24),

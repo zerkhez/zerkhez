@@ -13,7 +13,7 @@ import { THEME_COLOR } from '@/constants/theme';
 import { commonTexts, VARIETY_MAPPING, imageAnalysisTexts } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -314,7 +314,6 @@ const styles = StyleSheet.create({
         padding: moderateScale(5),
     },
     headerTitle: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(22),
         color: 'white',
         textAlign: 'center',

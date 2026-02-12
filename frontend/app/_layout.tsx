@@ -18,6 +18,11 @@ export default function RootLayout() {
     'NotoNastaliqUrdu-Bold': require('../assets/fonts/NotoSansArabic-Bold.ttf'),
     'NotoSansArabic-Regular': require('../assets/fonts/NotoSansArabic-Regular.ttf'),
     'NotoSansArabic-Bold': require('../assets/fonts/NotoSansArabic-Bold.ttf'),
+    'Montserrat-Regular': require('../assets/fonts/Montserrat-Regular.ttf'),
+    'Montserrat-Medium': require('../assets/fonts/Montserrat-Medium.ttf'),
+    'Montserrat-SemiBold': require('../assets/fonts/Montserrat-SemiBold.ttf'),
+    'Montserrat-Bold': require('../assets/fonts/Montserrat-Bold.ttf'),
+    'Montserrat-Italic': require('../assets/fonts/Montserrat-Italic.ttf'),
   });
 
   useEffect(() => {

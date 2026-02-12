@@ -18,7 +18,7 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
 import Header from '@/components/header';
-import { commonStyles, horizontalScale, verticalScale, moderateScale } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
 
 // Placeholder data for fertilizers
 const GROUP_1_FERTILIZERS = [
@@ -108,7 +108,7 @@ export default function FertilizerSelectionScreen() {
                 onPress={() => setExpanded(!isExpanded)}
                 activeOpacity={0.7}
             >
-                <Text style={styles.groupLabel}>{title}</Text>
+                <Text style={[styles.groupLabel, getHeaderFont(i18n.language)]}>{title}</Text>
                 <Text style={[styles.chevronIcon, isExpanded && styles.chevronExpanded]}>
                     ▼
                 </Text>
@@ -123,7 +123,7 @@ export default function FertilizerSelectionScreen() {
                         onPress={() => { openModal(groupNum) }}
                         activeOpacity={0.7}
                     >
-                        <Text style={[styles.dropdownText, !state.fertilizer && styles.placeholderText, !isRTL && styles.textLeft]}>
+                        <Text style={[styles.dropdownText, !state.fertilizer && styles.placeholderText, !isRTL && styles.textLeft, getRegularFont(i18n.language)]}>
                             {state.fertilizer ? state.fertilizer.name : t('fertilizerSelection.selectFertilizer')}
                         </Text>
                         <Text style={styles.dropdownIcon}>▼</Text>
@@ -131,7 +131,7 @@ export default function FertilizerSelectionScreen() {
 
                     {/* Amount Input */}
                     <View style={styles.inputContainer}>
-                        <Text style={[styles.inputLabel, !isRTL && styles.textLeft]}>{t('fertilizerSelection.amountLabel')}</Text>
+                        <Text style={[styles.inputLabel, !isRTL && styles.textLeft, getRegularFont(i18n.language)]}>{t('fertilizerSelection.amountLabel')}</Text>
                         <TextInput
                             style={[styles.input, !isRTL && styles.textLeft]}
                             keyboardType="numeric"
@@ -189,7 +189,7 @@ export default function FertilizerSelectionScreen() {
                         <TouchableWithoutFeedback>
                             <View style={styles.modalContent}>
                                 <View style={styles.modalHeader}>
-                                    <Text style={styles.modalTitle}>{t('fertilizerSelection.selectFertilizer')}</Text>
+                                    <Text style={[styles.modalTitle, getHeaderFont(i18n.language)]}>{t('fertilizerSelection.selectFertilizer')}</Text>
                                     <TouchableOpacity onPress={() => { setModalVisible(false); }}>
                                         <Text style={styles.closeButton}>✕</Text>
                                     </TouchableOpacity>
@@ -202,7 +202,7 @@ export default function FertilizerSelectionScreen() {
                                             style={styles.modalItem}
                                             onPress={() => { selectFertilizer(item); }}
                                         >
-                                            <Text style={[styles.modalItemText, !isRTL && styles.textLeft]}>{item.name}</Text>
+                                            <Text style={[styles.modalItemText, !isRTL && styles.textLeft, getRegularFont(i18n.language)]}>{item.name}</Text>
                                         </TouchableOpacity>
                                     )}
                                 />
@@ -242,7 +242,6 @@ const styles = StyleSheet.create({
         paddingVertical: verticalScale(4),
     },
     groupLabel: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(18),
         color: THEME_COLOR,
         flex: 1,
@@ -274,7 +273,6 @@ const styles = StyleSheet.create({
         minHeight: verticalScale(55),
     },
     dropdownText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: 'black',
         flex: 1,
@@ -293,7 +291,6 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     inputLabel: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(15),
         color: '#555',
         marginBottom: verticalScale(8),
@@ -309,7 +306,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: moderateScale(15),
         textAlign: 'right',
         fontSize: moderateScale(16),
-        fontFamily: 'NotoSansArabic-Regular',
     },
     textLeft: {
         textAlign: 'left',
@@ -340,7 +336,6 @@ const styles = StyleSheet.create({
         paddingBottom: verticalScale(10),
     },
     modalTitle: {
-        fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(18),
         color: THEME_COLOR,
     },
@@ -355,7 +350,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#f0f0f0',
     },
     modalItemText: {
-        fontFamily: 'NotoSansArabic-Regular',
         fontSize: moderateScale(16),
         color: '#333',
         textAlign: 'right',
