@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
@@ -88,68 +89,64 @@ export default function InstructionsScreen() {
   };
 
   return (
-    <View style={commonStyles.lightContainer}>
+    <SafeAreaView style={commonStyles.container} edges={['top']}>
       {/* Header */}
       <Header text={t('common.instructions')} />
 
-      <ScrollView style={styles.content}>
-        <Animated.Text
-          entering={FadeInDown.delay(400).springify()}
-          style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}
-        >
-          {t('common.videos')}
-        </Animated.Text>
-        <Animated.Text
-          entering={FadeInDown.delay(500).springify()}
-          style={[styles.sectionSubtitle, { textAlign: isRTL ? 'right' : 'left' }]}
-        >
-          {t('common.moreInfo')}
-        </Animated.Text>
+      {/* Content Container with rounded corners */}
+      <View style={commonStyles.contentContainer}>
+        <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
+          <Animated.Text
+            entering={FadeInDown.delay(400).springify()}
+            style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}
+          >
+            {t('common.videos')}
+          </Animated.Text>
+          <Animated.Text
+            entering={FadeInDown.delay(500).springify()}
+            style={[styles.sectionSubtitle, { textAlign: isRTL ? 'right' : 'left' }, getRegularFont(i18n.language)]}
+          >
+            {t('common.moreInfo')}
+          </Animated.Text>
 
-        <View style={styles.videosContainer}>
-          {videos.map((video, index) => (
-            <Animated.View
-              key={video.id}
-              entering={FadeInDown.delay(600 + index * 200).springify()}
-            >
-              <TouchableOpacity
-                style={styles.videoCard}
-                onPress={() => { openVideo(video.url); }}
-                activeOpacity={0.7}
+          <View style={styles.videosContainer}>
+            {videos.map((video, index) => (
+              <Animated.View
+                key={video.id}
+                entering={FadeInDown.delay(600 + index * 200).springify()}
               >
-                <View style={styles.videoThumbnail}>
-                  <Animated.View
-                    style={[
-                      styles.playButton,
-                      index === 0
-                        ? playButtonAnimatedStyle1
-                        : playButtonAnimatedStyle2,
-                    ]}
-                  >
-                    <Text style={styles.playIcon}>▶</Text>
-                  </Animated.View>
-                  <Text style={styles.thumbnailEmoji}>{video.thumbnail}</Text>
-                </View>
-                <View style={styles.videoInfo}>
-                  <Text style={[styles.videoTitle, { textAlign: isRTL ? 'right' : 'left' }, getRegularFont(i18n.language)]}>{t(`common.${video.titleKey}`)}</Text>
-                </View>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+                <TouchableOpacity
+                  style={styles.videoCard}
+                  onPress={() => { openVideo(video.url); }}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.videoThumbnail}>
+                    <Animated.View
+                      style={[
+                        styles.playButton,
+                        index === 0
+                          ? playButtonAnimatedStyle1
+                          : playButtonAnimatedStyle2,
+                      ]}
+                    >
+                      <Text style={styles.playIcon}>▶</Text>
+                    </Animated.View>
+                    <Text style={styles.thumbnailEmoji}>{video.thumbnail}</Text>
+                  </View>
+                  <View style={styles.videoInfo}>
+                    <Text style={[styles.videoTitle, { textAlign: isRTL ? 'right' : 'left' }, getRegularFont(i18n.language)]}>{t(`common.${video.titleKey}`)}</Text>
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  placeholder: {
-    width: horizontalScale(40),
-  },
-  content: {
-    flex: 1,
-    padding: horizontalScale(20),
-  },
   sectionTitle: {
     fontSize: moderateScale(24),
     fontWeight: "bold",
