@@ -91,10 +91,18 @@ export const urduDays = [
 export const urduNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
 
 export const VARIETY_MAPPING: Record<string, string> = {
+    // Urdu mappings
     'سونا سپر باسمتی - 282': 'Sona super Basmati',
     'کسان باسمتی': 'Kisan Basmati',
     'سپر باسمتی': 'Super Basmati',
     'باسمتی - 515': 'Basmati 515',
     'پی کے خوشبودار - 1121': 'PK 1121 Aromatic',
-    'پی کے خوشبودار - 2021': 'Pk 2021 Aromatic'
+    'پی کے خوشبودار - 2021': 'Pk 2021 Aromatic',
+    // English mappings
+    'Sona Super Basmati - 282': 'Sona super Basmati',
+    'Kisan Basmati': 'Kisan Basmati',
+    'Super Basmati': 'Super Basmati',
+    'Basmati - 515': 'Basmati 515',
+    'PK Aromatic - 1121': 'PK 1121 Aromatic',
+    'PK Aromatic - 2021': 'Pk 2021 Aromatic',
 };

@@ -20,9 +20,13 @@ import Animated, {
   withSequence,
   withTiming
 } from "react-native-reanimated";
+import { useTranslation } from 'react-i18next';
 
 export default function InstructionsScreen() {
   const router = useRouter();
+  const { t, i18n } = useTranslation();
+
+  const isRTL = i18n.language === 'ur';
 
   // Animation values for play buttons
   const playButtonScale1 = useSharedValue(1);
@@ -31,15 +35,13 @@ export default function InstructionsScreen() {
   const videos = [
     {
       id: 1,
-      title: "فصلوں کی بیماریوں کی تشخیص",
-      titleEng: "Crop Disease Identification",
+      titleKey: "cropDiseaseIdentification",
       url: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_1",
       thumbnail: "📹",
     },
     {
       id: 2,
-      title: "ایپ استعمال کرنے کی ہدایات",
-      titleEng: "App Usage Instructions",
+      titleKey: "appUsageInstructions",
       url: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_2",
       thumbnail: "📹",
     },
@@ -88,20 +90,20 @@ export default function InstructionsScreen() {
   return (
     <View style={commonStyles.lightContainer}>
       {/* Header */}
-      <Header text={commonTexts.instructions} />
+      <Header text={t('common.instructions')} />
 
       <ScrollView style={styles.content}>
         <Animated.Text
           entering={FadeInDown.delay(400).springify()}
-          style={styles.sectionTitle}
+          style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }]}
         >
-          {commonTexts.videos}
+          {t('common.videos')}
         </Animated.Text>
         <Animated.Text
           entering={FadeInDown.delay(500).springify()}
-          style={styles.sectionSubtitle}
+          style={[styles.sectionSubtitle, { textAlign: isRTL ? 'right' : 'left' }]}
         >
-          {commonTexts.moreInfo}
+          {t('common.moreInfo')}
         </Animated.Text>
 
         <View style={styles.videosContainer}>
@@ -129,8 +131,7 @@ export default function InstructionsScreen() {
                   <Text style={styles.thumbnailEmoji}>{video.thumbnail}</Text>
                 </View>
                 <View style={styles.videoInfo}>
-                  <Text style={styles.videoTitle}>{video.title}</Text>
-                  <Text style={styles.videoTitleEng}>{video.titleEng}</Text>
+                  <Text style={[styles.videoTitle, { textAlign: isRTL ? 'right' : 'left' }]}>{t(`common.${video.titleKey}`)}</Text>
                 </View>
               </TouchableOpacity>
             </Animated.View>
@@ -155,14 +156,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: verticalScale(8),
-    textAlign: "right",
   },
   sectionSubtitle: {
     fontFamily: "NotoSansArabic-Regular",
     fontSize: moderateScale(16),
     color: "#666",
     marginBottom: verticalScale(24),
-    textAlign: "right",
   },
   videosContainer: {
     gap: verticalScale(20),
@@ -208,11 +207,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginBottom: verticalScale(4),
-    textAlign: "right",
   },
-  videoTitleEng: {
-    fontSize: moderateScale(14),
-    color: "#666",
-    textAlign: "right",
-  },
+
 });

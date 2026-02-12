@@ -15,14 +15,16 @@ import { useTranslation } from 'react-i18next';
 export default function AnalysisResultsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     // paramerts providng amount of fertilizer
     const { urea, can, ammonium_sulfate, n_rate } = params;
+
+    const isRTL = i18n.language === 'ur';
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header viewSize={moderateScale(25)} text={t('common.fertilizerAmount')} textSize={moderateScale(20)} />
+            <Header viewSize={moderateScale(25)} text={t('common.fertilizerAmount')} textSize={moderateScale(18)} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -31,19 +33,19 @@ export default function AnalysisResultsScreen() {
                     <View style={commonStyles.midViewWidth} />
 
                     {/* Result Rows */}
-                    <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.resultRow}>
+                    <Animated.View entering={FadeInUp.delay(300).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
                         <Text style={styles.resultValue}>{ammonium_sulfate || '-'}</Text>
-                        <Text style={styles.resultLabel}>{t('fertilizers.ammonium_sulfate')}</Text>
+                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }]}>{t('fertilizers.ammonium_sulfate')}</Text>
                     </Animated.View>
 
-                    <Animated.View entering={FadeInUp.delay(400).springify()} style={styles.resultRow}>
+                    <Animated.View entering={FadeInUp.delay(400).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
                         <Text style={styles.resultValue}>{urea || '-'}</Text>
-                        <Text style={styles.resultLabel}>{t('fertilizers.urea')}</Text>
+                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }]}>{t('fertilizers.urea')}</Text>
                     </Animated.View>
 
-                    <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.resultRow}>
+                    <Animated.View entering={FadeInUp.delay(500).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
                         <Text style={styles.resultValue}>{can || '-'}</Text>
-                        <Text style={styles.resultLabel}>{t('fertilizers.can')}</Text>
+                        <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }]}>{t('fertilizers.can')}</Text>
                     </Animated.View>
 
                     {/* Summary Section */}
@@ -87,9 +89,14 @@ const styles = StyleSheet.create({
         fontFamily: 'NotoSansArabic-Bold',
         fontSize: moderateScale(16),
         color: 'black',
-        textAlign: 'right',
         flex: 1,
         marginBottom: verticalScale(5),
+    },
+    resultRowRTL: {
+        flexDirection: 'row',
+    },
+    resultRowLTR: {
+        flexDirection: 'row-reverse',
     },
     resultValue: {
         fontFamily: 'NotoSansArabic-Bold',

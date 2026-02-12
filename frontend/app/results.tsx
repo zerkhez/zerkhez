@@ -5,21 +5,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { commonStyles, verticalScale, moderateScale } from '@/styles/common';
+import { useTranslation } from 'react-i18next';
 
 export default function ResultsScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { t, i18n } = useTranslation();
+
+    const isRTL = i18n.language === 'ur';
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
             {/* Header */}
-            <Header text="چاول کی فصل" />
+            <Header text={t('cropNames.rice')} />
 
             <View style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
                     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.titleContainer}>
-                        <Text style={commonStyles.titleText}>نتائج</Text>
+                        <Text style={[commonStyles.titleText, { textAlign: isRTL ? 'right' : 'left' }]}>{t('common.results')}</Text>
                     </Animated.View>
 
                     {/* Result Boxes */}

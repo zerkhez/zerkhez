@@ -29,7 +29,10 @@
         "atTimeOf": "بوقت کاشت",
         "ofFertilizers": "کی کھادیں",
         "determineNitrogenDeficiency": "تصویر سے نائٹروجن کی کمی معلوم کریں",
-        "fertilizerAtPlanting": "بوقت کاشت {{cropName}} کی کھادیں"
+        "fertilizerAtPlanting": "بوقت کاشت {{cropName}} کی کھادیں",
+        "cropDiseaseIdentification": "فصلوں کی بیماریوں کی تشخیص",
+        "appUsageInstructions": "ایپ استعمال کرنے کی ہدایات",
+        "results": "نتائج"
     },
     "fertilizerSelection": {
         "header": "کھاد کا انتخاب",

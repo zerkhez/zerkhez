@@ -29,7 +29,10 @@
         "atTimeOf": "At the time of planting",
         "ofFertilizers": "of fertilizers",
         "determineNitrogenDeficiency": "Determine Nitrogen Deficiency from Image",
-        "fertilizerAtPlanting": "{{cropName}} Fertilizer Application at Planting"
+        "fertilizerAtPlanting": "{{cropName}} Fertilizer Application at Planting",
+        "cropDiseaseIdentification": "Crop Disease Identification",
+        "appUsageInstructions": "App Usage Instructions",
+        "results": "Results"
     },
     "fertilizerSelection": {
         "header": "Fertilizer Selection",
