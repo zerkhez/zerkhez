@@ -19,32 +19,43 @@ export default function WelcomeScreen() {
   const blobScale = useSharedValue(0);
   const blobOpacity = useSharedValue(0);
   const logoOpacity = useSharedValue(0);
+  const logoTranslateY = useSharedValue(0);
   const textOpacity = useSharedValue(0);
+  const textTranslateY = useSharedValue(50); // Start text slightly lower for slide-up effect
 
   // Track if minimum animation time has passed
   const [minTimePassed, setMinTimePassed] = useState(false);
 
   useEffect(() => {
-    // Start animations immediately
-    // Phase 1: Blob appears with logo (0-3.0s)
-    blobOpacity.value = withTiming(1, { duration: 300 });
+    // Start animations
+    // Phase 1: Blob appears (0-1.0s)
+    blobOpacity.value = withTiming(1, { duration: 500 });
     blobScale.value = withSpring(1, { damping: 12, stiffness: 100 });
-    logoOpacity.value = withTiming(1, { duration: 400 });
 
-    // Phase 2: Blob expands to full screen (starts at 3.0s)
+    // Phase 2: Logo fades in AFTER blob appears (starts at 0.8s)
     setTimeout(() => {
-      blobScale.value = withSpring(20, { damping: 15, stiffness: 80 });
-    }, 3000);
+      logoOpacity.value = withTiming(1, { duration: 600 });
+    }, 800);
 
-    // Phase 3: Title and motto fade in (starts at 3.6s)
+    // Phase 3: Blob expands to full screen (starts at 2.5s)
     setTimeout(() => {
-      textOpacity.value = withTiming(1, { duration: 500 });
-    }, 3600);
+      blobScale.value = withTiming(25, { duration: 1000 }); // Smoother expansion
+    }, 2500);
 
-    // Minimum time passed (starts at 3.6s + 3s hold = 6.6s ~ 7s)
+    // Phase 4: Logo moves up and Title/Motto appear (starts at 3.2s)
+    setTimeout(() => {
+      // Move logo up
+      logoTranslateY.value = withSpring(-verticalScale(100), { damping: 12, stiffness: 80 });
+
+      // Fade in text and slide up
+      textOpacity.value = withTiming(1, { duration: 600 });
+      textTranslateY.value = withSpring(0, { damping: 12, stiffness: 80 });
+    }, 3200);
+
+    // Minimum time passed (Total animation ~4s, give it a buffer to read text)
     setTimeout(() => {
       setMinTimePassed(true);
-    }, 7000);
+    }, 6000);
   }, []);
 
   useEffect(() => {
@@ -141,12 +152,14 @@ export default function WelcomeScreen() {
   const logoAnimatedStyle = useAnimatedStyle(() => {
     return {
       opacity: logoOpacity.value,
+      transform: [{ translateY: logoTranslateY.value }],
     };
   });
 
   const textAnimatedStyle = useAnimatedStyle(() => {
     return {
       opacity: textOpacity.value,
+      transform: [{ translateY: textTranslateY.value }],
     };
   });
 
