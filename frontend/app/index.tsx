@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [weatherData, setWeatherData] = useState<Record<string, string>>({});
   const [weatherLoaded, setWeatherLoaded] = useState(false);
 
@@ -22,47 +22,103 @@ export default function WelcomeScreen() {
   const logoTranslateY = useSharedValue(0);
   const textOpacity = useSharedValue(0);
   const textTranslateY = useSharedValue(50); // Start text slightly lower for slide-up effect
+  const textScale = useSharedValue(1);
+  const textTranslateX = useSharedValue(0);
+  const welcomeOpacity = useSharedValue(0);
+  const welcomeScale = useSharedValue(1);
+  const welcomeTranslateX = useSharedValue(0);
+  const welcomeTranslateY = useSharedValue(0);
 
   // Track if minimum animation time has passed
   const [minTimePassed, setMinTimePassed] = useState(false);
 
+  // Permission state
+  const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
+
+  // Language loop state
+  const [displayLanguage, setDisplayLanguage] = useState<'en' | 'ur'>('en');
+
   useEffect(() => {
     // Start animations
-    // Phase 1: Blob appears (0-1.0s)
+    // Phase 1: Blob AND Logo appear TOGETHER (0-1.0s)
     blobOpacity.value = withTiming(1, { duration: 500 });
-    blobScale.value = withSpring(1, { damping: 12, stiffness: 100 });
+    blobScale.value = withTiming(1, { duration: 500 }); // No bounce - using withTiming
+    logoOpacity.value = withTiming(1, { duration: 600 });
 
-    // Phase 2: Logo fades in AFTER blob appears (starts at 0.8s)
+    // Phase 2: Blob expands AND Logo moves up TOGETHER (starts at 2.5s)
     setTimeout(() => {
-      logoOpacity.value = withTiming(1, { duration: 600 });
-    }, 800);
+      // Expand blob smoothly without bounce
+      blobScale.value = withTiming(25, { duration: 1200 });
 
-    // Phase 3: Blob expands to full screen (starts at 2.5s)
-    setTimeout(() => {
-      blobScale.value = withTiming(25, { duration: 1000 }); // Smoother expansion
+      // Move logo up synchronously - increased margin to 140
+      logoTranslateY.value = withTiming(-verticalScale(140), { duration: 1200 });
+
+      // Text appears with smooth timing
+      textOpacity.value = withTiming(1, { duration: 800 });
+      textTranslateY.value = withTiming(0, { duration: 800 });
+
+      // Welcome text appears
+      welcomeOpacity.value = withTiming(1, { duration: 1000 });
     }, 2500);
 
-    // Phase 4: Logo moves up and Title/Motto appear (starts at 3.2s)
-    setTimeout(() => {
-      // Move logo up
-      logoTranslateY.value = withSpring(-verticalScale(100), { damping: 12, stiffness: 80 });
-
-      // Fade in text and slide up
-      textOpacity.value = withTiming(1, { duration: 600 });
-      textTranslateY.value = withSpring(0, { damping: 12, stiffness: 80 });
-    }, 3200);
-
-    // Minimum time passed (Total animation ~4s, give it a buffer to read text)
+    // Minimum time passed - Extended to 10 seconds
     setTimeout(() => {
       setMinTimePassed(true);
-    }, 6000);
+    }, 10000);
+  }, []);
+
+  // Language loop effect - switches between English and Urdu
+  useEffect(() => {
+    const startLoop = async () => {
+      // Wait for text to appear (4.5s)
+      await new Promise(r => setTimeout(r, 4500));
+
+      // Loop every 2 seconds
+      const intervalId = setInterval(() => {
+        // Fade out
+        textOpacity.value = withTiming(0, { duration: 400 });
+
+        welcomeOpacity.value = withTiming(0, { duration: 400 });
+
+        setTimeout(() => {
+          // Switch language
+          setDisplayLanguage(prev => prev === 'en' ? 'ur' : 'en');
+
+          // Fade in
+          textOpacity.value = withTiming(1, { duration: 400 });
+          welcomeOpacity.value = withTiming(1, { duration: 400 });
+        }, 400);
+      }, 2500);
+
+      return intervalId;
+    };
+
+    const loopPromise = startLoop();
+
+    return () => {
+      loopPromise.then(intervalId => clearInterval(intervalId));
+    };
+  }, []);
+
+  // Request location permission on splash screen
+  useEffect(() => {
+    const requestPermission = async () => {
+      // Wait for initial animations (4s)
+      await new Promise(r => setTimeout(r, 4000));
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      setPermissionGranted(status === 'granted');
+    };
+
+    requestPermission();
   }, []);
 
   useEffect(() => {
+    // Only fetch weather if permission has been granted
+    if (permissionGranted === null) return; // Wait for permission response
+
     const fetchWeather = async () => {
-      // check whether user permissions allowed or not
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
+      if (!permissionGranted) {
         setWeatherLoaded(true);
         return;
       }
@@ -110,7 +166,7 @@ export default function WelcomeScreen() {
       // Ensure we mark as loaded even on error so we don't get stuck
       setWeatherLoaded(true);
     });
-  }, []);
+  }, [permissionGranted]);
 
   // Navigation effect: wait for weather AND minimum time, OR safety timeout
   useEffect(() => {
@@ -127,13 +183,13 @@ export default function WelcomeScreen() {
       }
     };
 
-    // Safety timeout (8s) - just in case
+    // Safety timeout (12s) - just in case
     timeoutId = setTimeout(() => {
       navigateToHome();
-    }, 8000);
+    }, 12000);
 
-    // Navigate when BOTH weather is loaded AND minimum time has passed
-    if (weatherLoaded && minTimePassed) {
+    // Navigate when BOTH weather is loaded AND minimum time has passed AND permission handled
+    if (weatherLoaded && minTimePassed && permissionGranted !== null) {
       navigateToHome();
     }
 
@@ -159,9 +215,28 @@ export default function WelcomeScreen() {
   const textAnimatedStyle = useAnimatedStyle(() => {
     return {
       opacity: textOpacity.value,
-      transform: [{ translateY: textTranslateY.value }],
+      transform: [
+        { translateY: textTranslateY.value },
+        { translateX: textTranslateX.value },
+        { scale: textScale.value }
+      ],
     };
   });
+
+  const welcomeAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: welcomeOpacity.value,
+      transform: [
+        { translateY: welcomeTranslateY.value },
+        { scale: welcomeScale.value }
+      ]
+    };
+  });
+
+  // Derived text based on displayLanguage state
+  const currentTitle = displayLanguage === 'en' ? "Zerkhez" : "زرخیز";
+  const currentMotto = displayLanguage === 'en' ? "Snap. Analyze. Fertilize." : "تصویر لیں۔ تجزیہ کریں۔ کھاد ڈالیں۔";
+  const currentWelcome = displayLanguage === 'en' ? "Welcome" : "خوش آمدید";
 
   return (
     <View style={styles.container}>
@@ -179,12 +254,17 @@ export default function WelcomeScreen() {
 
       {/* Title and Motto */}
       <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
-        <Text style={[styles.title, getHeaderFont(i18n.language)]} allowFontScaling={false}>
-          {zerkhezAppTitle}
+        <Text style={[styles.title, getHeaderFont(displayLanguage)]} allowFontScaling={false}>
+          {currentTitle}
         </Text>
-        <Text style={[styles.subtitle, getRegularFont(i18n.language)]} allowFontScaling={false}>
-          {motto}
+        <Text style={[styles.subtitle, getRegularFont(displayLanguage)]} allowFontScaling={false}>
+          {currentMotto}
         </Text>
+      </Animated.View>
+
+      {/* Welcome Text */}
+      <Animated.View style={[styles.welcomeContainer, welcomeAnimatedStyle]}>
+        <Text style={[styles.welcomeText, getHeaderFont(displayLanguage)]}>{currentWelcome}</Text>
       </Animated.View>
     </View>
   );
@@ -241,4 +321,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.5,
   },
+  welcomeContainer: {
+    position: 'absolute',
+    bottom: verticalScale(50),
+    alignItems: 'center',
+    zIndex: 5,
+  },
+  welcomeText: {
+    fontSize: moderateScale(24),
+    fontWeight: '600',
+    color: '#FFFFFF',
+    letterSpacing: 1,
+  }
 });
