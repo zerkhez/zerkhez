@@ -12,13 +12,17 @@ import {
     TextInput,
     TouchableOpacity,
     TouchableWithoutFeedback,
-    View
+    View,
+    Alert,
+    ActivityIndicator
 } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
 import Header from '@/components/header';
 import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
+import { BACKEND_API_URL } from '@/constants';
+import * as Network from 'expo-network';
 
 // Placeholder data for fertilizers
 const GROUP_1_FERTILIZERS = [
@@ -64,6 +68,8 @@ export default function FertilizerSelectionScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [currentGroup, setCurrentGroup] = useState<1 | 2 | 3 | null>(null);
 
+    const [isCalculating, setIsCalculating] = useState(false);
+
     const openModal = (group: 1 | 2 | 3) => {
         setCurrentGroup(group);
         setModalVisible(true);
@@ -84,13 +90,75 @@ export default function FertilizerSelectionScreen() {
     };
 
     const handleCalculate = async () => {
-        console.log('Calculating with:', { group1, group2, group3 });
+        // Validation
+        if (!group1.fertilizer || !group2.fertilizer || !group3.fertilizer) {
+            Alert.alert(t('imageAnalysis.error'), "Please select one fertilizer from each group.");
+            return;
+        }
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const n = parseFloat(group1.amount || '0');
+        const p = parseFloat(group2.amount || '0');
+        const k = parseFloat(group3.amount || '0');
 
-        // Navigate to result page
-        router.push('/results');
+        if (isNaN(n) || isNaN(p) || isNaN(k)) {
+            Alert.alert(t('imageAnalysis.error'), "Please enter valid amounts for all groups.");
+            return;
+        }
+
+        const networkState = await Network.getNetworkStateAsync();
+        if (!networkState.isConnected) {
+            Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
+            return;
+        }
+
+        setIsCalculating(true);
+
+        try {
+            // Extract English part of fertilizer name (before \n)
+            const cleanName = (name: string) => name.split('\n')[0].trim();
+
+            const payload = {
+                n,
+                p,
+                k,
+                selected_fertilizers: {
+                    "Group 1": cleanName(group1.fertilizer.name),
+                    "Group 2": cleanName(group2.fertilizer.name),
+                    "Group 3": cleanName(group3.fertilizer.name)
+                }
+            };
+
+            console.log('Calculating with:', payload);
+
+            const response = await fetch(`${BACKEND_API_URL}/api/calculate-fertilizer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Navigate to result page with data
+                router.push({
+                    pathname: '/results',
+                    params: {
+                        results: JSON.stringify(data.results),
+                        warnings: JSON.stringify(data.warnings),
+                        requirements: JSON.stringify(data.requirements)
+                    }
+                });
+            } else {
+                Alert.alert(t('imageAnalysis.error'), data.error || "Failed to calculate fertilizer package.");
+            }
+        } catch (error) {
+            console.log('Error calculating fertilizer:', error);
+            Alert.alert(t('imageAnalysis.error'), "An error occurred while connecting to the server.");
+        } finally {
+            setIsCalculating(false);
+        }
     };
 
     const renderGroup = (
@@ -167,11 +235,16 @@ export default function FertilizerSelectionScreen() {
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%', alignItems: 'center', marginTop: verticalScale(20) }}>
                         <TouchableOpacity
-                            style={commonStyles.actionButton}
+                            style={[commonStyles.actionButton, isCalculating && { opacity: 0.7 }]}
                             onPress={handleCalculate}
                             activeOpacity={0.8}
+                            disabled={isCalculating}
                         >
-                            <Text style={commonStyles.actionButtonText}>{t('fertilizerSelection.calculate')}</Text>
+                            {isCalculating ? (
+                                <ActivityIndicator color="white" />
+                            ) : (
+                                <Text style={commonStyles.actionButtonText}>{t('fertilizerSelection.calculate')}</Text>
+                            )}
                         </TouchableOpacity>
                     </Animated.View>
                 </ScrollView>

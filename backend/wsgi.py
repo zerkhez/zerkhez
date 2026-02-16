@@ -3,6 +3,7 @@ from flask_cors import CORS
 from app.routes.rice_routes import rice_bp
 from app.routes.wheat_routes import wheat_bp
 from app.routes.maize_routes import maize_bp
+from app.routes.fertilizer_routes import fertilizer_bp
 from datetime import datetime
 
 def create_app():
@@ -23,6 +24,7 @@ def create_app():
     app.register_blueprint(rice_bp, url_prefix='/api')
     app.register_blueprint(wheat_bp, url_prefix='/api')
     app.register_blueprint(maize_bp, url_prefix='/api')
+    app.register_blueprint(fertilizer_bp, url_prefix='/api')
 
     return app
 
