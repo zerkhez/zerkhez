@@ -66,8 +66,8 @@ def calculate_fertilizer_package(n_req, p_req, k_req, selected_fertilizers):
             # Check for negative values as in original code
             if n_amount < 0:
                 warnings[n_fertilizer_name] = (
-                    "munfi ki alamat zahar karti hay kah nitrogen ooper wali khad se pehlay hi "
-                    "ziyada dul jaey ghe es leay yeh khad dalnay ki zaroorat nai"
+                    "منفی کی علامت ظاہر کرتی ہے کہ نائٹروجن اوپر والی کھاد سے پہلے ہی زیادہ "
+                    "ڈل جائے گی اس لیے یہ کھاد ڈالنے کی ضرورت نہیں"
                 )
         else:
             results[n_fertilizer_name] = 0
