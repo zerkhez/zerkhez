@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
     cropImage: {
         width: horizontalScale(80),
         height: horizontalScale(80),
-        marginLeft: -horizontalScale(20),
+        marginLeft: -horizontalScale(15),
         marginRight: horizontalScale(20),
         marginTop: -verticalScale(40),
     },
