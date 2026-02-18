@@ -7,6 +7,10 @@ import { zerkhezAppTitle, motto } from '@/constants/commonText';
 import * as Network from 'expo-network';
 import { horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
 import { useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '@/lib/i18n';
+
+const LANGUAGE_KEY = 'appLanguage';
 
 
 export default function WelcomeScreen() {
@@ -182,11 +186,24 @@ export default function WelcomeScreen() {
     let timeoutId: ReturnType<typeof setTimeout>;
     let navigated = false;
 
-    const navigateToHome = () => {
-      if (!navigated) {
-        navigated = true;
+    const navigateNext = async () => {
+      if (navigated) return;
+      navigated = true;
+
+      // Check if user has already chosen a language
+      const savedLang = await AsyncStorage.getItem(LANGUAGE_KEY);
+
+      if (savedLang) {
+        // Returning user — apply saved language and go to home
+        await i18n.changeLanguage(savedLang);
         router.push({
           pathname: '/home',
+          params: weatherData || {}
+        });
+      } else {
+        // First launch — go to language selection, carry weather data
+        router.push({
+          pathname: '/language-select',
           params: weatherData || {}
         });
       }
@@ -194,12 +211,12 @@ export default function WelcomeScreen() {
 
     // Safety timeout (12s) - just in case
     timeoutId = setTimeout(() => {
-      navigateToHome();
+      navigateNext();
     }, 12000);
 
     // Navigate when BOTH weather is loaded AND minimum time has passed AND permission handled
     if (weatherLoaded && minTimePassed && permissionGranted !== null) {
-      navigateToHome();
+      navigateNext();
     }
 
     return () => {
