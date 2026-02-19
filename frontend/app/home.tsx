@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import * as Network from 'expo-network';
 import { OPEN_WEATHER_API_URL } from '@/constants';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
     FadeIn,
@@ -42,6 +42,15 @@ export default function HomeScreen() {
         description: params.description ? params.description as string : '',
         location: params.location ? params.location as string : 'Loading...'
     });
+
+    // Exit app on hardware back press — don't go back to splash screen
+    useEffect(() => {
+        const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+            BackHandler.exitApp();
+            return true; // prevents default back navigation
+        });
+        return () => subscription.remove();
+    }, []);
 
     const getCurrentUrduDate = () => {
         const now = new Date();
