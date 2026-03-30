@@ -1,14 +1,17 @@
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { commonStyles } from '@/styles/common';
-import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 function Microphone() {
-    return <Animated.View entering={FadeInUp.delay(700).springify()} style={commonStyles.micContainer}>
-        <TouchableOpacity style={commonStyles.micButton}>
-            <Ionicons name="mic" size={32} color="white" />
-        </TouchableOpacity>
-    </Animated.View>;
+    const router = useRouter();
+    return (
+        <Animated.View entering={FadeInUp.delay(700).springify()} style={commonStyles.micContainer}>
+            <TouchableOpacity style={commonStyles.micButton} onPress={() => router.push('/chat')} activeOpacity={0.85}>
+                <Text style={{ fontSize: 28 }}>🤖</Text>
+            </TouchableOpacity>
+        </Animated.View>
+    );
 }
 
 export default Microphone;

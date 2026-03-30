@@ -65,7 +65,7 @@ export default function HomeScreen() {
         const year = now.getFullYear();
         const dayName = urduDays[now.getDay()];
 
-        return `${month} ${toUrduNumber(day)}، ${dayName}، ${toUrduNumber(year)}`;
+        return `${month} ${day}، ${dayName}، ${year}`;
     };
 
     const getCurrentEnglishDate = () => {
@@ -397,15 +397,13 @@ export default function HomeScreen() {
                 entering={FadeInUp.delay(1200).springify()}
                 style={styles.bottomNav}
             >
+                {/* Chat bot button */}
                 <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => {
-                        console.log('Voice input pressed');
-                    }}
+                    style={styles.fab}
+                    onPress={() => router.push('/chat')}
+                    activeOpacity={0.85}
                 >
-                    <View style={styles.voiceButton}>
-                        <Image source={require('../assets/icons/mic.png')} style={styles.navIconImage} />
-                    </View>
+                    <Text style={styles.fabIcon}>🤖</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -611,5 +609,21 @@ const styles = StyleSheet.create({
         marginLeft: -horizontalScale(15),
         marginRight: horizontalScale(20),
         marginTop: -verticalScale(40),
+    },
+    fab: {
+        width: moderateScale(48),
+        height: moderateScale(48),
+        borderRadius: moderateScale(24),
+        backgroundColor: THEME_COLOR,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    fabIcon: {
+        fontSize: moderateScale(24),
     },
 });
