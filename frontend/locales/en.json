@@ -1,7 +1,8 @@
 {
     "app": {
         "title": "Zerkhez",
-        "motto": "Increase your crop yield with accurate nitrogen advice!"
+        "motto": "Snap. Analyze. Fertilize.",
+        "welcome": "Welcome"
     },
     "packages": {
         "package1": "Package 1",

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import * as Network from 'expo-network';
 import { OPEN_WEATHER_API_URL } from '@/constants';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
     FadeIn,
@@ -43,6 +43,15 @@ export default function HomeScreen() {
         location: params.location ? params.location as string : 'Loading...'
     });
 
+    // Exit app on hardware back press — don't go back to splash screen
+    useEffect(() => {
+        const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+            BackHandler.exitApp();
+            return true; // prevents default back navigation
+        });
+        return () => subscription.remove();
+    }, []);
+
     const getCurrentUrduDate = () => {
         const now = new Date();
 
@@ -56,7 +65,7 @@ export default function HomeScreen() {
         const year = now.getFullYear();
         const dayName = urduDays[now.getDay()];
 
-        return `${month} ${toUrduNumber(day)}، ${dayName}، ${toUrduNumber(year)}`;
+        return `${month} ${day}، ${dayName}، ${year}`;
     };
 
     const getCurrentEnglishDate = () => {
@@ -388,15 +397,13 @@ export default function HomeScreen() {
                 entering={FadeInUp.delay(1200).springify()}
                 style={styles.bottomNav}
             >
+                {/* Chat bot button */}
                 <TouchableOpacity
-                    style={styles.navButton}
-                    onPress={() => {
-                        console.log('Voice input pressed');
-                    }}
+                    style={styles.fab}
+                    onPress={() => router.push('/chat')}
+                    activeOpacity={0.85}
                 >
-                    <View style={styles.voiceButton}>
-                        <Image source={require('../assets/icons/mic.png')} style={styles.navIconImage} />
-                    </View>
+                    <Text style={styles.fabIcon}>🤖</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -599,8 +606,24 @@ const styles = StyleSheet.create({
     cropImage: {
         width: horizontalScale(80),
         height: horizontalScale(80),
-        marginLeft: -horizontalScale(20),
+        marginLeft: -horizontalScale(15),
         marginRight: horizontalScale(20),
         marginTop: -verticalScale(40),
+    },
+    fab: {
+        width: moderateScale(48),
+        height: moderateScale(48),
+        borderRadius: moderateScale(24),
+        backgroundColor: THEME_COLOR,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    fabIcon: {
+        fontSize: moderateScale(24),
     },
 });
