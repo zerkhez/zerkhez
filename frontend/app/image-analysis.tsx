@@ -1,10 +1,15 @@
 // Purpose: Get images as input from user and call the api to upload images to do analysis.
 // 
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal, Switch } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import { processImageStats } from '@/lib/imageProcessing';
+import { 
+    VARIETY_PARAMS, calculate_gi, calculate_ndvi, calculate_iey, 
+    calculate_pyp, calculate_ri, calculate_n_rate, calculate_fertilizers 
+} from '@/lib/riceRulesCalculator';
 import * as ImagePicker from 'expo-image-picker';
 import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
@@ -31,6 +36,7 @@ export default function ImageAnalysisScreen() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [useLocalProcessing, setUseLocalProcessing] = useState(true);
 
     const handleImageSelection = async (target: 'sufficient' | 'common') => {
         const useCamera = mode === 'camera';
@@ -116,6 +122,75 @@ export default function ImageAnalysisScreen() {
         }
 
         const variety = VARIETY_MAPPING[typeName as string] || typeName;
+        
+        if (useLocalProcessing && id === 'rice') {
+            setIsAnalyzing(true);
+            try {
+                // 1. Process Images
+                const kaafiStats = await processImageStats(sufficientPlotImage);
+                const aamStats = await processImageStats(commonPlotImage);
+                
+                // 2. Rules
+                if (!VARIETY_PARAMS[variety as string]) {
+                    Alert.alert(t('imageAnalysis.error'), `Unknown variety: ${variety}`);
+                    setIsAnalyzing(false);
+                    return;
+                }
+                const params = VARIETY_PARAMS[variety as string];
+                
+                // 3. Calculate GI
+                const gi_nl = calculate_gi(params.formula, kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
+                const gi_t = calculate_gi(params.formula, aamStats.mean_rgb[0], aamStats.mean_rgb[1], aamStats.mean_rgb[2]);
+                
+                // 4. Calculate NDVI
+                const x_nl = gi_nl * kaafiStats.ratio;
+                const x_t = gi_t * aamStats.ratio;
+                
+                const ndvi_nl = calculate_ndvi(params.m, params.c, x_nl);
+                const ndvi_t = calculate_ndvi(params.m, params.c, x_t);
+                
+                // 5. Calculate IEY
+                const datValue = Number(dat);
+                if (Number.isNaN(datValue) || !Number.isFinite(datValue)) {
+                    Alert.alert(t('imageAnalysis.error'), "Invalid DAT");
+                    setIsAnalyzing(false);
+                    return;
+                }
+                const iey = calculate_iey(ndvi_t, datValue);
+                
+                // 6. Calculate PYP
+                const pyp_kg_ha = calculate_pyp(iey);
+                
+                // 7. Calculate RI
+                const ri = calculate_ri(ndvi_nl, ndvi_t);
+                
+                // 8. Calculate PYPN
+                const pypn_kg_ha = pyp_kg_ha * ri;
+                
+                // 9. Calculate N rate
+                const n_rate_kg_ha = calculate_n_rate(pypn_kg_ha, pyp_kg_ha);
+                
+                // 10. Recommendations
+                const recommendations = calculate_fertilizers(n_rate_kg_ha);
+                
+                router.push({
+                    pathname: '/analysis-results',
+                    params: {
+                        urea: recommendations.Urea,
+                        can: recommendations.CAN,
+                        ammonium_sulfate: recommendations.Ammonium_Sulfate,
+                        n_rate: Math.round(n_rate_kg_ha)
+                    }
+                });
+            } catch (err: any) {
+                console.log("LOCAL PROCESS ERROR:", err);
+                Alert.alert(t('imageAnalysis.error'), err.message || "Error processing locally");
+            } finally {
+                setIsAnalyzing(false);
+            }
+            return;
+        }
+
         setIsAnalyzing(true);
 
         try {
@@ -201,6 +276,18 @@ export default function ImageAnalysisScreen() {
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
                     {/* Sufficient Nitrogen Plot Button */}
+                    {id === 'rice' && (
+                        <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.toggleContainer}>
+                            <Text style={styles.toggleLabel}>Process Locally</Text>
+                            <Switch
+                                value={useLocalProcessing}
+                                onValueChange={setUseLocalProcessing}
+                                trackColor={{ false: '#767577', true: '#b5d985' }}
+                                thumbColor={useLocalProcessing ? THEME_COLOR : '#f4f3f4'}
+                            />
+                        </Animated.View>
+                    )}
+
                     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.buttonWrapper}>
                         <TouchableOpacity
                             style={styles.actionButton}
@@ -327,9 +414,26 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         padding: moderateScale(30),
-        paddingTop: verticalScale(50),
+        paddingTop: verticalScale(20),
         alignItems: 'center',
         gap: verticalScale(20),
+    },
+    toggleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        backgroundColor: '#f9f9f9',
+        paddingHorizontal: horizontalScale(20),
+        paddingVertical: verticalScale(12),
+        borderRadius: moderateScale(15),
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+    },
+    toggleLabel: {
+        fontFamily: 'NotoSansArabic-Regular',
+        fontSize: moderateScale(14),
+        color: '#333',
     },
     buttonWrapper: {
         width: '100%',
