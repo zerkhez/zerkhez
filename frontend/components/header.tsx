@@ -12,7 +12,16 @@ function Header({ text, viewSize, textSize, fadeDuration, arrowColor }: { text: 
 
     return (
         <Animated.View entering={FadeInDown.duration(fadeDuration || 600).springify()} style={commonStyles.header}>
-            <TouchableOpacity onPress={() => router.back()} style={commonStyles.backButton}>
+            <TouchableOpacity 
+                onPress={() => {
+                    if (router.canGoBack()) {
+                        router.back();
+                    } else {
+                        router.replace('/home');
+                    }
+                }} 
+                style={commonStyles.backButton}
+            >
                 <Text style={{ fontSize: 28, color: arrowColor || "white", fontWeight: 'bold' }}>←</Text>
             </TouchableOpacity>
             <Text style={[

@@ -247,6 +247,7 @@ export default function FertilizerSelectionScreen() {
                             )}
                         </TouchableOpacity>
                     </Animated.View>
+                    <View style={{ height: verticalScale(100), width: '100%' }} />
                 </ScrollView>
             </View>
 
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingHorizontal: horizontalScale(20),
         paddingTop: verticalScale(20),
-        paddingBottom: verticalScale(100),
+        paddingBottom: verticalScale(140),
         width: '100%',
     },
     groupContainer: {

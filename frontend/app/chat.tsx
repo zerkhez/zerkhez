@@ -184,7 +184,16 @@ export default function ChatScreen() {
                 </Svg>
 
                 {/* Close button top-left */}
-                <TouchableOpacity onPress={() => router.back()} style={[styles.closeBtn, { top: insets.top + verticalScale(10) }]}>
+                <TouchableOpacity 
+                    onPress={() => {
+                        if (router.canGoBack()) {
+                            router.back();
+                        } else {
+                            router.replace('/home');
+                        }
+                    }} 
+                    style={[styles.closeBtn, { top: insets.top + verticalScale(10) }]}
+                >
                     <Text style={styles.closeBtnText}>✕</Text>
                 </TouchableOpacity>
 

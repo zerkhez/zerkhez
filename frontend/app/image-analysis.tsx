@@ -10,6 +10,17 @@ import {
     VARIETY_PARAMS, calculate_gi, calculate_ndvi, calculate_iey, 
     calculate_pyp, calculate_ri, calculate_n_rate, calculate_fertilizers 
 } from '@/lib/riceRulesCalculator';
+import {
+    calculate_spad, calculate_si, calculate_fertilizer_needs
+} from '@/lib/maizeRulesCalculator';
+import {
+    calculate_ndvi as calc_wheat_ndvi,
+    calculate_iey as calc_wheat_iey,
+    calculate_pyp as calc_wheat_pyp,
+    calculate_ri as calc_wheat_ri,
+    calculate_n_rate as calc_wheat_n_rate,
+    calculate_fertilizers as calc_wheat_fertilizers
+} from '@/lib/wheatRulesCalculator';
 import * as ImagePicker from 'expo-image-picker';
 import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
@@ -191,6 +202,109 @@ export default function ImageAnalysisScreen() {
             return;
         }
 
+        if (useLocalProcessing && id === 'maize') {
+            setIsAnalyzing(true);
+            try {
+                // 1. Process Images
+                const kaafiStats = await processImageStats(sufficientPlotImage);
+                const aamStats = await processImageStats(commonPlotImage);
+
+                // 2. Calculate SPAD
+                const spad_f = calculate_spad(kaafiStats.mean_rgb[1]); // Green channel
+                const spad_t = calculate_spad(aamStats.mean_rgb[1]);
+
+                // 3. Calculate SI
+                const si = calculate_si(spad_t, spad_f);
+
+                // 4. Calculate Fertilizer Needs
+                const fertilizer_result = calculate_fertilizer_needs(si, variety as string);
+
+                if (fertilizer_result.need_of_fertilizer === false) {
+                    setAlertMessage(fertilizer_result.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
+                    setAlertVisible(true);
+                    setIsAnalyzing(false);
+                    return;
+                }
+
+                router.push({
+                    pathname: '/analysis-results',
+                    params: {
+                        urea: fertilizer_result.urea,
+                        can: fertilizer_result.can,
+                        ammonium_sulfate: fertilizer_result.ammonium_sulfate,
+                        n_rate: Math.round(fertilizer_result.n_rate)
+                    }
+                });
+            } catch (err: any) {
+                console.log("LOCAL PROCESS ERROR MAIZE:", err);
+                Alert.alert(t('imageAnalysis.error'), err.message || "Error processing locally");
+            } finally {
+                setIsAnalyzing(false);
+            }
+            return;
+        }
+
+        if (useLocalProcessing && id === 'wheat') {
+            setIsAnalyzing(true);
+            try {
+                // 1. Process Images
+                const kaafiStats = await processImageStats(sufficientPlotImage);
+                const aamStats = await processImageStats(commonPlotImage);
+
+                // 2. Calculate GI (Fixed formula 2G-B-R)
+                const gi_nl = calculate_gi("2G-B-R", kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
+                const gi_t = calculate_gi("2G-B-R", aamStats.mean_rgb[0], aamStats.mean_rgb[1], aamStats.mean_rgb[2]);
+                
+                // 3. Calculate X
+                const x_nl = gi_nl * kaafiStats.ratio;
+                const x_t = gi_t * aamStats.ratio;
+
+                // 4. Calculate NDVI
+                const ndvi_nl = calc_wheat_ndvi(x_nl);
+                const ndvi_t = calc_wheat_ndvi(x_t);
+
+                // 5. Calculate IEY
+                const dasValue = Number(dat);
+                if (Number.isNaN(dasValue) || !Number.isFinite(dasValue)) {
+                    Alert.alert(t('imageAnalysis.error'), "Invalid DAT/DAS");
+                    setIsAnalyzing(false);
+                    return;
+                }
+                const iey = calc_wheat_iey(ndvi_t, dasValue);
+                
+                // 6. Calculate PYP
+                const pyp = calc_wheat_pyp(iey);
+                
+                // 7. Calculate RI
+                const ri = calc_wheat_ri(ndvi_nl, ndvi_t);
+                
+                // 8. Calculate PYPN
+                const pypn = pyp * ri;
+                
+                // 9. Calculate N rate
+                const n_rate_kg_ha = calc_wheat_n_rate(pypn, pyp);
+                
+                // 10. Recommendations
+                const recommendations = calc_wheat_fertilizers(n_rate_kg_ha);
+
+                router.push({
+                    pathname: '/analysis-results',
+                    params: {
+                        urea: recommendations.Urea,
+                        can: recommendations.CAN,
+                        ammonium_sulfate: recommendations.Ammonium_Sulfate,
+                        n_rate: Math.round(n_rate_kg_ha)
+                    }
+                });
+            } catch (err: any) {
+                console.log("LOCAL PROCESS ERROR WHEAT:", err);
+                Alert.alert(t('imageAnalysis.error'), err.message || "Error processing locally");
+            } finally {
+                setIsAnalyzing(false);
+            }
+            return;
+        }
+
         setIsAnalyzing(true);
 
         try {
@@ -276,7 +390,7 @@ export default function ImageAnalysisScreen() {
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
                     {/* Sufficient Nitrogen Plot Button */}
-                    {id === 'rice' && (
+                    {['rice', 'maize', 'wheat'].includes(id as string) && (
                         <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.toggleContainer}>
                             <Text style={styles.toggleLabel}>Process Locally</Text>
                             <Switch
@@ -351,6 +465,7 @@ export default function ImageAnalysisScreen() {
                         </TouchableOpacity>
                     </Animated.View>
 
+                    <View style={{ height: verticalScale(100), width: '100%' }} />
                 </ScrollView>
 
                 {/* Mic Button */}
@@ -415,6 +530,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         padding: moderateScale(30),
         paddingTop: verticalScale(20),
+        paddingBottom: verticalScale(120),
         alignItems: 'center',
         gap: verticalScale(20),
     },
