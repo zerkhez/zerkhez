@@ -192,17 +192,26 @@ export default function ChatScreen() {
                 </Svg>
 
                 {/* Close button top-left */}
-                <TouchableOpacity 
+                <TouchableOpacity
                     onPress={() => {
                         if (router.canGoBack()) {
                             router.back();
                         } else {
                             router.replace('/home');
                         }
-                    }} 
+                    }}
                     style={[styles.closeBtn, { top: insets.top + verticalScale(10) }]}
+                    activeOpacity={0.7}
                 >
-                    <Text style={styles.closeBtnText}>✕</Text>
+                    <Svg width={moderateScale(16)} height={moderateScale(16)} viewBox="0 0 24 24" fill="none">
+                        <Path
+                            d="M15 19l-7-7 7-7"
+                            stroke="rgba(255,255,255,0.85)"
+                            strokeWidth={2.5}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </Svg>
                 </TouchableOpacity>
 
                 {/* Centered agent info */}
@@ -294,18 +303,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: horizontalScale(16),
         zIndex: 20,
-        padding: moderateScale(6),
         backgroundColor: 'rgba(255,255,255,0.15)',
-        borderRadius: moderateScale(20),
-        width: moderateScale(32),
-        height: moderateScale(32),
+        borderRadius: moderateScale(12),
+        width: moderateScale(38),
+        height: moderateScale(38),
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    closeBtnText: {
-        color: 'rgba(255,255,255,0.85)',
-        fontSize: moderateScale(14),
-        fontWeight: 'bold',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.25)',
     },
     agentInfo: {
         alignItems: 'center',

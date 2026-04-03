@@ -6,14 +6,14 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { commonStyles } from '@/styles/common';
+import { commonStyles, getHeaderFont, getRegularFont } from '@/styles/common';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
 
 export default function PrePlantingInstructionsScreen() {
     const router = useRouter();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const params = useLocalSearchParams();
     const { id, name, typeName } = params;
 
@@ -21,8 +21,6 @@ export default function PrePlantingInstructionsScreen() {
         { title: t("packages.package1"), text: t("wheat.plantingInstructions.package1") },
         { title: t("packages.package2"), text: t("wheat.plantingInstructions.package2") },
     ];
-
-    const cropName = Array.isArray(name) ? name[0] : name || '';
 
     return (
         <SafeAreaView style={commonStyles.container} edges={['top']}>
@@ -33,18 +31,18 @@ export default function PrePlantingInstructionsScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                    <Text style={commonStyles.packageInstruction}>
+                    <Text style={[commonStyles.packageInstruction, getRegularFont(i18n.language)]}>
                         {t("wheat.plantingInstructions.packageText")}
                     </Text>
 
                     {packages.map((pkg, index) => (
                         <View key={index} style={commonStyles.packageContainer}>
-                            <Text style={commonStyles.packageTitle}>{pkg.title}</Text>
-                            <Text style={commonStyles.packageText}>{pkg.text}</Text>
+                            <Text style={[commonStyles.packageTitle, getHeaderFont(i18n.language)]}>{pkg.title}</Text>
+                            <Text style={[commonStyles.packageText, getRegularFont(i18n.language)]}>{pkg.text}</Text>
                         </View>
                     ))}
 
-                    <Text style={commonStyles.noteText}>
+                    <Text style={[commonStyles.noteText, getRegularFont(i18n.language)]}>
                         {t("wheat.plantingInstructions.note")}
                     </Text>
 
@@ -59,7 +57,7 @@ export default function PrePlantingInstructionsScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={commonStyles.actionButtonText}>
+                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language)]}>
                                 {t("common.createPackage")}
                             </Text>
                         </TouchableOpacity>

@@ -1,11 +1,11 @@
 // Purpose: This screen is used to display the sub-crop types of a specific crop.
 // Author: 
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { commonStyles, horizontalScale, verticalScale, moderateScale, getRegularFont } from '@/styles/common';
+import { commonStyles, horizontalScale, verticalScale, moderateScale, getRegularFont, getMediumFont } from '@/styles/common';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 
@@ -28,7 +28,7 @@ export default function CropTypesScreen() {
 
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
-                <Text style={styles.instructionText}>{t('common.chooseType', { cropName })}</Text>
+                <Text style={[styles.instructionText, getMediumFont(i18n.language)]}>{t('common.chooseType', { cropName })}</Text>
 
                 <ScrollView contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false}>
                     {/* display the sub-types of crop */}
@@ -93,12 +93,12 @@ const styles = StyleSheet.create({
         gap: verticalScale(15),
     },
     typeButton: {
-        backgroundColor: '#b5d985', // Light green color from image
-        paddingVertical: verticalScale(4),
-        paddingHorizontal: horizontalScale(10),
+        backgroundColor: '#b5d985',
+        paddingVertical: verticalScale(12),
+        paddingHorizontal: horizontalScale(16),
         borderRadius: moderateScale(20),
         width: horizontalScale(280),
-        minHeight: verticalScale(40),
+        minHeight: verticalScale(48),
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#000',
@@ -110,8 +110,8 @@ const styles = StyleSheet.create({
         borderColor: '#a3c970',
     },
     typeButtonText: {
-        fontSize: moderateScale(15),
-        color: 'black',
+        fontSize: moderateScale(14),
+        color: '#1a2600',
         textAlign: 'center',
     },
 });
