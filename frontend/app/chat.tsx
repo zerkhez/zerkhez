@@ -17,7 +17,6 @@ import Animated, {
     FadeIn,
     FadeInDown,
     FadeInUp,
-    SlideInUp,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
@@ -171,7 +170,7 @@ export default function ChatScreen() {
         >
             {/* ── Premium Gradient Header ── */}
             <Animated.View
-                entering={SlideInUp.duration(700).springify().damping(14)}
+                entering={FadeInDown.duration(700)}
                 style={[styles.headerWrapper, { height: HEADER_HEIGHT, paddingTop: insets.top }]}
             >
                 {/* Gradient fill */}
