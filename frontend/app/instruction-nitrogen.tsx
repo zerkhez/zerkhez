@@ -24,9 +24,9 @@ export default function NitrogenInstructionScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     <View style={styles.card}>
-                        <View style={styles.cardIconRow}>
+                        {/* <View style={styles.cardIconRow}>
                             <Text style={styles.cardIcon}>{cropIcon}</Text>
-                        </View>
+                        </View> */}
                         <Text style={[styles.instructionText, getRegularFont(i18n.language)]}>
                             {cropId === 'wheat'
                                 ? t('wheat.nitrogenInstructions')

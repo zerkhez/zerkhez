@@ -44,7 +44,7 @@ export default function SelectionScreen() {
                 <View style={styles.buttonsContainer}>
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={[commonStyles.actionButton, styles.uniformButton]}
+                            style={commonStyles.actionButton}
                             onPress={() => {
                                 if (id !== 'rice' && id !== 'wheat' && id !== 'maize') {
                                     return;
@@ -69,7 +69,7 @@ export default function SelectionScreen() {
 
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={[commonStyles.actionButton, styles.uniformButton]}
+                            style={commonStyles.actionButton}
                             onPress={() => {
                                 router.push({ pathname: '/video-tutorial', params: { id, displayFieldName } });
                             }}
@@ -83,7 +83,7 @@ export default function SelectionScreen() {
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={[commonStyles.actionButton, styles.uniformButton]}
+                            style={commonStyles.actionButton}
                             onPress={() => {
                                 router.push({
                                     pathname: '/instruction-nitrogen',
@@ -100,7 +100,7 @@ export default function SelectionScreen() {
 
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={{ width: '100%', alignItems: 'center' }}>
                         <TouchableOpacity
-                            style={[commonStyles.actionButton, styles.uniformButton]}
+                            style={commonStyles.actionButton}
                             onPress={() => {
                                 router.push({
                                     pathname: '/crop-types',
@@ -136,10 +136,6 @@ const styles = StyleSheet.create({
         gap: verticalScale(20),
         alignItems: 'center',
         marginTop: verticalScale(50),
-    },
-    uniformButton: {
-        height: verticalScale(75),
-        minHeight: undefined,
     },
 });
 

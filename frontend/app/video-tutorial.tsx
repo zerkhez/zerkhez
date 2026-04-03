@@ -1,25 +1,50 @@
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+import { useLocalSearchParams } from 'expo-router';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, {
+  FadeInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
+import { THEME_COLOR } from '@/constants/theme';
 import { commonStyles, verticalScale, horizontalScale, moderateScale, getRegularFont } from '@/styles/common';
 
 
 export default function RiceTutorialScreen() {
-  const router = useRouter();
   const params = useLocalSearchParams();
   const { t, i18n } = useTranslation();
   const { displayFieldName } = params;
 
   const cropName = Array.isArray(displayFieldName) ? displayFieldName[0] : displayFieldName || '';
 
+  const playButtonScale = useSharedValue(1);
+
+  useEffect(() => {
+    playButtonScale.value = withRepeat(
+      withSequence(
+        withTiming(1.15, { duration: 1000 }),
+        withTiming(1, { duration: 1000 }),
+      ),
+      -1,
+      true,
+    );
+  }, []);
+
+  const playButtonAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: playButtonScale.value }],
+  }));
+
   return (
     <SafeAreaView style={commonStyles.container} edges={['top']}>
       {/* Header */}
-      <Header text={t('common.wayOfImage', { cropName })} textSize={moderateScale(15)} />
+      <Header text={t('common.wayOfImage', { cropName })} textSize={15} />
       {/* Content Container */}
       <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
         <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -28,17 +53,20 @@ export default function RiceTutorialScreen() {
             {cropName} {t('common.watchVideo')}
           </Text>
 
-          {/* Video Placeholder */}
-          <View style={styles.videoContainer}>
-            {/* 
-                           Note: Provide a real video source when available.
-                        */}
-            <View style={styles.videoPlaceholder}>
-              <View style={styles.playButtonCircle}>
-                <Text style={styles.playButtonIcon}>▶</Text>
-              </View>
+          {/* Video Card */}
+          <TouchableOpacity style={styles.videoCard} activeOpacity={0.7}>
+            <View style={styles.videoThumbnail}>
+              <Animated.View style={[styles.playButton, playButtonAnimatedStyle]}>
+                <Text style={styles.playIcon}>▶</Text>
+              </Animated.View>
+              <Text style={styles.thumbnailEmoji}>📹</Text>
             </View>
-          </View>
+            <View style={styles.videoInfo}>
+              <Text style={[styles.videoTitle, getRegularFont(i18n.language)]}>
+                {t('common.wayOfImage', { cropName })}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </ScrollView>
 
         {/* Mic Button */}
@@ -49,33 +77,47 @@ export default function RiceTutorialScreen() {
 }
 
 const styles = StyleSheet.create({
-  videoContainer: {
+  videoCard: {
     width: '100%',
-    height: verticalScale(200),
-    borderRadius: moderateScale(10),
+    backgroundColor: 'white',
+    borderRadius: moderateScale(16),
     overflow: 'hidden',
-    backgroundColor: 'black',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  videoThumbnail: {
+    height: verticalScale(200),
+    backgroundColor: THEME_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
-  videoPlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'black',
+  thumbnailEmoji: {
+    fontSize: moderateScale(64),
+    opacity: 0.3,
+  },
+  playButton: {
+    position: 'absolute',
+    width: horizontalScale(70),
+    height: horizontalScale(70),
+    borderRadius: horizontalScale(35),
+    backgroundColor: 'rgba(255,255,255,0.9)',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
-  playButtonCircle: {
-    width: horizontalScale(60),
-    height: verticalScale(50),
-    borderRadius: moderateScale(10),
-    borderWidth: 2,
-    borderColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
+  playIcon: {
+    fontSize: moderateScale(32),
+    color: THEME_COLOR,
+    marginLeft: horizontalScale(4),
   },
-  playButtonIcon: {
-    color: 'white',
-    fontSize: moderateScale(24),
+  videoInfo: {
+    padding: horizontalScale(20),
+  },
+  videoTitle: {
+    fontSize: moderateScale(16),
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: verticalScale(4),
   },
 });
