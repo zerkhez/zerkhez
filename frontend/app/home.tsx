@@ -7,6 +7,7 @@ import * as Location from "expo-location";
 import * as Network from "expo-network";
 import { OPEN_WEATHER_API_URL } from "@/constants";
 import {
+    Dimensions,
     Image,
     StyleSheet,
     Text,
@@ -16,7 +17,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
-    FadeIn,
     FadeInLeft,
     FadeInRight,
     FadeInUp,
@@ -27,9 +27,9 @@ import Animated, {
     useSharedValue,
     withRepeat,
     withSequence,
+    withSpring,
     withTiming,
 } from "react-native-reanimated";
-import Svg, { Path } from "react-native-svg";
 import { useTranslation } from "react-i18next";
 import { THEME_COLOR } from "@/constants/theme";
 import {
@@ -219,6 +219,10 @@ export default function HomeScreen() {
         }
     };
 
+    // ── Blob entrance animation (like language-select) ──
+    const BLOB_HEIGHT = verticalScale(240);
+    const blobY = useSharedValue(-BLOB_HEIGHT);
+
     // Animation values
     const bellRotation = useSharedValue(0);
     const weatherIconScale = useSharedValue(1);
@@ -251,6 +255,12 @@ export default function HomeScreen() {
     ];
 
     useEffect(() => {
+        // Blob drops in like language-select
+        blobY.value = withSpring(0, {
+            damping: 18,
+            stiffness: 120,
+        });
+
         // Bell notification animation - subtle shake
         bellRotation.value = withRepeat(
             withSequence(
@@ -274,6 +284,10 @@ export default function HomeScreen() {
             true,
         );
     }, []);
+
+    const blobAnimatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: blobY.value }],
+    }));
 
     const bellAnimatedStyle = useAnimatedStyle(() => {
         return {
@@ -322,24 +336,11 @@ export default function HomeScreen() {
 
     return (
         <View style={commonStyles.lightContainer}>
-            {/* Curved Header */}
-            <Animated.View
-                entering={FadeIn.duration(800)}
-                style={styles.headerContainer}
-            >
-                {/* SVG Curve */}
-                <Svg
-                    height={verticalScale(200)}
-                    width="100%"
-                    style={styles.svg}
-                    viewBox="0 0 375 200"
-                    preserveAspectRatio="none"
-                >
-                    <Path
-                        d="M 0 0 L 0 150 Q 187.5 350 375 150 L 375 0 Z"
-                        fill={THEME_COLOR}
-                    />
-                </Svg>
+            {/* Curved Header — animated blob like language-select */}
+            <View style={styles.headerContainer}>
+                <Animated.View style={[styles.blobWrapper, blobAnimatedStyle]}>
+                    <View style={styles.blob} />
+                </Animated.View>
 
                 {/* Header Content */}
                 <View
@@ -407,7 +408,7 @@ export default function HomeScreen() {
                         </Text>
                     </Animated.View>
                 </View>
-            </Animated.View>
+            </View>
 
             {/* Weather Card - Slide in from bottom */}
             <Animated.View
@@ -452,11 +453,11 @@ export default function HomeScreen() {
                         entering={
                             index % 2 === 0
                                 ? SlideInRight.delay(
-                                      700 + index * 150,
-                                  ).springify()
+                                    700 + index * 150,
+                                ).springify()
                                 : SlideInLeft.delay(
-                                      700 + index * 150,
-                                  ).springify()
+                                    700 + index * 150,
+                                ).springify()
                         }
                     >
                         <TouchableOpacity
@@ -568,11 +569,20 @@ const styles = StyleSheet.create({
         height: verticalScale(200),
         position: "relative",
     },
-    svg: {
+    blobWrapper: {
         position: "absolute",
         top: 0,
         left: 0,
         right: 0,
+        height: verticalScale(240),
+    },
+    blob: {
+        width: Dimensions.get("window").width * 1.35,
+        height: Dimensions.get("window").width * 1.15,
+        borderRadius: (Dimensions.get("window").width * 1.15) / 2,
+        backgroundColor: THEME_COLOR,
+        alignSelf: "center",
+        marginTop: -(Dimensions.get("window").width * 1.15 - verticalScale(240)),
     },
     headerContent: {
         position: "absolute",
