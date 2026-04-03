@@ -1,12 +1,20 @@
 // Purpose: Display home page, fetch location and weather information if failed on index.ts.
 // Author:
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import * as Location from 'expo-location';
-import * as Network from 'expo-network';
-import { OPEN_WEATHER_API_URL } from '@/constants';
-import { Image, StyleSheet, Text, TouchableOpacity, View, BackHandler } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
+import * as Location from "expo-location";
+import * as Network from "expo-network";
+import { OPEN_WEATHER_API_URL } from "@/constants";
+import {
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    BackHandler,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
     FadeIn,
     FadeInLeft,
@@ -19,16 +27,32 @@ import Animated, {
     useSharedValue,
     withRepeat,
     withSequence,
-    withTiming
-} from 'react-native-reanimated';
-import Svg, { Path } from 'react-native-svg';
-import { useTranslation } from 'react-i18next';
-import { THEME_COLOR } from '@/constants/theme';
-import { commonTexts, urduDays, urduMonths, urduNumbers } from '@/constants/commonText';
-import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
-import { bellIcon, forwardButtonIcon, wheatIcon, riceIcon, maizeIcon } from '@/constants/constants';
-
-
+    withTiming,
+} from "react-native-reanimated";
+import Svg, { Path } from "react-native-svg";
+import { useTranslation } from "react-i18next";
+import { THEME_COLOR } from "@/constants/theme";
+import {
+    commonTexts,
+    urduDays,
+    urduMonths,
+    urduNumbers,
+} from "@/constants/commonText";
+import {
+    commonStyles,
+    horizontalScale,
+    verticalScale,
+    moderateScale,
+    getHeaderFont,
+    getRegularFont,
+} from "@/styles/common";
+import {
+    bellIcon,
+    forwardButtonIcon,
+    wheatIcon,
+    riceIcon,
+    maizeIcon,
+} from "@/constants/constants";
 
 export default function HomeScreen() {
     const router = useRouter();
@@ -37,27 +61,40 @@ export default function HomeScreen() {
     const insets = useSafeAreaInsets();
 
     const [weather, setWeather] = useState({
-        temp: params.temp ? params.temp as string : "Loading...",
-        condition: params.condition ? params.condition as string : 'Loading...',
-        description: params.description ? params.description as string : '',
-        location: params.location ? params.location as string : 'Loading...'
+        temp: params.temp ? (params.temp as string) : "Loading...",
+        condition: params.condition
+            ? (params.condition as string)
+            : "Loading...",
+        description: params.description ? (params.description as string) : "",
+        location: params.location ? (params.location as string) : "Loading...",
     });
 
-    // Exit app on hardware back press — don't go back to splash screen
-    useEffect(() => {
-        const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-            BackHandler.exitApp();
-            return true; // prevents default back navigation
-        });
-        return () => subscription.remove();
-    }, []);
+    // Exit app on hardware back press — only when this screen is focused
+    // Using useFocusEffect ensures the handler is removed when the user
+    // navigates away, preventing it from closing the app on other screens
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = BackHandler.addEventListener(
+                "hardwareBackPress",
+                () => {
+                    BackHandler.exitApp();
+                    return true; // prevents default back navigation
+                },
+            );
+            return () => subscription.remove();
+        }, []),
+    );
 
     const getCurrentUrduDate = () => {
         const now = new Date();
 
         // Convert English number to Urdu
         const toUrduNumber = (num: number) => {
-            return num.toString().split('').map(digit => urduNumbers[parseInt(digit)]).join('');
+            return num
+                .toString()
+                .split("")
+                .map((digit) => urduNumbers[parseInt(digit)])
+                .join("");
         };
 
         const day = now.getDate();
@@ -71,19 +108,21 @@ export default function HomeScreen() {
     const getCurrentEnglishDate = () => {
         const now = new Date();
         const options: Intl.DateTimeFormatOptions = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
         };
-        return now.toLocaleDateString('en-US', options);
+        return now.toLocaleDateString("en-US", options);
     };
 
     const getCurrentDate = () => {
-        return i18n.language === 'ur' ? getCurrentUrduDate() : getCurrentEnglishDate();
+        return i18n.language === "ur"
+            ? getCurrentUrduDate()
+            : getCurrentEnglishDate();
     };
 
-    const [currentDate, setCurrentDate] = useState(getCurrentDate())
+    const [currentDate, setCurrentDate] = useState(getCurrentDate());
 
     // Update date when language changes
     useEffect(() => {
@@ -96,8 +135,10 @@ export default function HomeScreen() {
             setWeather({
                 temp: params.temp as string,
                 condition: params.condition as string,
-                description: params.description ? params.description as string : '',
-                location: params.location as string
+                description: params.description
+                    ? (params.description as string)
+                    : "",
+                location: params.location as string,
             });
             return;
         }
@@ -105,18 +146,21 @@ export default function HomeScreen() {
         (async () => {
             const networkState = await Network.getNetworkStateAsync();
             if (!networkState.isConnected) {
-                setWeather(prev => ({
+                setWeather((prev) => ({
                     ...prev,
-                    location: 'No Internet',
-                    temp: '--',
-                    condition: 'Unknown'
+                    location: "No Internet",
+                    temp: "--",
+                    condition: "Unknown",
                 }));
                 return;
             }
 
             let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setWeather(prev => ({ ...prev, location: 'Permission Denied' }));
+            if (status !== "granted") {
+                setWeather((prev) => ({
+                    ...prev,
+                    location: "Permission Denied",
+                }));
                 return;
             }
 
@@ -127,10 +171,9 @@ export default function HomeScreen() {
 
     const fetchWeather = async (lat: number, lon: number) => {
         try {
-
             // fetch the weather information to show on home page
             const response = await fetch(
-                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPEN_WEATHER_API_URL}`
+                `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPEN_WEATHER_API_URL}`,
             );
             const data = await response.json();
             if (response.ok) {
@@ -138,7 +181,7 @@ export default function HomeScreen() {
                     temp: Math.round(data.main.temp).toString(),
                     condition: data.weather[0].main,
                     description: data.weather[0].description,
-                    location: data.name
+                    location: data.name,
                 });
             } else {
                 console.error("Weather API Error:", data.message);
@@ -150,22 +193,29 @@ export default function HomeScreen() {
 
     const getWeatherIcon = (condition: string) => {
         switch (condition.toLowerCase()) {
-            case 'clear': return '☀️';
-            case 'clouds': return '⛅';
-            case 'rain':
-            case 'drizzle': return '🌧️';
-            case 'thunderstorm': return '⛈️';
-            case 'snow': return '❄️';
-            case 'mist':
-            case 'smoke':
-            case 'haze':
-            case 'dust':
-            case 'fog':
-            case 'sand':
-            case 'ash':
-            case 'squall':
-            case 'tornado': return '☁️';
-            default: return '⛅';
+            case "clear":
+                return "☀️";
+            case "clouds":
+                return "⛅";
+            case "rain":
+            case "drizzle":
+                return "🌧️";
+            case "thunderstorm":
+                return "⛈️";
+            case "snow":
+                return "❄️";
+            case "mist":
+            case "smoke":
+            case "haze":
+            case "dust":
+            case "fog":
+            case "sand":
+            case "ash":
+            case "squall":
+            case "tornado":
+                return "☁️";
+            default:
+                return "⛅";
         }
     };
 
@@ -174,9 +224,30 @@ export default function HomeScreen() {
     const weatherIconScale = useSharedValue(1);
 
     const crops = [
-        { id: 'wheat', name: 'گندم', nameEng: 'Wheat', icon: wheatIcon, color: THEME_COLOR, image: require('../assets/images/wheat.png') },
-        { id: 'rice', name: 'چاول', nameEng: 'Rice', icon: riceIcon, color: THEME_COLOR, image: require('../assets/images/rice.png') },
-        { id: 'maize', name: 'مکئی', nameEng: 'Maize', icon: maizeIcon, color: THEME_COLOR, image: require('../assets/images/corn.png') },
+        {
+            id: "wheat",
+            name: "گندم",
+            nameEng: "Wheat",
+            icon: wheatIcon,
+            color: THEME_COLOR,
+            image: require("../assets/images/wheat.png"),
+        },
+        {
+            id: "rice",
+            name: "چاول",
+            nameEng: "Rice",
+            icon: riceIcon,
+            color: THEME_COLOR,
+            image: require("../assets/images/rice.png"),
+        },
+        {
+            id: "maize",
+            name: "مکئی",
+            nameEng: "Maize",
+            icon: maizeIcon,
+            color: THEME_COLOR,
+            image: require("../assets/images/corn.png"),
+        },
     ];
 
     useEffect(() => {
@@ -187,20 +258,20 @@ export default function HomeScreen() {
                 withTiming(-10, { duration: 100 }),
                 withTiming(10, { duration: 100 }),
                 withTiming(0, { duration: 100 }),
-                withTiming(0, { duration: 3000 }) // Pause between shakes
+                withTiming(0, { duration: 3000 }), // Pause between shakes
             ),
             -1, // Infinite repeat
-            false
+            false,
         );
 
         // Weather icon pulse animation
         weatherIconScale.value = withRepeat(
             withSequence(
                 withTiming(1.1, { duration: 1500 }),
-                withTiming(1, { duration: 1500 })
+                withTiming(1, { duration: 1500 }),
             ),
             -1,
-            true
+            true,
         );
     }, []);
 
@@ -271,29 +342,43 @@ export default function HomeScreen() {
                 </Svg>
 
                 {/* Header Content */}
-                <View style={[styles.headerContent, { paddingTop: insets.top + verticalScale(10) }]}>
+                <View
+                    style={[
+                        styles.headerContent,
+                        { paddingTop: insets.top + verticalScale(10) },
+                    ]}
+                >
                     {/* Left Side - Bell Icon and Language Toggle */}
                     <View style={styles.headerLeft}>
-                        <Animated.View entering={FadeInLeft.delay(300).springify()}>
+                        <Animated.View
+                            entering={FadeInLeft.delay(300).springify()}
+                        >
                             <TouchableOpacity style={styles.bellIcon}>
-                                <Animated.Text style={[styles.bellText, bellAnimatedStyle]}>
+                                <Animated.Text
+                                    style={[styles.bellText, bellAnimatedStyle]}
+                                >
                                     {bellIcon}
                                 </Animated.Text>
                             </TouchableOpacity>
                         </Animated.View>
 
                         {/* Language Toggle Button */}
-                        <Animated.View entering={FadeInLeft.delay(400).springify()}>
+                        <Animated.View
+                            entering={FadeInLeft.delay(400).springify()}
+                        >
                             <TouchableOpacity
                                 style={styles.languageToggle}
                                 onPress={() => {
-                                    const newLang = i18n.language === 'ur' ? 'en' : 'ur';
+                                    const newLang =
+                                        i18n.language === "ur" ? "en" : "ur";
                                     i18n.changeLanguage(newLang);
                                 }}
                                 activeOpacity={0.7}
                             >
                                 <Text style={styles.languageText}>
-                                    {i18n.language === 'en' ? 'اردو' : 'English'}
+                                    {i18n.language === "en"
+                                        ? "اردو"
+                                        : "English"}
                                 </Text>
                             </TouchableOpacity>
                         </Animated.View>
@@ -304,8 +389,22 @@ export default function HomeScreen() {
                         entering={FadeInRight.delay(300).springify()}
                         style={styles.headerTextContainer}
                     >
-                        <Text style={[styles.headerTitle, getHeaderFont(i18n.language)]}>{t("common.welcomeFarmer")}</Text>
-                        <Text style={[styles.headerDate, getRegularFont(i18n.language)]}>{currentDate}</Text>
+                        <Text
+                            style={[
+                                styles.headerTitle,
+                                getHeaderFont(i18n.language),
+                            ]}
+                        >
+                            {t("common.welcomeFarmer")}
+                        </Text>
+                        <Text
+                            style={[
+                                styles.headerDate,
+                                getRegularFont(i18n.language),
+                            ]}
+                        >
+                            {currentDate}
+                        </Text>
                     </Animated.View>
                 </View>
             </Animated.View>
@@ -316,21 +415,32 @@ export default function HomeScreen() {
                 style={styles.weatherCard}
             >
                 <View style={styles.weatherTop}>
-                    <Text style={styles.weatherLocation}>{weather.location}</Text>
-                    <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.weatherLocation}>
+                        {weather.location}
+                    </Text>
+                    <View style={{ alignItems: "center" }}>
                         <Animated.View
-                            style={[styles.weatherIcon, weatherIconAnimatedStyle]}
+                            style={[
+                                styles.weatherIcon,
+                                weatherIconAnimatedStyle,
+                            ]}
                         >
-                            <Text style={styles.weatherIconText}>{getWeatherIcon(weather.condition)}</Text>
+                            <Text style={styles.weatherIconText}>
+                                {getWeatherIcon(weather.condition)}
+                            </Text>
                         </Animated.View>
                         {weather.description ? (
-                            <Text style={styles.weatherDescription}>{weather.description}</Text>
+                            <Text style={styles.weatherDescription}>
+                                {weather.description}
+                            </Text>
                         ) : null}
                     </View>
                 </View>
                 <View style={styles.weatherBottom}>
                     <Text style={styles.weatherTemp}>{displayTemp}°</Text>
-                    <Text style={styles.weatherCondition}>{weather.condition.toUpperCase()}</Text>
+                    <Text style={styles.weatherCondition}>
+                        {weather.condition.toUpperCase()}
+                    </Text>
                 </View>
             </Animated.View>
 
@@ -341,20 +451,26 @@ export default function HomeScreen() {
                         key={crop.id}
                         entering={
                             index % 2 === 0
-                                ? SlideInRight.delay(700 + index * 150).springify()
-                                : SlideInLeft.delay(700 + index * 150).springify()
+                                ? SlideInRight.delay(
+                                      700 + index * 150,
+                                  ).springify()
+                                : SlideInLeft.delay(
+                                      700 + index * 150,
+                                  ).springify()
                         }
                     >
                         <TouchableOpacity
                             style={[
                                 styles.cropCard,
                                 { backgroundColor: crop.color },
-                                index % 2 === 0 ? styles.cropCardRight : styles.cropCardLeft
+                                index % 2 === 0
+                                    ? styles.cropCardRight
+                                    : styles.cropCardLeft,
                             ]}
                             onPress={() => {
                                 router.push({
-                                    pathname: '/selection',
-                                    params: { id: crop.id, name: crop.name }
+                                    pathname: "/selection",
+                                    params: { id: crop.id, name: crop.name },
                                 });
                             }}
                             activeOpacity={0.7}
@@ -362,8 +478,15 @@ export default function HomeScreen() {
                             {/* Text on inside edge, image placeholder on outside edge */}
                             {index % 2 === 0 ? (
                                 <>
-                                    <Text style={[styles.cropName, getHeaderFont(i18n.language)]}>
-                                        {i18n.language === 'ur' ? crop.name : crop.nameEng}
+                                    <Text
+                                        style={[
+                                            styles.cropName,
+                                            getHeaderFont(i18n.language),
+                                        ]}
+                                    >
+                                        {i18n.language === "ur"
+                                            ? crop.name
+                                            : crop.nameEng}
                                     </Text>
                                     <View style={styles.cropImagePlaceholder}>
                                         <Image
@@ -382,8 +505,15 @@ export default function HomeScreen() {
                                             resizeMode="contain"
                                         />
                                     </View>
-                                    <Text style={[styles.cropName, getHeaderFont(i18n.language)]}>
-                                        {i18n.language === 'ur' ? crop.name : crop.nameEng}
+                                    <Text
+                                        style={[
+                                            styles.cropName,
+                                            getHeaderFont(i18n.language),
+                                        ]}
+                                    >
+                                        {i18n.language === "ur"
+                                            ? crop.name
+                                            : crop.nameEng}
                                     </Text>
                                 </>
                             )}
@@ -399,18 +529,33 @@ export default function HomeScreen() {
             >
                 {/* Chat bot button */}
                 <TouchableOpacity
-                    style={styles.fab}
+                    style={styles.navButton}
                     onPress={() => router.push('/chat')}
-                    activeOpacity={0.85}
+                    activeOpacity={0.75}
                 >
-                    <Text style={styles.fabIcon}>🤖</Text>
+                    <View style={styles.voiceButton}>
+                        <Image
+                            source={require("../assets/icons/chatbot.png")}
+                            style={[styles.navIconImage, { tintColor: THEME_COLOR }]}
+                        />
+                    </View>
                 </TouchableOpacity>
+
+                {/* Spacer to keep layout balanced */}
+                <View style={styles.fab} />
 
                 <TouchableOpacity
                     style={styles.navButtonRight}
-                    onPress={() => router.push('/instructions')}
+                    onPress={() => router.push("/instructions")}
                 >
-                    <Text style={[styles.navTextRight, getHeaderFont(i18n.language)]}>{t("common.instructions")}</Text>
+                    <Text
+                        style={[
+                            styles.navTextRight,
+                            getHeaderFont(i18n.language),
+                        ]}
+                    >
+                        {t("common.instructions")}
+                    </Text>
                     <Text style={styles.navArrow}>{forwardButtonIcon}</Text>
                 </TouchableOpacity>
             </Animated.View>
@@ -421,27 +566,27 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     headerContainer: {
         height: verticalScale(200),
-        position: 'relative',
+        position: "relative",
     },
     svg: {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
         right: 0,
     },
     headerContent: {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
         right: 0,
         paddingHorizontal: horizontalScale(20),
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
     },
     headerLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         gap: horizontalScale(10),
     },
     bellIcon: {
@@ -449,66 +594,66 @@ const styles = StyleSheet.create({
     },
     bellText: {
         fontSize: moderateScale(20),
-        color: 'white',
+        color: "white",
     },
     languageToggle: {
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        backgroundColor: "rgba(255, 255, 255, 0.25)",
         paddingHorizontal: horizontalScale(12),
         paddingVertical: verticalScale(6),
         borderRadius: moderateScale(15),
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.4)',
+        borderColor: "rgba(255, 255, 255, 0.4)",
     },
     languageText: {
         fontSize: moderateScale(12),
-        fontWeight: '700',
-        color: 'white',
+        fontWeight: "700",
+        color: "white",
         letterSpacing: 0.5,
     },
     headerTextContainer: {
-        alignItems: 'flex-end',
+        alignItems: "flex-end",
     },
     weatherText: {
-        fontFamily: 'NotoSansArabic-Bold',
+        fontFamily: "NotoSansArabic-Bold",
         fontSize: moderateScale(16),
-        color: 'white',
-        textAlign: 'right',
+        color: "white",
+        textAlign: "right",
     },
     headerTitle: {
         fontSize: moderateScale(20),
-        color: 'white',
-        textAlign: 'right',
+        color: "white",
+        textAlign: "right",
     },
     headerDate: {
         fontSize: moderateScale(14),
-        color: 'rgba(255,255,255,0.9)',
+        color: "rgba(255,255,255,0.9)",
         marginTop: 3,
-        textAlign: 'right',
+        textAlign: "right",
     },
     weatherCard: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
         marginHorizontal: horizontalScale(30),
         marginTop: -verticalScale(60),
         padding: moderateScale(20),
         borderRadius: moderateScale(20),
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: "#e0e0e0",
     },
     weatherTop: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         marginBottom: verticalScale(10),
     },
     weatherLocation: {
         fontSize: moderateScale(16),
-        fontWeight: '600',
+        fontWeight: "600",
         flex: 1,
         marginRight: horizontalScale(10),
     },
     weatherIcon: {
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
     },
     weatherIconText: {
         fontSize: moderateScale(32),
@@ -518,17 +663,17 @@ const styles = StyleSheet.create({
     },
     weatherTemp: {
         fontSize: moderateScale(48),
-        fontWeight: 'bold',
+        fontWeight: "bold",
     },
     weatherCondition: {
         fontSize: moderateScale(14),
-        color: '#666',
+        color: "#666",
         letterSpacing: 1,
     },
     weatherDescription: {
         fontSize: moderateScale(12),
-        color: '#888',
-        textTransform: 'capitalize',
+        color: "#888",
+        textTransform: "capitalize",
     },
     cropsContainer: {
         flex: 1,
@@ -536,67 +681,67 @@ const styles = StyleSheet.create({
         gap: verticalScale(30),
     },
     cropCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
         padding: moderateScale(10),
         paddingHorizontal: horizontalScale(32),
         borderRadius: moderateScale(25),
         height: verticalScale(74),
-        width: '75%',
+        width: "75%",
     },
     cropCardLeft: {
-        alignSelf: 'flex-start',
+        alignSelf: "flex-start",
         marginLeft: -horizontalScale(20),
     },
     cropCardRight: {
-        alignSelf: 'flex-end',
+        alignSelf: "flex-end",
         marginRight: -horizontalScale(20),
     },
     cropName: {
         fontSize: moderateScale(22),
-        fontWeight: '300',
-        color: 'white',
+        fontWeight: "300",
+        color: "white",
         lineHeight: verticalScale(55),
     },
 
     bottomNav: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         paddingVertical: verticalScale(15),
         paddingHorizontal: horizontalScale(20),
-        backgroundColor: 'white',
+        backgroundColor: "white",
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
+        borderTopColor: "#e0e0e0",
     },
     navButton: {
-        alignItems: 'center',
+        alignItems: "center",
     },
     voiceButton: {
         width: horizontalScale(50),
         height: horizontalScale(50),
         borderRadius: horizontalScale(25),
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
     },
     navIconImage: {
-        width: horizontalScale(24),
-        height: horizontalScale(24),
+        width: horizontalScale(28),
+        height: horizontalScale(28),
     },
     navButtonRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         gap: horizontalScale(5),
     },
     navTextRight: {
         fontSize: moderateScale(16),
-        color: '#333',
-        fontWeight: '800',
+        color: "#333",
+        fontWeight: "800",
     },
     navArrow: {
         fontSize: moderateScale(20),
-        color: '#333',
+        color: "#333",
     },
     cropImagePlaceholder: {
         width: horizontalScale(60),
@@ -613,17 +758,5 @@ const styles = StyleSheet.create({
     fab: {
         width: moderateScale(48),
         height: moderateScale(48),
-        borderRadius: moderateScale(24),
-        backgroundColor: THEME_COLOR,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    fabIcon: {
-        fontSize: moderateScale(24),
     },
 });

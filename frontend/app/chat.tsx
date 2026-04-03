@@ -13,7 +13,12 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, {
+    FadeIn,
+    FadeInDown,
+    FadeInUp,
+    SlideInUp,
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -159,12 +164,16 @@ export default function ChatScreen() {
     const HEADER_HEIGHT = verticalScale(160);
 
     return (
+        <Animated.View entering={FadeIn.duration(600)} style={{ flex: 1 }}>
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: CREAM }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
             {/* ── Premium Gradient Header ── */}
-            <View style={[styles.headerWrapper, { height: HEADER_HEIGHT, paddingTop: insets.top }]}>
+            <Animated.View
+                entering={SlideInUp.duration(700).springify().damping(14)}
+                style={[styles.headerWrapper, { height: HEADER_HEIGHT, paddingTop: insets.top }]}
+            >
                 {/* Gradient fill */}
                 <LinearGradient
                     colors={[GRAD_START, GRAD_END]}
@@ -205,7 +214,7 @@ export default function ChatScreen() {
                         <Text style={[styles.agentSubtitle, getRegularFont('ur')]}>زرعی مشیر</Text>
                     </View>
                 </View>
-            </View>
+            </Animated.View>
 
             {/* ── Chat Body ── */}
             <FlatList
@@ -221,7 +230,7 @@ export default function ChatScreen() {
             {/* ── Action Area ── */}
             <View style={styles.actionArea}>
                 {/* Quick reply pills */}
-                <Animated.View entering={FadeInUp.duration(400)}>
+                <Animated.View entering={FadeInUp.duration(600).delay(200)}>
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -262,6 +271,7 @@ export default function ChatScreen() {
                 </View>
             </View>
         </KeyboardAvoidingView>
+        </Animated.View>
     );
 }
 
