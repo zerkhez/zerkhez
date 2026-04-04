@@ -116,12 +116,6 @@ export default function ImageAnalysisScreen() {
     };
 
     const handleAnalyze = async () => {
-        const networkState = await Network.getNetworkStateAsync();
-        if (!networkState.isConnected) {
-            Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
-            return;
-        }
-
         if (!sufficientPlotImage || !commonPlotImage) {
             Alert.alert(t('imageAnalysis.imagesRequired'), t('imageAnalysis.pleaseSelectBothImages'));
             return;
@@ -133,7 +127,7 @@ export default function ImageAnalysisScreen() {
         }
 
         const variety = VARIETY_MAPPING[typeName as string] || typeName;
-        
+
         if (useLocalProcessing) {
             setIsAnalyzing(true);
             try {
@@ -248,6 +242,12 @@ export default function ImageAnalysisScreen() {
         }
 
 
+
+        const networkState = await Network.getNetworkStateAsync();
+        if (!networkState.isConnected) {
+            Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
+            return;
+        }
 
         setIsAnalyzing(true);
 

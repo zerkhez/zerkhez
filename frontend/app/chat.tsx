@@ -427,8 +427,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: horizontalScale(12),
         paddingVertical: verticalScale(10),
         alignItems: 'center',
-        minWidth: horizontalScale(68),
-        gap: verticalScale(4),
+        gap: horizontalScale(6),
         borderWidth: 1,
         borderColor: GREEN_BORDER,
         shadowColor: '#000',
@@ -445,7 +444,6 @@ const styles = StyleSheet.create({
         color: TEXT_DARK,
         fontSize: moderateScale(13),
         fontWeight: '700',
-        flex: 1,
         textAlign: 'center',
     },
     cropTileChevron: {
