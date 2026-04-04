@@ -354,7 +354,7 @@ export default function HomeScreen() {
                         <Animated.View
                             entering={FadeInLeft.delay(300).springify()}
                         >
-                            <TouchableOpacity style={styles.bellIcon}>
+                            <TouchableOpacity style={styles.bellIcon} onPress={() => router.push('/notifications')}>
                                 <Animated.Text
                                     style={[styles.bellText, bellAnimatedStyle]}
                                 >

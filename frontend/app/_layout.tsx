@@ -52,6 +52,7 @@ export default function RootLayout() {
         <Stack.Screen name="sprout-instructions" />
         <Stack.Screen name="gobh-instructions" />
         <Stack.Screen name="language-select" />
+        <Stack.Screen name="notifications" />
         <Stack.Screen name="results" />
       </Stack>
       <StatusBar style="auto" />
