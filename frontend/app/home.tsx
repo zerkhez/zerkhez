@@ -59,6 +59,7 @@ export default function HomeScreen() {
     const params = useLocalSearchParams();
     const { t, i18n } = useTranslation();
     const insets = useSafeAreaInsets();
+    const isRTL = i18n.language === 'ur';
 
     const [weather, setWeather] = useState({
         temp: params.temp ? (params.temp as string) : "Loading...",
@@ -394,6 +395,7 @@ export default function HomeScreen() {
                             style={[
                                 styles.headerTitle,
                                 getHeaderFont(i18n.language),
+                                { textAlign: isRTL ? 'right' : 'left' },
                             ]}
                         >
                             {t("common.welcomeFarmer")}
@@ -402,6 +404,7 @@ export default function HomeScreen() {
                             style={[
                                 styles.headerDate,
                                 getRegularFont(i18n.language),
+                                { textAlign: isRTL ? 'right' : 'left' },
                             ]}
                         >
                             {currentDate}
@@ -632,13 +635,11 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: moderateScale(20),
         color: "white",
-        textAlign: "right",
     },
     headerDate: {
         fontSize: moderateScale(14),
         color: "rgba(255,255,255,0.9)",
         marginTop: 3,
-        textAlign: "right",
     },
     weatherCard: {
         backgroundColor: "white",

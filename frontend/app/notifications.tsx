@@ -154,7 +154,7 @@ export default function NotificationsScreen() {
                             tips.map((tip, index) => (
                                 <Animated.View key={tip.id} entering={FadeInUp.delay(150 + index * 80).springify()} style={styles.tipCard}>
                                     <Text style={styles.tipCropIcon}>{CROP_ICONS[tip.crop] || '🌱'}</Text>
-                                    <Text style={[styles.tipText, getRegularFont(lang)]}>
+                                    <Text style={[styles.tipText, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>
                                         {lang === 'ur' ? tip.ur : tip.en}
                                     </Text>
                                 </Animated.View>
@@ -178,8 +178,8 @@ export default function NotificationsScreen() {
                                         <View style={styles.historyLeft}>
                                             <Text style={styles.historyIcon}>{CROP_ICONS[entry.crop] || '🌱'}</Text>
                                             <View style={styles.historyInfo}>
-                                                <Text style={[styles.historyVariety, getHeaderFont(lang)]}>{entry.variety}</Text>
-                                                <Text style={[styles.historyDate, getRegularFont(lang)]}>{formatDate(entry.date)}</Text>
+                                                <Text style={[styles.historyVariety, getHeaderFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>{entry.variety}</Text>
+                                                <Text style={[styles.historyDate, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>{formatDate(entry.date)}</Text>
                                             </View>
                                         </View>
                                         <View style={styles.historyRight}>
@@ -204,13 +204,13 @@ export default function NotificationsScreen() {
                         {announcements.length > 0 ? (
                             announcements.map((item, index) => (
                                 <Animated.View key={item.id} entering={FadeInUp.delay(550 + index * 80).springify()} style={styles.announcementCard}>
-                                    <Text style={[styles.announcementTitle, getHeaderFont(lang)]}>
+                                    <Text style={[styles.announcementTitle, getHeaderFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>
                                         {lang === 'ur' ? item.title_ur : item.title_en}
                                     </Text>
-                                    <Text style={[styles.announcementBody, getRegularFont(lang)]}>
+                                    <Text style={[styles.announcementBody, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>
                                         {lang === 'ur' ? item.body_ur : item.body_en}
                                     </Text>
-                                    <Text style={[styles.announcementDate, getRegularFont(lang)]}>{formatDate(item.date)}</Text>
+                                    <Text style={[styles.announcementDate, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>{formatDate(item.date)}</Text>
                                 </Animated.View>
                             ))
                         ) : (

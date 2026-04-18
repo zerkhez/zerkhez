@@ -49,7 +49,7 @@ export default function RiceTutorialScreen() {
       <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
         <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
-          <Text style={[commonStyles.descriptionText, getRegularFont(i18n.language)]}>
+          <Text style={[commonStyles.descriptionText, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>
             {cropName} {t('common.watchVideo')}
           </Text>
 
@@ -62,7 +62,7 @@ export default function RiceTutorialScreen() {
               <Text style={styles.thumbnailEmoji}>📹</Text>
             </View>
             <View style={styles.videoInfo}>
-              <Text style={[styles.videoTitle, getRegularFont(i18n.language)]}>
+              <Text style={[styles.videoTitle, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>
                 {t('common.wayOfImage', { cropName })}
               </Text>
             </View>
