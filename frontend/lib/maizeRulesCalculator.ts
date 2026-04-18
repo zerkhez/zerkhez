@@ -38,23 +38,19 @@ export function calculate_fertilizer_needs(si: number, variety: string): {
     const isHybrid = varietyLower.includes('hybrid') || varietyLower.includes('ہائبرڈ');
 
     let n_rate = 0;
-    let need_fertilizer = false;
 
     if (si > 95) {
         return {
             need_of_fertilizer: false,
-            message: "آپ کی فصل کو اس وقت کھاد کی ضرورت نہیں ہے! لہذا، براہ کرم 10 دن بعد دوبارہ کوشش کریں۔",
             n_rate: 0,
             urea: 0,
             can: 0,
             ammonium_sulfate: 0
         };
     } else if (si >= 90 && si <= 95) {
-        need_fertilizer = true;
         n_rate = isHybrid ? 12.14 : 10.12;
     } else {
         // si < 90
-        need_fertilizer = true;
         n_rate = isHybrid ? 23.08 : 20.25;
     }
 
