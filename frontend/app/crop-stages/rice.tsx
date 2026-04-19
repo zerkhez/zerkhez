@@ -1,9 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles, verticalScale, horizontalScale, moderateScale, getHeaderFont, getRegularFont, getMediumFont } from '@/styles/common';
+import { commonStyles, verticalScale, horizontalScale, moderateScale, getRegularFont, getMediumFont } from '@/styles/common';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
 import { useTranslation } from 'react-i18next';
@@ -73,8 +72,8 @@ export default function CropStagesScreen() {
 
 const styles = StyleSheet.create({
     instructionText: {
-        fontSize: moderateScale(22),
-        color: 'black',
+        fontSize: moderateScale(18),
+        color: '#2a3510',
         marginTop: verticalScale(20),
         marginBottom: verticalScale(20),
         textAlign: 'center',
@@ -95,8 +94,8 @@ const styles = StyleSheet.create({
         borderColor: '#a3c970',
     },
     typeButtonText: {
-        fontSize: moderateScale(16), // Slightly larger font for readability
-        color: 'black',
+        fontSize: moderateScale(14),
+        color: '#1a2600',
         textAlign: 'center',
     },
 });

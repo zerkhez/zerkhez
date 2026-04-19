@@ -1,0 +1,370 @@
+// Purpose: Notifications screen showing farming tips, analysis history, and announcements.
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Network from 'expo-network';
+import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
+import { BACKEND_API_URL } from '@/constants';
+import { THEME_COLOR } from '@/constants/theme';
+import { FARMING_TIPS, getCurrentSeason, getDailyTips, FarmingTip } from '@/constants/farmingTips';
+import Header from '@/components/header';
+import Microphone from '@/components/microphone';
+import {
+    horizontalScale,
+    verticalScale,
+    moderateScale,
+    getHeaderFont,
+    getRegularFont,
+} from '@/styles/common';
+
+export interface AnalysisHistoryEntry {
+    id: string;
+    crop: string;
+    variety: string;
+    date: string;
+    n_rate: number;
+    urea: number;
+    can: number;
+    ammonium_sulfate: number;
+}
+
+interface Announcement {
+    id: string;
+    title_en: string;
+    title_ur: string;
+    body_en: string;
+    body_ur: string;
+    date: string;
+}
+
+const CROP_ICONS: Record<string, string> = {
+    rice: '🍚',
+    wheat: '🌾',
+    maize: '🌽',
+};
+
+export default function NotificationsScreen() {
+    const router = useRouter();
+    const { t, i18n } = useTranslation();
+    const lang = i18n.language;
+
+    const [tips, setTips] = useState<FarmingTip[]>([]);
+    const [history, setHistory] = useState<AnalysisHistoryEntry[]>([]);
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        try {
+            // Load history
+            const historyJson = await AsyncStorage.getItem('analysis_history');
+            const parsedHistory: AnalysisHistoryEntry[] = historyJson ? JSON.parse(historyJson) : [];
+            setHistory(parsedHistory);
+
+            // Select tips based on history or season
+            const analyzedCrops = [...new Set(parsedHistory.map(h => h.crop))];
+            let filteredTips: FarmingTip[];
+
+            if (analyzedCrops.length > 0) {
+                filteredTips = FARMING_TIPS.filter(tip => analyzedCrops.includes(tip.crop));
+            } else {
+                const season = getCurrentSeason();
+                filteredTips = FARMING_TIPS.filter(tip => tip.season === season);
+            }
+            setTips(getDailyTips(filteredTips, 3));
+
+            // Load announcements
+            await loadAnnouncements();
+        } catch (error) {
+            console.log('Error loading notification data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const loadAnnouncements = async () => {
+        try {
+            const networkState = await Network.getNetworkStateAsync();
+            if (networkState.isConnected) {
+                const response = await fetch(`${BACKEND_API_URL}/api/announcements`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setAnnouncements(data);
+                    await AsyncStorage.setItem('announcements_cache', JSON.stringify(data));
+                    return;
+                }
+            }
+        } catch {
+            // Fall through to cached
+        }
+
+        // Fallback to cache
+        try {
+            const cached = await AsyncStorage.getItem('announcements_cache');
+            if (cached) {
+                setAnnouncements(JSON.parse(cached));
+            }
+        } catch {
+            // No cache available
+        }
+    };
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        if (lang === 'ur') {
+            return date.toLocaleDateString('ur-PK', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    };
+
+    const handleHistoryPress = (entry: AnalysisHistoryEntry) => {
+        router.push({
+            pathname: '/analysis-results',
+            params: {
+                urea: entry.urea,
+                can: entry.can,
+                ammonium_sulfate: entry.ammonium_sulfate,
+                n_rate: Math.round(entry.n_rate),
+            },
+        });
+    };
+
+    return (
+        <SafeAreaView style={styles.container} edges={['top']}>
+            <Header text={t('notifications.title')} textSize={moderateScale(15)} />
+
+            <View style={styles.contentContainer}>
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+                    {/* ── Tips & Reminders ── */}
+                    <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="bulb-outline" size={moderateScale(20)} color={THEME_COLOR} />
+                            <Text style={[styles.sectionTitle, getHeaderFont(lang)]}>{t('notifications.tipsTitle')}</Text>
+                        </View>
+
+                        {tips.length > 0 ? (
+                            tips.map((tip, index) => (
+                                <Animated.View key={tip.id} entering={FadeInUp.delay(150 + index * 80).springify()} style={styles.tipCard}>
+                                    <Text style={styles.tipCropIcon}>{CROP_ICONS[tip.crop] || '🌱'}</Text>
+                                    <Text style={[styles.tipText, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>
+                                        {lang === 'ur' ? tip.ur : tip.en}
+                                    </Text>
+                                </Animated.View>
+                            ))
+                        ) : (
+                            <Text style={[styles.emptyText, getRegularFont(lang)]}>{t('notifications.noTips')}</Text>
+                        )}
+                    </Animated.View>
+
+                    {/* ── Analysis History ── */}
+                    <Animated.View entering={FadeInUp.delay(300).springify()} style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="time-outline" size={moderateScale(20)} color={THEME_COLOR} />
+                            <Text style={[styles.sectionTitle, getHeaderFont(lang)]}>{t('notifications.historyTitle')}</Text>
+                        </View>
+
+                        {history.length > 0 ? (
+                            history.slice(0, 10).map((entry, index) => (
+                                <Animated.View key={entry.id} entering={FadeInUp.delay(350 + index * 80).springify()}>
+                                    <TouchableOpacity style={styles.historyCard} onPress={() => handleHistoryPress(entry)} activeOpacity={0.7}>
+                                        <View style={styles.historyLeft}>
+                                            <Text style={styles.historyIcon}>{CROP_ICONS[entry.crop] || '🌱'}</Text>
+                                            <View style={styles.historyInfo}>
+                                                <Text style={[styles.historyVariety, getHeaderFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>{entry.variety}</Text>
+                                                <Text style={[styles.historyDate, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>{formatDate(entry.date)}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.historyRight}>
+                                            <Text style={[styles.historyNRate, getHeaderFont(lang)]}>{Math.round(entry.n_rate)}</Text>
+                                            <Text style={[styles.historyNRateLabel, getRegularFont(lang)]}>{t('notifications.nRate')}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </Animated.View>
+                            ))
+                        ) : (
+                            <Text style={[styles.emptyText, getRegularFont(lang)]}>{t('notifications.noHistory')}</Text>
+                        )}
+                    </Animated.View>
+
+                    {/* ── Announcements ── */}
+                    <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="megaphone-outline" size={moderateScale(20)} color={THEME_COLOR} />
+                            <Text style={[styles.sectionTitle, getHeaderFont(lang)]}>{t('notifications.announcementsTitle')}</Text>
+                        </View>
+
+                        {announcements.length > 0 ? (
+                            announcements.map((item, index) => (
+                                <Animated.View key={item.id} entering={FadeInUp.delay(550 + index * 80).springify()} style={styles.announcementCard}>
+                                    <Text style={[styles.announcementTitle, getHeaderFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>
+                                        {lang === 'ur' ? item.title_ur : item.title_en}
+                                    </Text>
+                                    <Text style={[styles.announcementBody, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>
+                                        {lang === 'ur' ? item.body_ur : item.body_en}
+                                    </Text>
+                                    <Text style={[styles.announcementDate, getRegularFont(lang), { textAlign: lang === 'ur' ? 'right' : 'left' }]}>{formatDate(item.date)}</Text>
+                                </Animated.View>
+                            ))
+                        ) : (
+                            <Text style={[styles.emptyText, getRegularFont(lang)]}>{t('notifications.noAnnouncements')}</Text>
+                        )}
+                    </Animated.View>
+
+                    <View style={{ height: verticalScale(100) }} />
+                </ScrollView>
+
+                <Microphone />
+            </View>
+        </SafeAreaView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: THEME_COLOR,
+    },
+    contentContainer: {
+        flex: 1,
+        backgroundColor: 'white',
+        borderTopLeftRadius: moderateScale(30),
+        borderTopRightRadius: moderateScale(30),
+        overflow: 'hidden',
+    },
+    scrollContent: {
+        padding: horizontalScale(20),
+        paddingTop: verticalScale(20),
+        paddingBottom: verticalScale(120),
+    },
+    section: {
+        marginBottom: verticalScale(24),
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: horizontalScale(8),
+        marginBottom: verticalScale(12),
+    },
+    sectionTitle: {
+        fontSize: moderateScale(17),
+        color: '#2a3510',
+    },
+
+    // ── Tips ──
+    tipCard: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        backgroundColor: '#f6f9f0',
+        borderRadius: moderateScale(14),
+        padding: moderateScale(14),
+        marginBottom: verticalScale(10),
+        borderLeftWidth: 3,
+        borderLeftColor: '#8BAA3D',
+        gap: horizontalScale(10),
+    },
+    tipCropIcon: {
+        fontSize: moderateScale(22),
+        marginTop: verticalScale(2),
+    },
+    tipText: {
+        flex: 1,
+        fontSize: moderateScale(13),
+        color: '#444',
+        lineHeight: moderateScale(22),
+    },
+
+    // ── History ──
+    historyCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+        borderRadius: moderateScale(14),
+        padding: moderateScale(14),
+        marginBottom: verticalScale(10),
+        borderWidth: 1,
+        borderColor: '#e8e8e8',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: verticalScale(1) },
+        shadowOpacity: 0.08,
+        shadowRadius: moderateScale(4),
+        elevation: 2,
+    },
+    historyLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: horizontalScale(10),
+        flex: 1,
+    },
+    historyIcon: {
+        fontSize: moderateScale(28),
+    },
+    historyInfo: {
+        flex: 1,
+    },
+    historyVariety: {
+        fontSize: moderateScale(14),
+        color: '#2a3510',
+    },
+    historyDate: {
+        fontSize: moderateScale(11),
+        color: '#888',
+        marginTop: verticalScale(2),
+    },
+    historyRight: {
+        alignItems: 'center',
+        backgroundColor: '#f6f9f0',
+        borderRadius: moderateScale(10),
+        paddingHorizontal: horizontalScale(12),
+        paddingVertical: verticalScale(6),
+    },
+    historyNRate: {
+        fontSize: moderateScale(18),
+        color: THEME_COLOR,
+    },
+    historyNRateLabel: {
+        fontSize: moderateScale(9),
+        color: '#888',
+    },
+
+    // ── Announcements ──
+    announcementCard: {
+        backgroundColor: '#fff9e6',
+        borderRadius: moderateScale(14),
+        padding: moderateScale(14),
+        marginBottom: verticalScale(10),
+        borderLeftWidth: 3,
+        borderLeftColor: '#e0c040',
+    },
+    announcementTitle: {
+        fontSize: moderateScale(14),
+        color: '#2a3510',
+        marginBottom: verticalScale(4),
+    },
+    announcementBody: {
+        fontSize: moderateScale(12),
+        color: '#555',
+        lineHeight: moderateScale(20),
+        marginBottom: verticalScale(6),
+    },
+    announcementDate: {
+        fontSize: moderateScale(10),
+        color: '#999',
+    },
+
+    // ── Empty state ──
+    emptyText: {
+        fontSize: moderateScale(13),
+        color: '#999',
+        textAlign: 'center',
+        paddingVertical: verticalScale(16),
+    },
+});

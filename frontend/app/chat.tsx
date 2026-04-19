@@ -13,7 +13,11 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import Animated, {
+    FadeIn,
+    FadeInDown,
+    FadeInUp,
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -159,12 +163,16 @@ export default function ChatScreen() {
     const HEADER_HEIGHT = verticalScale(160);
 
     return (
+        <Animated.View entering={FadeIn.duration(600)} style={{ flex: 1 }}>
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: CREAM }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
             {/* ── Premium Gradient Header ── */}
-            <View style={[styles.headerWrapper, { height: HEADER_HEIGHT, paddingTop: insets.top }]}>
+            <Animated.View
+                entering={FadeInDown.duration(700)}
+                style={[styles.headerWrapper, { height: HEADER_HEIGHT, paddingTop: insets.top }]}
+            >
                 {/* Gradient fill */}
                 <LinearGradient
                     colors={[GRAD_START, GRAD_END]}
@@ -184,8 +192,26 @@ export default function ChatScreen() {
                 </Svg>
 
                 {/* Close button top-left */}
-                <TouchableOpacity onPress={() => router.back()} style={[styles.closeBtn, { top: insets.top + verticalScale(10) }]}>
-                    <Text style={styles.closeBtnText}>✕</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        if (router.canGoBack()) {
+                            router.back();
+                        } else {
+                            router.replace('/home');
+                        }
+                    }}
+                    style={[styles.closeBtn, { top: insets.top + verticalScale(10) }]}
+                    activeOpacity={0.7}
+                >
+                    <Svg width={moderateScale(16)} height={moderateScale(16)} viewBox="0 0 24 24" fill="none">
+                        <Path
+                            d="M15 19l-7-7 7-7"
+                            stroke="rgba(255,255,255,0.85)"
+                            strokeWidth={2.5}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </Svg>
                 </TouchableOpacity>
 
                 {/* Centered agent info */}
@@ -196,7 +222,7 @@ export default function ChatScreen() {
                         <Text style={[styles.agentSubtitle, getRegularFont('ur')]}>زرعی مشیر</Text>
                     </View>
                 </View>
-            </View>
+            </Animated.View>
 
             {/* ── Chat Body ── */}
             <FlatList
@@ -212,7 +238,7 @@ export default function ChatScreen() {
             {/* ── Action Area ── */}
             <View style={styles.actionArea}>
                 {/* Quick reply pills */}
-                <Animated.View entering={FadeInUp.duration(400)}>
+                <Animated.View entering={FadeInUp.duration(600).delay(200)}>
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -253,6 +279,7 @@ export default function ChatScreen() {
                 </View>
             </View>
         </KeyboardAvoidingView>
+        </Animated.View>
     );
 }
 
@@ -276,18 +303,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: horizontalScale(16),
         zIndex: 20,
-        padding: moderateScale(6),
         backgroundColor: 'rgba(255,255,255,0.15)',
-        borderRadius: moderateScale(20),
-        width: moderateScale(32),
-        height: moderateScale(32),
+        borderRadius: moderateScale(12),
+        width: moderateScale(38),
+        height: moderateScale(38),
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    closeBtnText: {
-        color: 'rgba(255,255,255,0.85)',
-        fontSize: moderateScale(14),
-        fontWeight: 'bold',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.25)',
     },
     agentInfo: {
         alignItems: 'center',
@@ -404,8 +427,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: horizontalScale(12),
         paddingVertical: verticalScale(10),
         alignItems: 'center',
-        minWidth: horizontalScale(68),
-        gap: verticalScale(4),
+        gap: horizontalScale(6),
         borderWidth: 1,
         borderColor: GREEN_BORDER,
         shadowColor: '#000',
@@ -422,7 +444,6 @@ const styles = StyleSheet.create({
         color: TEXT_DARK,
         fontSize: moderateScale(13),
         fontWeight: '700',
-        flex: 1,
         textAlign: 'center',
     },
     cropTileChevron: {

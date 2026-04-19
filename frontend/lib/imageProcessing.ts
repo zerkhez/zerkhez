@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import { File } from 'expo-file-system/next';
 import jpeg from 'jpeg-js';
 import { Buffer } from 'buffer';
 
@@ -73,7 +73,8 @@ async function processImageWeb(uri: string): Promise<ImageStats> {
 
 async function processImageNative(uri: string): Promise<ImageStats> {
     try {
-        const base64Str = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
+        const file = new File(uri);
+        const base64Str = await file.base64();
         const imgBuffer = Buffer.from(base64Str, 'base64');
         const rawImageData = jpeg.decode(imgBuffer, { useTArray: true, maxMemoryUsageInMB: 1024 });
         

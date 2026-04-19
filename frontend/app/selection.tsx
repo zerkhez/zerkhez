@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonTexts } from '@/constants/commonText';
 import { commonStyles, verticalScale, getHeaderFont } from '@/styles/common';
 
 export default function SelectionScreen() {

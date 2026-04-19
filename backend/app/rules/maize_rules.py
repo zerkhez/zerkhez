@@ -32,8 +32,7 @@ def calculate_fertilizer_needs(si, variety):
     
     if si > 95:
         return {
-            "need_of_fertilizer": False,
-            "message": "آپ کی فصل کو اس وقت کھاد کی ضرورت نہیں ہے! لہذا، براہ کرم 10 دن بعد دوبارہ کوشش کریں۔"
+            "need_of_fertilizer": False
         }
         
     elif 90 <= si <= 95:

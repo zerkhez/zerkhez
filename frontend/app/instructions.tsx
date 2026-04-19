@@ -1,5 +1,4 @@
 import Header from "@/components/header";
-import { commonTexts } from "@/constants/commonText";
 import { THEME_COLOR } from "@/constants/theme";
 import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from "@/styles/common";
 import { useRouter } from "expo-router";
@@ -148,13 +147,13 @@ export default function InstructionsScreen() {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    fontSize: moderateScale(24),
+    fontSize: moderateScale(20),
     fontWeight: "bold",
-    color: "#333",
+    color: "#2a3510",
     marginBottom: verticalScale(8),
   },
   sectionSubtitle: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
     color: "#666",
     marginBottom: verticalScale(24),
   },

@@ -11,11 +11,17 @@ import {
     calculate_pyp, calculate_ri, calculate_n_rate, calculate_fertilizers 
 } from '@/lib/riceRulesCalculator';
 import { 
-    calculate_wheat_ndvi, calculate_wheat_iey, calculate_wheat_pyp, calculate_wheat_n_rate
+    calculate_ndvi as calculate_wheat_ndvi, 
+    calculate_iey as calculate_wheat_iey, 
+    calculate_pyp as calculate_wheat_pyp, 
+    calculate_n_rate as calculate_wheat_n_rate
 } from '@/lib/wheatRulesCalculator';
 import {
-    calculate_maize_spad, calculate_maize_si, calculate_maize_fertilizer_needs
+    calculate_spad as calculate_maize_spad, 
+    calculate_si as calculate_maize_si, 
+    calculate_fertilizer_needs as calculate_maize_fertilizer_needs
 } from '@/lib/maizeRulesCalculator';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
@@ -43,6 +49,28 @@ export default function ImageAnalysisScreen() {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [useLocalProcessing, setUseLocalProcessing] = useState(true);
+
+    const saveToHistory = async (n_rate: number, urea: number, can: number, ammonium_sulfate: number) => {
+        try {
+            const entry = {
+                id: Date.now().toString(),
+                crop: id as string,
+                variety: (VARIETY_MAPPING[typeName as string] || typeName) as string,
+                date: new Date().toISOString(),
+                n_rate,
+                urea,
+                can,
+                ammonium_sulfate,
+            };
+            const existing = await AsyncStorage.getItem('analysis_history');
+            const history = existing ? JSON.parse(existing) : [];
+            history.unshift(entry);
+            if (history.length > 50) history.length = 50;
+            await AsyncStorage.setItem('analysis_history', JSON.stringify(history));
+        } catch (err) {
+            console.log('Error saving history:', err);
+        }
+    };
 
     const handleImageSelection = async (target: 'sufficient' | 'common') => {
         const useCamera = mode === 'camera';
@@ -111,12 +139,6 @@ export default function ImageAnalysisScreen() {
     };
 
     const handleAnalyze = async () => {
-        const networkState = await Network.getNetworkStateAsync();
-        if (!networkState.isConnected) {
-            Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
-            return;
-        }
-
         if (!sufficientPlotImage || !commonPlotImage) {
             Alert.alert(t('imageAnalysis.imagesRequired'), t('imageAnalysis.pleaseSelectBothImages'));
             return;
@@ -128,7 +150,7 @@ export default function ImageAnalysisScreen() {
         }
 
         const variety = VARIETY_MAPPING[typeName as string] || typeName;
-        
+
         if (useLocalProcessing) {
             setIsAnalyzing(true);
             try {
@@ -223,6 +245,7 @@ export default function ImageAnalysisScreen() {
                 }
                 
                 if (recommendations) {
+                    await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
                     router.push({
                         pathname: '/analysis-results',
                         params: {
@@ -239,6 +262,14 @@ export default function ImageAnalysisScreen() {
             } finally {
                 setIsAnalyzing(false);
             }
+            return;
+        }
+
+
+
+        const networkState = await Network.getNetworkStateAsync();
+        if (!networkState.isConnected) {
+            Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
             return;
         }
 
@@ -293,13 +324,15 @@ export default function ImageAnalysisScreen() {
                 if (data.recommendations_kg_acre) {
                     const recs = data.recommendations_kg_acre;
                     const calcs = data.calculations;
+                    const nRate = calcs?.N_rate_kg_ha ? Math.round(calcs.N_rate_kg_ha) : 0;
+                    await saveToHistory(nRate, recs.Urea, recs.CAN, recs.Ammonium_Sulfate);
                     router.push({
                         pathname: '/analysis-results',
                         params: {
                             urea: recs.Urea,
                             can: recs.CAN,
                             ammonium_sulfate: recs.Ammonium_Sulfate,
-                            n_rate: calcs?.N_rate_kg_ha ? Math.round(calcs.N_rate_kg_ha) : 0
+                            n_rate: nRate
                         }
                     });
                 } else {
@@ -402,6 +435,7 @@ export default function ImageAnalysisScreen() {
                         </TouchableOpacity>
                     </Animated.View>
 
+                    <View style={{ height: verticalScale(100), width: '100%' }} />
                 </ScrollView>
 
                 {/* Mic Button */}
@@ -466,6 +500,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         padding: moderateScale(30),
         paddingTop: verticalScale(20),
+        paddingBottom: verticalScale(120),
         alignItems: 'center',
         gap: verticalScale(20),
     },

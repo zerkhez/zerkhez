@@ -92,6 +92,17 @@
         "urea": "Urea:",
         "can": "CAN (Calcium Ammonium Nitrate):"
     },
+    "notifications": {
+        "title": "Notifications",
+        "tipsTitle": "Tips & Reminders",
+        "historyTitle": "Analysis History",
+        "announcementsTitle": "Announcements",
+        "noTips": "No tips available right now.",
+        "noHistory": "No analysis history yet. Analyze your crop images to see results here.",
+        "noAnnouncements": "No announcements at the moment.",
+        "kgPerAcre": "kg/acre",
+        "nRate": "N-Rate"
+    },
     "results": {
         "recommendedNitrogenRate": "Recommended Nitrogen Rate:",
         "perHectare": "Kilograms per Hectare",
