@@ -31,18 +31,18 @@ export default function PrePlantingInstructionsScreen() {
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                    <Text style={[commonStyles.packageInstruction, getRegularFont(i18n.language)]}>
+                    <Text style={[commonStyles.packageInstruction, getRegularFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                         {t("wheat.plantingInstructions.packageText")}
                     </Text>
 
                     {packages.map((pkg, index) => (
                         <View key={index} style={commonStyles.packageContainer}>
-                            <Text style={[commonStyles.packageTitle, getHeaderFont(i18n.language)]}>{pkg.title}</Text>
-                            <Text style={[commonStyles.packageText, getRegularFont(i18n.language)]}>{pkg.text}</Text>
+                            <Text style={[commonStyles.packageTitle, getHeaderFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>{pkg.title}</Text>
+                            <Text style={[commonStyles.packageText, getRegularFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>{pkg.text}</Text>
                         </View>
                     ))}
 
-                    <Text style={[commonStyles.noteText, getRegularFont(i18n.language)]}>
+                    <Text style={[commonStyles.noteText, getRegularFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                         {t("wheat.plantingInstructions.note")}
                     </Text>
 
@@ -57,7 +57,7 @@ export default function PrePlantingInstructionsScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language)]}>
+                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                                 {t("common.createPackage")}
                             </Text>
                         </TouchableOpacity>

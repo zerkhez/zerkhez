@@ -23,25 +23,25 @@ export default function PrePlantingInstructionsScreen() {
             {/* Content Container */}
             <Animated.View entering={FadeInUp.delay(200).duration(600).springify()} style={commonStyles.contentContainer}>
                 <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
-                    <Text style={[commonStyles.packageInstruction, getRegularFont(i18n.language)]}>
+                    <Text style={[commonStyles.packageInstruction, getRegularFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                         {t("maize.prePlantingInstructions.packageText")}
                     </Text>
 
                     <View style={commonStyles.packageContainer}>
-                        <Text style={[commonStyles.packageTitle, getHeaderFont(i18n.language)]}>{t("packages.package1")}</Text>
-                        <Text style={[commonStyles.packageText, getRegularFont(i18n.language)]}>
+                        <Text style={[commonStyles.packageTitle, getHeaderFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>{t("packages.package1")}</Text>
+                        <Text style={[commonStyles.packageText, getRegularFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                             {t("maize.prePlantingInstructions.package1")}
                         </Text>
                     </View>
 
                     <View style={commonStyles.packageContainer}>
-                        <Text style={[commonStyles.packageTitle, getHeaderFont(i18n.language)]}>{t("packages.package2")}</Text>
-                        <Text style={[commonStyles.packageText, getRegularFont(i18n.language)]}>
+                        <Text style={[commonStyles.packageTitle, getHeaderFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>{t("packages.package2")}</Text>
+                        <Text style={[commonStyles.packageText, getRegularFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                             {t("maize.prePlantingInstructions.package2")}
                         </Text>
                     </View>
 
-                    <Text style={[commonStyles.noteText, getRegularFont(i18n.language)]}>
+                    <Text style={[commonStyles.noteText, getRegularFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                         {t("maize.prePlantingInstructions.note")}
                     </Text>
 
@@ -56,7 +56,7 @@ export default function PrePlantingInstructionsScreen() {
                             }}
                             activeOpacity={0.8}
                         >
-                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language)]}>
+                            <Text style={[commonStyles.actionButtonText, getHeaderFont(i18n.language), i18n.language === 'ur' && { textAlign: 'right' }]}>
                                 {t("common.createPackage")}
                             </Text>
                         </TouchableOpacity>
