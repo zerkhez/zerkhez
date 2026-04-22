@@ -132,3 +132,7 @@ backend/*.sqlite3
 backend/*.tmp
 backend/*.temp
 node_modules
+
+
+# Claude
+.claude/

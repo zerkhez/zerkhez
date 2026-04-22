@@ -755,13 +755,13 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     cropImagePlaceholder: {
-        width: horizontalScale(60),
-        height: horizontalScale(60),
+        width: horizontalScale(70),
+        height: horizontalScale(70),
         borderRadius: moderateScale(10),
     },
     cropImage: {
-        width: horizontalScale(80),
-        height: horizontalScale(80),
+        width: horizontalScale(92),
+        height: horizontalScale(92),
         marginLeft: -horizontalScale(15),
         marginRight: horizontalScale(20),
         marginTop: -verticalScale(40),
