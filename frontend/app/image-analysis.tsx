@@ -49,7 +49,7 @@ export default function ImageAnalysisScreen() {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [useLocalProcessing, setUseLocalProcessing] = useState(true);
-    const [offlineModalVisible, setOfflineModalVisible] = useState(false);
+    const [offlineToastVisible, setOfflineToastVisible] = useState(false);
 
     const saveToHistory = async (n_rate: number, urea: number, can: number, ammonium_sulfate: number) => {
         try {
@@ -170,6 +170,7 @@ export default function ImageAnalysisScreen() {
             const recommendations = calculate_fertilizers(final_n_rate);
 
             await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
+            await new Promise(resolve => setTimeout(resolve, 2000));
             router.push({
                 pathname: '/analysis-results',
                 params: {
@@ -204,7 +205,9 @@ export default function ImageAnalysisScreen() {
         if (id === 'wheat') {
             const networkState = await Network.getNetworkStateAsync();
             if (!networkState.isConnected) {
-                setOfflineModalVisible(true);
+                setOfflineToastVisible(true);
+                setTimeout(() => setOfflineToastVisible(false), 4000);
+                processWheatLocally();
                 return;
             }
             // Internet available → fall through to remote processing below
@@ -460,34 +463,15 @@ export default function ImageAnalysisScreen() {
 
                 {/* Mic Button */}
                 <Microphone />
-            </View>
 
-            {/* Offline Mode Notification Modal */}
-            <Modal
-                transparent={true}
-                visible={offlineModalVisible}
-                animationType="fade"
-                onRequestClose={() => setOfflineModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <Animated.View entering={ZoomIn.springify()} style={styles.modalContent}>
-                        <View style={[styles.iconContainer, { backgroundColor: '#e07b2a' }]}>
-                            <Ionicons name="wifi-outline" size={40} color="white" />
-                        </View>
-                        <Text style={[styles.modalTitle, { color: '#e07b2a' }]}>{t('imageAnalysis.offlineMode')}</Text>
-                        <Text style={styles.modalMessage}>{t('imageAnalysis.offlineModeMessage')}</Text>
-                        <TouchableOpacity
-                            style={[styles.closeButton, { backgroundColor: '#e07b2a' }]}
-                            onPress={() => {
-                                setOfflineModalVisible(false);
-                                processWheatLocally();
-                            }}
-                        >
-                            <Text style={styles.closeButtonText}>{t('imageAnalysis.continueOffline')}</Text>
-                        </TouchableOpacity>
+                {/* Offline Toast */}
+                {offlineToastVisible && (
+                    <Animated.View entering={FadeInDown.springify()} style={styles.offlineToast}>
+                        <Ionicons name="wifi-outline" size={moderateScale(20)} color="white" />
+                        <Text style={styles.offlineToastText}>{t('imageAnalysis.offlineModeMessage')}</Text>
                     </Animated.View>
-                </View>
-            </Modal>
+                )}
+            </View>
 
             {/* Custom Alert Modal */}
             <Modal
@@ -651,6 +635,32 @@ const styles = StyleSheet.create({
         width: horizontalScale(30),
         height: horizontalScale(30),
         tintColor: 'white',
+    },
+    offlineToast: {
+        position: 'absolute',
+        top: verticalScale(15),
+        left: horizontalScale(20),
+        right: horizontalScale(20),
+        backgroundColor: '#e07b2a',
+        borderRadius: moderateScale(12),
+        paddingVertical: verticalScale(12),
+        paddingHorizontal: horizontalScale(16),
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: horizontalScale(10),
+        zIndex: 100,
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: verticalScale(2) },
+        shadowOpacity: 0.3,
+        shadowRadius: moderateScale(4),
+    },
+    offlineToastText: {
+        fontFamily: 'NotoSansArabic-Regular',
+        fontSize: moderateScale(12),
+        color: 'white',
+        flex: 1,
+        textAlign: 'right',
     },
     modalOverlay: {
         flex: 1,
