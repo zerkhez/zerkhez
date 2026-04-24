@@ -2,7 +2,7 @@
 // 
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal, Switch } from 'react-native';
-import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
+import Animated, { FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { processImageStats } from '@/lib/imageProcessing';
@@ -27,10 +27,10 @@ import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
 import * as Network from 'expo-network';
 import { THEME_COLOR } from '@/constants/theme';
-import { commonTexts, VARIETY_MAPPING, imageAnalysisTexts } from '@/constants/commonText';
+import { VARIETY_MAPPING } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
+import { horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -38,7 +38,7 @@ export default function ImageAnalysisScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { t } = useTranslation();
-    const { mode, typeName, dat, id, name } = params;
+    const { mode, typeName, dat, id } = params;
 
 
 
@@ -49,7 +49,7 @@ export default function ImageAnalysisScreen() {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [useLocalProcessing, setUseLocalProcessing] = useState(true);
-    const [offlineToastVisible, setOfflineToastVisible] = useState(false);
+    const [offlineModalVisible, setOfflineModalVisible] = useState(false);
 
     const saveToHistory = async (n_rate: number, urea: number, can: number, ammonium_sulfate: number) => {
         try {
@@ -85,7 +85,7 @@ export default function ImageAnalysisScreen() {
                     return;
                 }
                 result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    mediaTypes: ['images'],
                     allowsEditing: true,
                     aspect: [4, 3],
                     quality: 1,
@@ -97,7 +97,7 @@ export default function ImageAnalysisScreen() {
                     return;
                 }
                 result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    mediaTypes: ['images'],
                     allowsEditing: true,
                     aspect: [4, 3],
                     quality: 1,
@@ -170,7 +170,6 @@ export default function ImageAnalysisScreen() {
             const recommendations = calculate_fertilizers(final_n_rate);
 
             await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
-            await new Promise(resolve => setTimeout(resolve, 2000));
             router.push({
                 pathname: '/analysis-results',
                 params: {
@@ -205,9 +204,7 @@ export default function ImageAnalysisScreen() {
         if (id === 'wheat') {
             const networkState = await Network.getNetworkStateAsync();
             if (!networkState.isConnected) {
-                setOfflineToastVisible(true);
-                setTimeout(() => setOfflineToastVisible(false), 4000);
-                processWheatLocally();
+                setOfflineModalVisible(true);
                 return;
             }
             // Internet available → fall through to remote processing below
@@ -464,14 +461,38 @@ export default function ImageAnalysisScreen() {
                 {/* Mic Button */}
                 <Microphone />
 
-                {/* Offline Toast */}
-                {offlineToastVisible && (
-                    <Animated.View entering={FadeInDown.springify()} style={styles.offlineToast}>
-                        <Ionicons name="wifi-outline" size={moderateScale(20)} color="white" />
-                        <Text style={styles.offlineToastText}>{t('imageAnalysis.offlineModeMessage')}</Text>
-                    </Animated.View>
-                )}
             </View>
+
+            {/* Offline Mode Popup */}
+            <Modal
+                transparent={true}
+                visible={offlineModalVisible}
+                animationType="fade"
+                onRequestClose={() => setOfflineModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <Animated.View entering={ZoomIn.springify()} style={styles.offlineModalContent}>
+                        <View style={styles.offlineModalBody}>
+                            <View style={styles.offlineIconCircle}>
+                                <Ionicons name="wifi-outline" size={moderateScale(20)} color="white" />
+                            </View>
+                            <View style={styles.offlineTextContainer}>
+                                <Text style={styles.offlineModalTitle}>{t('imageAnalysis.offlineMode')}</Text>
+                                <Text style={styles.offlineModalMessage}>{t('imageAnalysis.offlineModeMessage')}</Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity
+                            style={styles.offlineButton}
+                            onPress={() => {
+                                setOfflineModalVisible(false);
+                                processWheatLocally();
+                            }}
+                        >
+                            <Text style={styles.offlineButtonText}>{t('imageAnalysis.continueOffline')}</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </View>
+            </Modal>
 
             {/* Custom Alert Modal */}
             <Modal
@@ -636,31 +657,67 @@ const styles = StyleSheet.create({
         height: horizontalScale(30),
         tintColor: 'white',
     },
-    offlineToast: {
-        position: 'absolute',
-        top: verticalScale(15),
-        left: horizontalScale(20),
-        right: horizontalScale(20),
-        backgroundColor: '#e07b2a',
-        borderRadius: moderateScale(12),
-        paddingVertical: verticalScale(12),
-        paddingHorizontal: horizontalScale(16),
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: horizontalScale(10),
-        zIndex: 100,
+    offlineModalContent: {
+        width: '85%',
+        backgroundColor: '#FFFDE7',
+        borderRadius: moderateScale(16),
+        borderLeftWidth: moderateScale(5),
+        borderLeftColor: '#F5A623',
+        padding: moderateScale(20),
         elevation: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: verticalScale(2) },
-        shadowOpacity: 0.3,
-        shadowRadius: moderateScale(4),
+        shadowOffset: { width: 0, height: verticalScale(4) },
+        shadowOpacity: 0.2,
+        shadowRadius: moderateScale(8),
     },
-    offlineToastText: {
-        fontFamily: 'NotoSansArabic-Regular',
-        fontSize: moderateScale(12),
+    offlineModalBody: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: horizontalScale(12),
+        marginBottom: verticalScale(20),
+    },
+    offlineIconCircle: {
+        width: moderateScale(36),
+        height: moderateScale(36),
+        borderRadius: moderateScale(18),
+        backgroundColor: '#F5A623',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: verticalScale(2),
+    },
+    offlineExclamation: {
         color: 'white',
+        fontSize: moderateScale(20),
+        fontFamily: 'NotoSansArabic-Bold',
+        lineHeight: moderateScale(24),
+    },
+    offlineTextContainer: {
         flex: 1,
+    },
+    offlineModalTitle: {
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(15),
+        color: '#B45309',
+        marginBottom: verticalScale(6),
         textAlign: 'right',
+    },
+    offlineModalMessage: {
+        fontFamily: 'NotoSansArabic-Regular',
+        fontSize: moderateScale(13),
+        color: '#78350F',
+        textAlign: 'right',
+        lineHeight: verticalScale(22),
+    },
+    offlineButton: {
+        backgroundColor: '#F5A623',
+        paddingVertical: verticalScale(10),
+        borderRadius: moderateScale(25),
+        alignItems: 'center',
+    },
+    offlineButtonText: {
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(14),
+        color: 'white',
     },
     modalOverlay: {
         flex: 1,
