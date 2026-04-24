@@ -192,12 +192,16 @@ export default function ImageAnalysisScreen() {
                 recommendations = { Urea: needs.urea, CAN: needs.can, Ammonium_Sulfate: needs.ammonium_sulfate };
             }
 
+            console.log("LOCAL PROCESS | id:", id, "| n_rate:", final_n_rate, "| recommendations:", recommendations);
+
             if (recommendations) {
                 await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
                 router.push({
                     pathname: '/analysis-results',
                     params: { urea: recommendations.Urea, can: recommendations.CAN, ammonium_sulfate: recommendations.Ammonium_Sulfate, n_rate: Math.round(final_n_rate) }
                 });
+            } else {
+                Alert.alert(t('imageAnalysis.error'), `Unsupported crop: ${id}`);
             }
         } catch (err: any) {
             console.log("LOCAL PROCESS ERROR:", err);
@@ -369,7 +373,7 @@ export default function ImageAnalysisScreen() {
                             style={styles.offlineButton}
                             onPress={() => {
                                 setOfflineModalVisible(false);
-
+                                setTimeout(() => processLocally(), 300);
                             }}
                         >
                             <Text style={styles.offlineButtonText}>{t('imageAnalysis.continueOffline')}</Text>
