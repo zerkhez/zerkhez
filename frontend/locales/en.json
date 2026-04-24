@@ -85,7 +85,10 @@
         "invalidServerResponse": "Invalid response from server",
         "noFertilizerNeeded": "No Fertilizer Needed",
         "cropDoesNotNeedFertilizer": "Your crop does not need fertilizer at this time! Therefore, please try again after 10 days.",
-        "okay": "Okay"
+        "okay": "Okay",
+        "offlineMode": "Offline Mode",
+        "offlineModeMessage": "Internet service is not available. Results will be calculated using offline functionality.",
+        "continueOffline": "Continue"
     },
     "fertilizers": {
         "ammonium_sulfate": "Ammonium Sulfate:",
