@@ -529,7 +529,7 @@ export default function HomeScreen() {
             {/* Bottom Navigation - Fade in */}
             <Animated.View
                 entering={FadeInUp.delay(1200).springify()}
-                style={styles.bottomNav}
+                style={[styles.bottomNav, { paddingBottom: insets.bottom + verticalScale(15) }]}
             >
                 {/* Chat bot button */}
                 <TouchableOpacity
@@ -720,7 +720,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingVertical: verticalScale(15),
+        paddingTop: verticalScale(15),
         paddingHorizontal: horizontalScale(20),
         backgroundColor: "white",
         borderTopWidth: 1,
