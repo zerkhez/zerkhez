@@ -1,7 +1,7 @@
 // Purpose: Get images as input from user and call the api to upload images to do analysis.
 // 
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal, Switch } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal } from 'react-native';
 import Animated, { FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
@@ -48,7 +48,6 @@ export default function ImageAnalysisScreen() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    const [useLocalProcessing, setUseLocalProcessing] = useState(true);
     const [offlineModalVisible, setOfflineModalVisible] = useState(false);
 
     const saveToHistory = async (n_rate: number, urea: number, can: number, ammonium_sulfate: number) => {
@@ -139,46 +138,67 @@ export default function ImageAnalysisScreen() {
         );
     };
 
-    const processWheatLocally = async () => {
+    const processLocally = async () => {
         if (!sufficientPlotImage || !commonPlotImage) return;
+        const variety = VARIETY_MAPPING[typeName as string] || typeName;
         setIsAnalyzing(true);
         try {
             const kaafiStats = await processImageStats(sufficientPlotImage);
             const aamStats = await processImageStats(commonPlotImage);
 
-            const formula = "2G-B-R";
-            const gi_nl = calculate_gi(formula, kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
-            const gi_t = calculate_gi(formula, aamStats.mean_rgb[0], aamStats.mean_rgb[1], aamStats.mean_rgb[2]);
+            let recommendations: { Urea: number, CAN: number, Ammonium_Sulfate: number } | null = null;
+            let final_n_rate = 0;
 
-            const x_nl = gi_nl * kaafiStats.ratio;
-            const x_t = gi_t * aamStats.ratio;
-
-            const ndvi_nl = calculate_wheat_ndvi(x_nl);
-            const ndvi_t = calculate_wheat_ndvi(x_t);
-
-            const datValue = Number(dat);
-            if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
-                Alert.alert(t('imageAnalysis.error'), "Invalid DAS");
-                return;
-            }
-            const iey = calculate_wheat_iey(ndvi_t, datValue);
-            const pyp = calculate_wheat_pyp(iey);
-            const ri = calculate_ri(ndvi_nl, ndvi_t);
-            const pypn = pyp * ri;
-
-            const final_n_rate = calculate_wheat_n_rate(pypn, pyp);
-            const recommendations = calculate_fertilizers(final_n_rate);
-
-            await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
-            router.push({
-                pathname: '/analysis-results',
-                params: {
-                    urea: recommendations.Urea,
-                    can: recommendations.CAN,
-                    ammonium_sulfate: recommendations.Ammonium_Sulfate,
-                    n_rate: Math.round(final_n_rate)
+            if (id === 'rice') {
+                if (!VARIETY_PARAMS[variety as string]) {
+                    Alert.alert(t('imageAnalysis.error'), `Unknown variety: ${variety}`);
+                    return;
                 }
-            });
+                const rp = VARIETY_PARAMS[variety as string];
+                const gi_nl = calculate_gi(rp.formula, kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
+                const gi_t  = calculate_gi(rp.formula, aamStats.mean_rgb[0],   aamStats.mean_rgb[1],   aamStats.mean_rgb[2]);
+                const ndvi_nl = calculate_ndvi(rp.m, rp.c, gi_nl * kaafiStats.ratio);
+                const ndvi_t  = calculate_ndvi(rp.m, rp.c, gi_t  * aamStats.ratio);
+                const datValue = Number(dat);
+                if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
+                    Alert.alert(t('imageAnalysis.error'), "Invalid DAT"); return;
+                }
+                const pyp_kg_ha = calculate_pyp(calculate_iey(ndvi_t, datValue));
+                final_n_rate = calculate_n_rate(pyp_kg_ha * calculate_ri(ndvi_nl, ndvi_t), pyp_kg_ha);
+                recommendations = calculate_fertilizers(final_n_rate);
+
+            } else if (id === 'wheat') {
+                const gi_nl = calculate_gi("2G-B-R", kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
+                const gi_t  = calculate_gi("2G-B-R", aamStats.mean_rgb[0],   aamStats.mean_rgb[1],   aamStats.mean_rgb[2]);
+                const ndvi_nl = calculate_wheat_ndvi(gi_nl * kaafiStats.ratio);
+                const ndvi_t  = calculate_wheat_ndvi(gi_t  * aamStats.ratio);
+                const datValue = Number(dat);
+                if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
+                    Alert.alert(t('imageAnalysis.error'), "Invalid DAS"); return;
+                }
+                const pyp = calculate_wheat_pyp(calculate_wheat_iey(ndvi_t, datValue));
+                final_n_rate = calculate_wheat_n_rate(pyp * calculate_ri(ndvi_nl, ndvi_t), pyp);
+                recommendations = calculate_fertilizers(final_n_rate);
+
+            } else if (id === 'maize') {
+                const si = calculate_maize_si(calculate_maize_spad(aamStats.mean_rgb[1]), calculate_maize_spad(kaafiStats.mean_rgb[1]));
+                const needs = calculate_maize_fertilizer_needs(si, variety as string);
+                if (!needs.need_of_fertilizer) {
+                    setAlertMessage(needs.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
+                    setAlertVisible(true);
+                    return;
+                }
+                final_n_rate = needs.n_rate;
+                recommendations = { Urea: needs.urea, CAN: needs.can, Ammonium_Sulfate: needs.ammonium_sulfate };
+            }
+
+            if (recommendations) {
+                await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
+                router.push({
+                    pathname: '/analysis-results',
+                    params: { urea: recommendations.Urea, can: recommendations.CAN, ammonium_sulfate: recommendations.Ammonium_Sulfate, n_rate: Math.round(final_n_rate) }
+                });
+            }
         } catch (err: any) {
             console.log("LOCAL PROCESS ERROR:", err);
             Alert.alert(t('imageAnalysis.error'), err.message || "Error processing locally");
@@ -192,120 +212,19 @@ export default function ImageAnalysisScreen() {
             Alert.alert(t('imageAnalysis.imagesRequired'), t('imageAnalysis.pleaseSelectBothImages'));
             return;
         }
-
         if (!typeName || !dat) {
             Alert.alert(t('imageAnalysis.missingInfo'), t('imageAnalysis.varietyOrDATInfoIsMissing'));
             return;
         }
 
-        const variety = VARIETY_MAPPING[typeName as string] || typeName;
-
-        // WHEAT: auto-detect connectivity — no manual toggle
-        if (id === 'wheat') {
-            const networkState = await Network.getNetworkStateAsync();
-            if (!networkState.isConnected) {
-                setOfflineModalVisible(true);
-                return;
-            }
-            // Internet available → fall through to remote processing below
-        } else if (useLocalProcessing) {
-            // RICE / MAIZE with local toggle ON
-            setIsAnalyzing(true);
-            try {
-                const kaafiStats = await processImageStats(sufficientPlotImage);
-                const aamStats = await processImageStats(commonPlotImage);
-
-                let recommendations: { Urea: number, CAN: number, Ammonium_Sulfate: number } | null = null;
-                let final_n_rate = 0;
-
-                if (id === 'rice') {
-                    if (!VARIETY_PARAMS[variety as string]) {
-                        Alert.alert(t('imageAnalysis.error'), `Unknown variety: ${variety}`);
-                        setIsAnalyzing(false);
-                        return;
-                    }
-                    const params = VARIETY_PARAMS[variety as string];
-
-                    const gi_nl = calculate_gi(params.formula, kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
-                    const gi_t = calculate_gi(params.formula, aamStats.mean_rgb[0], aamStats.mean_rgb[1], aamStats.mean_rgb[2]);
-
-                    const x_nl = gi_nl * kaafiStats.ratio;
-                    const x_t = gi_t * aamStats.ratio;
-
-                    const ndvi_nl = calculate_ndvi(params.m, params.c, x_nl);
-                    const ndvi_t = calculate_ndvi(params.m, params.c, x_t);
-
-                    const datValue = Number(dat);
-                    if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
-                        Alert.alert(t('imageAnalysis.error'), "Invalid DAT");
-                        setIsAnalyzing(false);
-                        return;
-                    }
-                    const iey = calculate_iey(ndvi_t, datValue);
-                    const pyp_kg_ha = calculate_pyp(iey);
-                    const ri = calculate_ri(ndvi_nl, ndvi_t);
-                    const pypn_kg_ha = pyp_kg_ha * ri;
-                    final_n_rate = calculate_n_rate(pypn_kg_ha, pyp_kg_ha);
-                    recommendations = calculate_fertilizers(final_n_rate);
-
-                } else if (id === 'maize') {
-                    const spad_f = calculate_maize_spad(kaafiStats.mean_rgb[1]);
-                    const spad_t = calculate_maize_spad(aamStats.mean_rgb[1]);
-
-                    const si = calculate_maize_si(spad_t, spad_f);
-                    const needs = calculate_maize_fertilizer_needs(si, variety as string);
-
-                    if (!needs.need_of_fertilizer) {
-                        setAlertMessage(needs.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
-                        setAlertVisible(true);
-                        return;
-                    }
-
-                    final_n_rate = needs.n_rate;
-                    recommendations = {
-                        Urea: needs.urea,
-                        CAN: needs.can,
-                        Ammonium_Sulfate: needs.ammonium_sulfate
-                    };
-
-                } else {
-                    Alert.alert(t('imageAnalysis.error'), `Unsupported crop type for local processing: ${id}`);
-                    setIsAnalyzing(false);
-                    return;
-                }
-
-                if (recommendations) {
-                    await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
-                    router.push({
-                        pathname: '/analysis-results',
-                        params: {
-                            urea: recommendations.Urea,
-                            can: recommendations.CAN,
-                            ammonium_sulfate: recommendations.Ammonium_Sulfate,
-                            n_rate: Math.round(final_n_rate)
-                        }
-                    });
-                }
-            } catch (err: any) {
-                console.log("LOCAL PROCESS ERROR:", err);
-                Alert.alert(t('imageAnalysis.error'), err.message || "Error processing locally");
-            } finally {
-                setIsAnalyzing(false);
-            }
+        const networkState = await Network.getNetworkStateAsync();
+        if (!networkState.isConnected) {
+            setOfflineModalVisible(true);
             return;
         }
 
-        // REMOTE PROCESSING (wheat with internet, or rice/maize with toggle off)
-        if (id !== 'wheat') {
-            const networkState = await Network.getNetworkStateAsync();
-            if (!networkState.isConnected) {
-                Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
-                return;
-            }
-        }
-
+        const variety = VARIETY_MAPPING[typeName as string] || typeName;
         setIsAnalyzing(true);
-
         try {
             const formData = new FormData();
             if (Platform.OS === 'web') {
@@ -314,56 +233,33 @@ export default function ImageAnalysisScreen() {
                 formData.append('kaafi_image', kaafiBlob, 'kaafi.jpg');
                 formData.append('aam_image', aamBlob, 'aam.jpg');
             } else {
-                formData.append('kaafi_image', {
-                    uri: sufficientPlotImage,
-                    name: 'kaafi.jpg',
-                    type: 'image/jpeg',
-                } as any);
-                formData.append('aam_image', {
-                    uri: commonPlotImage,
-                    name: 'aam.jpg',
-                    type: 'image/jpeg',
-                } as any);
+                formData.append('kaafi_image', { uri: sufficientPlotImage, name: 'kaafi.jpg', type: 'image/jpeg' } as any);
+                formData.append('aam_image', { uri: commonPlotImage, name: 'aam.jpg', type: 'image/jpeg' } as any);
             }
-
             formData.append('variety', variety as string);
             formData.append('dat', String(dat));
 
-            const response = await fetch(
-                `${BACKEND_API_URL}/api/calculate_fertilizer/${id}`,
-                { method: 'POST', body: formData }
-            );
+            const response = await fetch(`${BACKEND_API_URL}/api/calculate_fertilizer/${id}`, { method: 'POST', body: formData });
             const data = await response.json();
 
             if (data) {
                 if (data.giveFertilizer === false) {
-                    console.log("Urea", data);
                     setAlertMessage(data.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
                     setAlertVisible(true);
                     return;
                 }
-
                 if (data.recommendations_kg_acre) {
                     const recs = data.recommendations_kg_acre;
-                    const calcs = data.calculations;
-                    const nRate = calcs?.N_rate_kg_ha ? Math.round(calcs.N_rate_kg_ha) : 0;
+                    const nRate = data.calculations?.N_rate_kg_ha ? Math.round(data.calculations.N_rate_kg_ha) : 0;
                     await saveToHistory(nRate, recs.Urea, recs.CAN, recs.Ammonium_Sulfate);
                     router.push({
                         pathname: '/analysis-results',
-                        params: {
-                            urea: recs.Urea,
-                            can: recs.CAN,
-                            ammonium_sulfate: recs.Ammonium_Sulfate,
-                            n_rate: nRate
-                        }
+                        params: { urea: recs.Urea, can: recs.CAN, ammonium_sulfate: recs.Ammonium_Sulfate, n_rate: nRate }
                     });
                 } else {
                     Alert.alert(t('imageAnalysis.error'), t('imageAnalysis.invalidServerResponse'));
-                    console.log("Invalid Response:", data);
                 }
             }
-
-            console.log("SUCCESS:", data);
         } catch (error) {
             console.log("UPLOAD ERROR:", error);
         } finally {
@@ -379,18 +275,6 @@ export default function ImageAnalysisScreen() {
             <View style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                    {/* Sufficient Nitrogen Plot Button */}
-                    {['rice', 'maize'].includes(id as string) && (
-                        <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.toggleContainer}>
-                            <Text style={styles.toggleLabel}>Process Locally</Text>
-                            <Switch
-                                value={useLocalProcessing}
-                                onValueChange={setUseLocalProcessing}
-                                trackColor={{ false: '#767577', true: '#b5d985' }}
-                                thumbColor={useLocalProcessing ? THEME_COLOR : '#f4f3f4'}
-                            />
-                        </Animated.View>
-                    )}
 
                     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.buttonWrapper}>
                         <TouchableOpacity
@@ -485,7 +369,7 @@ export default function ImageAnalysisScreen() {
                             style={styles.offlineButton}
                             onPress={() => {
                                 setOfflineModalVisible(false);
-                                processWheatLocally();
+
                             }}
                         >
                             <Text style={styles.offlineButtonText}>{t('imageAnalysis.continueOffline')}</Text>
