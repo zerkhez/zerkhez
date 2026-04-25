@@ -29,6 +29,8 @@ import Animated, {
     withSequence,
     withSpring,
     withTiming,
+    ZoomOut,
+    ZoomIn,
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { THEME_COLOR } from "@/constants/theme";
@@ -128,6 +130,18 @@ export default function HomeScreen() {
     // Update date when language changes
     useEffect(() => {
         setCurrentDate(getCurrentDate());
+
+        // Trigger language toggle animation
+        languageButtonRotation.value = withSequence(
+            withTiming(180, { duration: 300 }),
+            withTiming(0, { duration: 300 })
+        );
+
+        // Trigger header text scale animation
+        headerTextScale.value = withSequence(
+            withTiming(0.95, { duration: 150 }),
+            withTiming(1, { duration: 150 })
+        );
     }, [i18n.language]);
 
     useEffect(() => {
@@ -227,6 +241,8 @@ export default function HomeScreen() {
     // Animation values
     const bellRotation = useSharedValue(0);
     const weatherIconScale = useSharedValue(1);
+    const languageButtonRotation = useSharedValue(0);
+    const headerTextScale = useSharedValue(1);
 
     const crops = [
         {
@@ -302,6 +318,18 @@ export default function HomeScreen() {
         };
     });
 
+    const languageButtonAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ rotateY: `${languageButtonRotation.value}deg` }],
+        };
+    });
+
+    const headerTextAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ scale: headerTextScale.value }],
+        };
+    });
+
     const [displayTemp, setDisplayTemp] = useState(0);
 
     useEffect(() => {
@@ -367,6 +395,7 @@ export default function HomeScreen() {
                         {/* Language Toggle Button */}
                         <Animated.View
                             entering={FadeInLeft.delay(400).springify()}
+                            style={languageButtonAnimatedStyle}
                         >
                             <TouchableOpacity
                                 style={styles.languageToggle}
@@ -389,7 +418,7 @@ export default function HomeScreen() {
                     {/* Title and Date - Top Right - Animated */}
                     <Animated.View
                         entering={FadeInRight.delay(300).springify()}
-                        style={styles.headerTextContainer}
+                        style={[styles.headerTextContainer, headerTextAnimatedStyle]}
                     >
                         <Text
                             style={[
