@@ -13,6 +13,7 @@ import {
     Text,
     TouchableOpacity,
     View,
+    ScrollView,
     BackHandler,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -365,8 +366,13 @@ export default function HomeScreen() {
 
     return (
         <View style={commonStyles.lightContainer}>
-            {/* Curved Header — animated blob like language-select */}
-            <View style={styles.headerContainer}>
+            <ScrollView 
+                contentContainerStyle={{ flexGrow: 1 }} 
+                showsVerticalScrollIndicator={false}
+                bounces={false}
+            >
+                {/* Curved Header — animated blob like language-select */}
+                <View style={styles.headerContainer}>
                 <Animated.View style={[styles.blobWrapper, blobAnimatedStyle]}>
                     <View style={styles.blob} />
                 </Animated.View>
@@ -554,6 +560,7 @@ export default function HomeScreen() {
                     </Animated.View>
                 ))}
             </View>
+            </ScrollView>
 
             {/* Bottom Navigation - Fade in */}
             <Animated.View
@@ -716,9 +723,9 @@ const styles = StyleSheet.create({
         textTransform: "capitalize",
     },
     cropsContainer: {
-        flex: 1,
         paddingTop: verticalScale(50),
         gap: verticalScale(30),
+        paddingBottom: verticalScale(20),
     },
     cropCard: {
         flexDirection: "row",

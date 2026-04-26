@@ -337,7 +337,7 @@ export default function ChatScreen() {
         <Animated.View entering={FadeIn.duration(600)} style={{ flex: 1 }}>
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: CREAM }}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             {/* ── Premium Gradient Header ── */}
             <Animated.View
@@ -408,6 +408,7 @@ export default function ChatScreen() {
                 renderItem={renderMessage}
                 contentContainerStyle={styles.chatBody}
                 showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
                 onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             />
 
