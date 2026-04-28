@@ -1,7 +1,15 @@
+
 import Header from "@/components/header";
 import { THEME_COLOR } from "@/constants/theme";
-import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from "@/styles/common";
-import { useRouter } from "expo-router";
+import {
+  commonStyles,
+  horizontalScale,
+  verticalScale,
+  moderateScale,
+  getHeaderFont,
+  getRegularFont,
+} from "@/styles/common";
+
 import { useEffect } from "react";
 import {
   Linking,
@@ -10,76 +18,54 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming
+  withTiming,
 } from "react-native-reanimated";
-import { useTranslation } from 'react-i18next';
+
+import { useTranslation } from "react-i18next";
+
+import howToUseApp from "@/assets/images/how_to_use_app.jpeg";
 
 export default function InstructionsScreen() {
-  const router = useRouter();
   const { t, i18n } = useTranslation();
 
-  const isRTL = i18n.language === 'ur';
+  const playButtonScale = useSharedValue(1);
 
-  // Animation values for play buttons
-  const playButtonScale1 = useSharedValue(1);
-  const playButtonScale2 = useSharedValue(1);
-
+  // Only ONE video placeholder
   const videos = [
     {
       id: 1,
-      titleKey: "cropDiseaseIdentification",
+      titleEn: "How to Use the App",
+      titleUr: "ایپ استعمال کرنے کا طریقہ",
+      image: howToUseApp,
       url: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_1",
-      thumbnail: "📹",
-    },
-    {
-      id: 2,
-      titleKey: "appUsageInstructions",
-      url: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID_2",
-      thumbnail: "📹",
     },
   ];
 
   useEffect(() => {
-    // Pulse animation for play button 1
-    playButtonScale1.value = withRepeat(
+    playButtonScale.value = withRepeat(
       withSequence(
-        withTiming(1.15, { duration: 1000 }),
-        withTiming(1, { duration: 1000 }),
+        withTiming(1.12, { duration: 1000 }),
+        withTiming(1, { duration: 1000 })
       ),
       -1,
-      true,
-    );
-
-    // Pulse animation for play button 2 (slightly offset)
-    playButtonScale2.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 500 }),
-        withTiming(1.15, { duration: 1000 }),
-        withTiming(1, { duration: 1000 }),
-        withTiming(1, { duration: 500 }),
-      ),
-      -1,
-      true,
+      true
     );
   }, []);
 
-  const playButtonAnimatedStyle1 = useAnimatedStyle(() => {
+  const playButtonAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ scale: playButtonScale1.value }],
-    };
-  });
-
-  const playButtonAnimatedStyle2 = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: playButtonScale2.value }],
+      transform: [{ scale: playButtonScale.value }],
     };
   });
 
@@ -88,24 +74,32 @@ export default function InstructionsScreen() {
   };
 
   return (
-    <SafeAreaView style={commonStyles.container} edges={['top']}>
-      {/* Header */}
-      <Header text={t('common.instructions')} />
+    <SafeAreaView style={commonStyles.container} edges={["top"]}>
+      <Header text={t("common.instructions")} />
 
-      {/* Content Container with rounded corners */}
       <View style={commonStyles.contentContainer}>
-        <ScrollView contentContainerStyle={commonStyles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={commonStyles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           <Animated.Text
-            entering={FadeInDown.delay(400).springify()}
-            style={[styles.sectionTitle, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}
+            entering={FadeInDown.delay(300).springify()}
+            style={[
+              styles.sectionTitle,
+              getHeaderFont(i18n.language),
+            ]}
           >
-            {t('common.videos')}
+            {t("common.videos")}
           </Animated.Text>
+
           <Animated.Text
-            entering={FadeInDown.delay(500).springify()}
-            style={[styles.sectionSubtitle, { textAlign: isRTL ? 'right' : 'left' }, getRegularFont(i18n.language)]}
+            entering={FadeInDown.delay(450).springify()}
+            style={[
+              styles.sectionSubtitle,
+              getRegularFont(i18n.language),
+            ]}
           >
-            {t('common.moreInfo')}
+            {t("common.moreInfo")}
           </Animated.Text>
 
           <View style={styles.videosContainer}>
@@ -115,25 +109,42 @@ export default function InstructionsScreen() {
                 entering={FadeInDown.delay(600 + index * 200).springify()}
               >
                 <TouchableOpacity
+                  activeOpacity={0.85}
                   style={styles.videoCard}
-                  onPress={() => { openVideo(video.url); }}
-                  activeOpacity={0.7}
+                  onPress={() => openVideo(video.url)}
                 >
-                  <View style={styles.videoThumbnail}>
+                  {/* Thumbnail */}
+                  <View style={styles.thumbnailWrapper}>
+                    <Image
+                      source={video.image}
+                      style={styles.thumbnailImage}
+                      resizeMode="contain"
+                    />
+
+                    {/* Play Button */}
                     <Animated.View
                       style={[
                         styles.playButton,
-                        index === 0
-                          ? playButtonAnimatedStyle1
-                          : playButtonAnimatedStyle2,
+                        playButtonAnimatedStyle,
                       ]}
                     >
                       <Text style={styles.playIcon}>▶</Text>
                     </Animated.View>
-                    <Text style={styles.thumbnailEmoji}>{video.thumbnail}</Text>
                   </View>
+
+                  {/* Fixed-height title section */}
                   <View style={styles.videoInfo}>
-                    <Text style={[styles.videoTitle, { textAlign: isRTL ? 'right' : 'left' }, getRegularFont(i18n.language)]}>{t(`common.${video.titleKey}`)}</Text>
+                    <Text
+                      numberOfLines={2}
+                      style={[
+                        styles.videoTitle,
+                        getRegularFont(i18n.language),
+                      ]}
+                    >
+                      {i18n.language === "ur"
+                        ? video.titleUr
+                        : video.titleEn}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </Animated.View>
@@ -152,55 +163,74 @@ const styles = StyleSheet.create({
     color: "#2a3510",
     marginBottom: verticalScale(8),
   },
+
   sectionSubtitle: {
     fontSize: moderateScale(14),
     color: "#666",
     marginBottom: verticalScale(24),
   },
+
   videosContainer: {
+    width: "100%",
     gap: verticalScale(20),
   },
+
   videoCard: {
+    width: "100%",
+    alignSelf: "center",
     backgroundColor: "white",
-    borderRadius: moderateScale(16),
+    borderRadius: moderateScale(18),
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#e5e5e5",
+    elevation: 3,
   },
-  videoThumbnail: {
-    height: verticalScale(200),
-    backgroundColor: THEME_COLOR,
-    justifyContent: "center",
-    alignItems: "center",
+
+  thumbnailWrapper: {
+    height: verticalScale(180),
     position: "relative",
   },
-  thumbnailEmoji: {
-    fontSize: moderateScale(64),
-    opacity: 0.3,
+
+  thumbnailImage: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#fff",
   },
+
   playButton: {
     position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginLeft: -35,
+    marginTop: -35,
     width: horizontalScale(70),
     height: horizontalScale(70),
     borderRadius: horizontalScale(35),
-    backgroundColor: "rgba(255,255,255,0.9)",
+    backgroundColor: "rgba(255,255,255,0.92)",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1,
   },
+
   playIcon: {
     fontSize: moderateScale(32),
     color: THEME_COLOR,
     marginLeft: horizontalScale(4),
   },
+
+  // Fixed height keeps Urdu and English same size
   videoInfo: {
-    padding: horizontalScale(20),
+    height: verticalScale(72),
+    paddingHorizontal: horizontalScale(18),
+    justifyContent: "center",
+    alignItems: "center",
   },
+
   videoTitle: {
     fontSize: moderateScale(18),
     fontWeight: "600",
     color: "#333",
-    marginBottom: verticalScale(4),
+    textAlign: "center",
+    lineHeight: moderateScale(28),
   },
-
 });
+
