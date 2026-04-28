@@ -13,6 +13,7 @@ import {
     Text,
     TouchableOpacity,
     View,
+    ScrollView,
     BackHandler,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -29,6 +30,8 @@ import Animated, {
     withSequence,
     withSpring,
     withTiming,
+    ZoomOut,
+    ZoomIn,
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { THEME_COLOR } from "@/constants/theme";
@@ -128,6 +131,18 @@ export default function HomeScreen() {
     // Update date when language changes
     useEffect(() => {
         setCurrentDate(getCurrentDate());
+
+        // Trigger language toggle animation
+        languageButtonRotation.value = withSequence(
+            withTiming(180, { duration: 300 }),
+            withTiming(0, { duration: 300 })
+        );
+
+        // Trigger header text scale animation
+        headerTextScale.value = withSequence(
+            withTiming(0.95, { duration: 150 }),
+            withTiming(1, { duration: 150 })
+        );
     }, [i18n.language]);
 
     useEffect(() => {
@@ -227,6 +242,8 @@ export default function HomeScreen() {
     // Animation values
     const bellRotation = useSharedValue(0);
     const weatherIconScale = useSharedValue(1);
+    const languageButtonRotation = useSharedValue(0);
+    const headerTextScale = useSharedValue(1);
 
     const crops = [
         {
@@ -302,6 +319,18 @@ export default function HomeScreen() {
         };
     });
 
+    const languageButtonAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ rotateY: `${languageButtonRotation.value}deg` }],
+        };
+    });
+
+    const headerTextAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ scale: headerTextScale.value }],
+        };
+    });
+
     const [displayTemp, setDisplayTemp] = useState(0);
 
     useEffect(() => {
@@ -337,8 +366,13 @@ export default function HomeScreen() {
 
     return (
         <View style={commonStyles.lightContainer}>
-            {/* Curved Header — animated blob like language-select */}
-            <View style={styles.headerContainer}>
+            <ScrollView 
+                contentContainerStyle={{ flexGrow: 1 }} 
+                showsVerticalScrollIndicator={false}
+                bounces={false}
+            >
+                {/* Curved Header — animated blob like language-select */}
+                <View style={styles.headerContainer}>
                 <Animated.View style={[styles.blobWrapper, blobAnimatedStyle]}>
                     <View style={styles.blob} />
                 </Animated.View>
@@ -367,6 +401,7 @@ export default function HomeScreen() {
                         {/* Language Toggle Button */}
                         <Animated.View
                             entering={FadeInLeft.delay(400).springify()}
+                            style={languageButtonAnimatedStyle}
                         >
                             <TouchableOpacity
                                 style={styles.languageToggle}
@@ -389,7 +424,7 @@ export default function HomeScreen() {
                     {/* Title and Date - Top Right - Animated */}
                     <Animated.View
                         entering={FadeInRight.delay(300).springify()}
-                        style={styles.headerTextContainer}
+                        style={[styles.headerTextContainer, headerTextAnimatedStyle]}
                     >
                         <Text
                             style={[
@@ -525,11 +560,12 @@ export default function HomeScreen() {
                     </Animated.View>
                 ))}
             </View>
+            </ScrollView>
 
             {/* Bottom Navigation - Fade in */}
             <Animated.View
                 entering={FadeInUp.delay(1200).springify()}
-                style={styles.bottomNav}
+                style={[styles.bottomNav, { paddingBottom: insets.bottom + verticalScale(15) }]}
             >
                 {/* Chat bot button */}
                 <TouchableOpacity
@@ -687,9 +723,9 @@ const styles = StyleSheet.create({
         textTransform: "capitalize",
     },
     cropsContainer: {
-        flex: 1,
         paddingTop: verticalScale(50),
         gap: verticalScale(30),
+        paddingBottom: verticalScale(20),
     },
     cropCard: {
         flexDirection: "row",
@@ -720,7 +756,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingVertical: verticalScale(15),
+        paddingTop: verticalScale(15),
         paddingHorizontal: horizontalScale(20),
         backgroundColor: "white",
         borderTopWidth: 1,
@@ -755,13 +791,13 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     cropImagePlaceholder: {
-        width: horizontalScale(60),
-        height: horizontalScale(60),
+        width: horizontalScale(70),
+        height: horizontalScale(70),
         borderRadius: moderateScale(10),
     },
     cropImage: {
-        width: horizontalScale(80),
-        height: horizontalScale(80),
+        width: horizontalScale(92),
+        height: horizontalScale(92),
         marginLeft: -horizontalScale(15),
         marginRight: horizontalScale(20),
         marginTop: -verticalScale(40),

@@ -1,8 +1,8 @@
 // Purpose: Get images as input from user and call the api to upload images to do analysis.
 // 
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal, Switch } from 'react-native';
-import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal , Platform } from 'react-native';
+import Animated, { FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { processImageStats } from '@/lib/imageProcessing';
@@ -23,14 +23,13 @@ import {
 } from '@/lib/maizeRulesCalculator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
-import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
 import * as Network from 'expo-network';
 import { THEME_COLOR } from '@/constants/theme';
-import { commonTexts, VARIETY_MAPPING, imageAnalysisTexts } from '@/constants/commonText';
+import { VARIETY_MAPPING } from '@/constants/commonText';
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
-import { commonStyles, horizontalScale, verticalScale, moderateScale, getHeaderFont, getRegularFont } from '@/styles/common';
+import { horizontalScale, verticalScale, moderateScale } from '@/styles/common';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -38,7 +37,7 @@ export default function ImageAnalysisScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { t } = useTranslation();
-    const { mode, typeName, dat, id, name } = params;
+    const { mode, typeName, dat, id } = params;
 
 
 
@@ -48,7 +47,7 @@ export default function ImageAnalysisScreen() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    const [useLocalProcessing, setUseLocalProcessing] = useState(true);
+    const [offlineModalVisible, setOfflineModalVisible] = useState(false);
 
     const saveToHistory = async (n_rate: number, urea: number, can: number, ammonium_sulfate: number) => {
         try {
@@ -84,7 +83,7 @@ export default function ImageAnalysisScreen() {
                     return;
                 }
                 result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    mediaTypes: ['images'],
                     allowsEditing: true,
                     aspect: [4, 3],
                     quality: 1,
@@ -96,7 +95,7 @@ export default function ImageAnalysisScreen() {
                     return;
                 }
                 result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    mediaTypes: ['images'],
                     allowsEditing: true,
                     aspect: [4, 3],
                     quality: 1,
@@ -138,212 +137,132 @@ export default function ImageAnalysisScreen() {
         );
     };
 
+    const processLocally = async () => {
+        if (!sufficientPlotImage || !commonPlotImage) return;
+        const variety = VARIETY_MAPPING[typeName as string] || typeName;
+        setIsAnalyzing(true);
+        try {
+            const kaafiStats = await processImageStats(sufficientPlotImage);
+            const aamStats = await processImageStats(commonPlotImage);
+
+            let recommendations: { Urea: number, CAN: number, Ammonium_Sulfate: number } | null = null;
+            let final_n_rate = 0;
+
+            if (id === 'rice') {
+                if (!VARIETY_PARAMS[variety as string]) {
+                    Alert.alert(t('imageAnalysis.error'), `Unknown variety: ${variety}`);
+                    return;
+                }
+                const rp = VARIETY_PARAMS[variety as string];
+                const gi_nl = calculate_gi(rp.formula, kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
+                const gi_t  = calculate_gi(rp.formula, aamStats.mean_rgb[0],   aamStats.mean_rgb[1],   aamStats.mean_rgb[2]);
+                const ndvi_nl = calculate_ndvi(rp.m, rp.c, gi_nl * kaafiStats.ratio);
+                const ndvi_t  = calculate_ndvi(rp.m, rp.c, gi_t  * aamStats.ratio);
+                const datValue = Number(dat);
+                if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
+                    Alert.alert(t('imageAnalysis.error'), "Invalid DAT"); return;
+                }
+                const pyp_kg_ha = calculate_pyp(calculate_iey(ndvi_t, datValue));
+                final_n_rate = calculate_n_rate(pyp_kg_ha * calculate_ri(ndvi_nl, ndvi_t), pyp_kg_ha);
+                recommendations = calculate_fertilizers(final_n_rate);
+
+            } else if (id === 'wheat') {
+                const gi_nl = calculate_gi("2G-B-R", kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
+                const gi_t  = calculate_gi("2G-B-R", aamStats.mean_rgb[0],   aamStats.mean_rgb[1],   aamStats.mean_rgb[2]);
+                const ndvi_nl = calculate_wheat_ndvi(gi_nl * kaafiStats.ratio);
+                const ndvi_t  = calculate_wheat_ndvi(gi_t  * aamStats.ratio);
+                const datValue = Number(dat);
+                if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
+                    Alert.alert(t('imageAnalysis.error'), "Invalid DAS"); return;
+                }
+                const pyp = calculate_wheat_pyp(calculate_wheat_iey(ndvi_t, datValue));
+                final_n_rate = calculate_wheat_n_rate(pyp * calculate_ri(ndvi_nl, ndvi_t), pyp);
+                recommendations = calculate_fertilizers(final_n_rate);
+
+            } else if (id === 'maize') {
+                const si = calculate_maize_si(calculate_maize_spad(aamStats.mean_rgb[1]), calculate_maize_spad(kaafiStats.mean_rgb[1]));
+                const needs = calculate_maize_fertilizer_needs(si, variety as string);
+                if (!needs.need_of_fertilizer) {
+                    setAlertMessage(needs.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
+                    setAlertVisible(true);
+                    return;
+                }
+                final_n_rate = needs.n_rate;
+                recommendations = { Urea: needs.urea, CAN: needs.can, Ammonium_Sulfate: needs.ammonium_sulfate };
+            }
+
+            console.log("LOCAL PROCESS | id:", id, "| n_rate:", final_n_rate, "| recommendations:", recommendations);
+
+            if (recommendations) {
+                await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
+                router.push({
+                    pathname: '/analysis-results',
+                    params: { urea: recommendations.Urea, can: recommendations.CAN, ammonium_sulfate: recommendations.Ammonium_Sulfate, n_rate: Math.round(final_n_rate) }
+                });
+            } else {
+                Alert.alert(t('imageAnalysis.error'), `Unsupported crop: ${id}`);
+            }
+        } catch (err: any) {
+            console.log("LOCAL PROCESS ERROR:", err);
+            Alert.alert(t('imageAnalysis.error'), err.message || "Error processing locally");
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
+
     const handleAnalyze = async () => {
         if (!sufficientPlotImage || !commonPlotImage) {
             Alert.alert(t('imageAnalysis.imagesRequired'), t('imageAnalysis.pleaseSelectBothImages'));
             return;
         }
-
         if (!typeName || !dat) {
             Alert.alert(t('imageAnalysis.missingInfo'), t('imageAnalysis.varietyOrDATInfoIsMissing'));
             return;
         }
 
-        const variety = VARIETY_MAPPING[typeName as string] || typeName;
-
-        if (useLocalProcessing) {
-            setIsAnalyzing(true);
-            try {
-                // 1. Process Images
-                const kaafiStats = await processImageStats(sufficientPlotImage);
-                const aamStats = await processImageStats(commonPlotImage);
-                
-                let recommendations: { Urea: number, CAN: number, Ammonium_Sulfate: number } | null = null;
-                let final_n_rate = 0;
-                
-                if (id === 'rice') {
-                    if (!VARIETY_PARAMS[variety as string]) {
-                        Alert.alert(t('imageAnalysis.error'), `Unknown variety: ${variety}`);
-                        setIsAnalyzing(false);
-                        return;
-                    }
-                    const params = VARIETY_PARAMS[variety as string];
-                    
-                    const gi_nl = calculate_gi(params.formula, kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
-                    const gi_t = calculate_gi(params.formula, aamStats.mean_rgb[0], aamStats.mean_rgb[1], aamStats.mean_rgb[2]);
-                    
-                    const x_nl = gi_nl * kaafiStats.ratio;
-                    const x_t = gi_t * aamStats.ratio;
-                    
-                    const ndvi_nl = calculate_ndvi(params.m, params.c, x_nl);
-                    const ndvi_t = calculate_ndvi(params.m, params.c, x_t);
-                    
-                    const datValue = Number(dat);
-                    if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
-                        Alert.alert(t('imageAnalysis.error'), "Invalid DAT");
-                        setIsAnalyzing(false);
-                        return;
-                    }
-                    const iey = calculate_iey(ndvi_t, datValue);
-                    const pyp_kg_ha = calculate_pyp(iey);
-                    const ri = calculate_ri(ndvi_nl, ndvi_t);
-                    const pypn_kg_ha = pyp_kg_ha * ri;
-                    final_n_rate = calculate_n_rate(pypn_kg_ha, pyp_kg_ha);
-                    recommendations = calculate_fertilizers(final_n_rate);
-                    
-                } else if (id === 'wheat') {
-                    // Wheat logic
-                    const formula = "2G-B-R";
-                    const gi_nl = calculate_gi(formula, kaafiStats.mean_rgb[0], kaafiStats.mean_rgb[1], kaafiStats.mean_rgb[2]);
-                    const gi_t = calculate_gi(formula, aamStats.mean_rgb[0], aamStats.mean_rgb[1], aamStats.mean_rgb[2]);
-                    
-                    const x_nl = gi_nl * kaafiStats.ratio;
-                    const x_t = gi_t * aamStats.ratio;
-                    
-                    const ndvi_nl = calculate_wheat_ndvi(x_nl);
-                    const ndvi_t = calculate_wheat_ndvi(x_t);
-                    
-                    const datValue = Number(dat); // represents DAS
-                    if (Number.isNaN(datValue) || !Number.isFinite(datValue) || datValue === 0) {
-                        Alert.alert(t('imageAnalysis.error'), "Invalid DAS");
-                        setIsAnalyzing(false);
-                        return;
-                    }
-                    const iey = calculate_wheat_iey(ndvi_t, datValue);
-                    const pyp = calculate_wheat_pyp(iey);
-                    const ri = calculate_ri(ndvi_nl, ndvi_t); // re-use from riceRules (same formula)
-                    const pypn = pyp * ri;
-                    
-                    final_n_rate = calculate_wheat_n_rate(pypn, pyp);
-                    recommendations = calculate_fertilizers(final_n_rate); // re-use from riceRules (same calculations)
-                    
-                } else if (id === 'maize') {
-                    // Maize Logic
-                    const spad_f = calculate_maize_spad(kaafiStats.mean_rgb[1]); // green channel
-                    const spad_t = calculate_maize_spad(aamStats.mean_rgb[1]);
-                    
-                    const si = calculate_maize_si(spad_t, spad_f);
-                    const needs = calculate_maize_fertilizer_needs(si, variety as string);
-                    
-                    if (!needs.need_of_fertilizer) {
-                        setAlertMessage(needs.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
-                        setAlertVisible(true);
-                        return;
-                    }
-                    
-                    final_n_rate = needs.n_rate;
-                    recommendations = {
-                        Urea: needs.urea,
-                        CAN: needs.can,
-                        Ammonium_Sulfate: needs.ammonium_sulfate
-                    };
-                    
-                } else {
-                     Alert.alert(t('imageAnalysis.error'), `Unsupported crop type for local processing: ${id}`);
-                     setIsAnalyzing(false);
-                     return;
-                }
-                
-                if (recommendations) {
-                    await saveToHistory(final_n_rate, recommendations.Urea, recommendations.CAN, recommendations.Ammonium_Sulfate);
-                    router.push({
-                        pathname: '/analysis-results',
-                        params: {
-                            urea: recommendations.Urea,
-                            can: recommendations.CAN,
-                            ammonium_sulfate: recommendations.Ammonium_Sulfate,
-                            n_rate: Math.round(final_n_rate)
-                        }
-                    });
-                }
-            } catch (err: any) {
-                console.log("LOCAL PROCESS ERROR:", err);
-                Alert.alert(t('imageAnalysis.error'), err.message || "Error processing locally");
-            } finally {
-                setIsAnalyzing(false);
-            }
-            return;
-        }
-
-
-
         const networkState = await Network.getNetworkStateAsync();
         if (!networkState.isConnected) {
-            Alert.alert(t('imageAnalysis.noInternetConnection'), t('imageAnalysis.connectToInternet'));
+            setOfflineModalVisible(true);
             return;
         }
 
+        const variety = VARIETY_MAPPING[typeName as string] || typeName;
         setIsAnalyzing(true);
-
         try {
             const formData = new FormData();
-            // if running on web application
             if (Platform.OS === 'web') {
-                // WEB: convert image URI → Blob
                 const kaafiBlob = await (await fetch(sufficientPlotImage)).blob();
                 const aamBlob = await (await fetch(commonPlotImage)).blob();
-
                 formData.append('kaafi_image', kaafiBlob, 'kaafi.jpg');
                 formData.append('aam_image', aamBlob, 'aam.jpg');
             } else {
-                // MOBILE (Android / iOS)
-                formData.append('kaafi_image', {
-                    uri: sufficientPlotImage,
-                    name: 'kaafi.jpg',
-                    type: 'image/jpeg',
-                } as any);
-
-                formData.append('aam_image', {
-                    uri: commonPlotImage,
-                    name: 'aam.jpg',
-                    type: 'image/jpeg',
-                } as any);
+                formData.append('kaafi_image', { uri: sufficientPlotImage, name: 'kaafi.jpg', type: 'image/jpeg' } as any);
+                formData.append('aam_image', { uri: commonPlotImage, name: 'aam.jpg', type: 'image/jpeg' } as any);
             }
-
             formData.append('variety', variety as string);
             formData.append('dat', String(dat));
 
-            const response = await fetch(
-                `${BACKEND_API_URL}/api/calculate_fertilizer/${id}`,
-                {
-                    method: 'POST',
-                    body: formData,
-                }
-            );
+            const response = await fetch(`${BACKEND_API_URL}/api/calculate_fertilizer/${id}`, { method: 'POST', body: formData });
             const data = await response.json();
 
             if (data) {
-                // Specific check for Maize or future crops that return this flag
                 if (data.giveFertilizer === false) {
-                    console.log("Urea", data);
                     setAlertMessage(data.message || t('imageAnalysis.cropDoesNotNeedFertilizer'));
                     setAlertVisible(true);
                     return;
                 }
-
                 if (data.recommendations_kg_acre) {
                     const recs = data.recommendations_kg_acre;
-                    const calcs = data.calculations;
-                    const nRate = calcs?.N_rate_kg_ha ? Math.round(calcs.N_rate_kg_ha) : 0;
+                    const nRate = data.calculations?.N_rate_kg_ha ? Math.round(data.calculations.N_rate_kg_ha) : 0;
                     await saveToHistory(nRate, recs.Urea, recs.CAN, recs.Ammonium_Sulfate);
                     router.push({
                         pathname: '/analysis-results',
-                        params: {
-                            urea: recs.Urea,
-                            can: recs.CAN,
-                            ammonium_sulfate: recs.Ammonium_Sulfate,
-                            n_rate: nRate
-                        }
+                        params: { urea: recs.Urea, can: recs.CAN, ammonium_sulfate: recs.Ammonium_Sulfate, n_rate: nRate }
                     });
                 } else {
                     Alert.alert(t('imageAnalysis.error'), t('imageAnalysis.invalidServerResponse'));
-                    console.log("Invalid Response:", data);
                 }
             }
-
-
-            console.log("SUCCESS:", data);
-
         } catch (error) {
             console.log("UPLOAD ERROR:", error);
         } finally {
@@ -359,18 +278,6 @@ export default function ImageAnalysisScreen() {
             <View style={styles.contentContainer}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                    {/* Sufficient Nitrogen Plot Button */}
-                    {['rice', 'wheat', 'maize'].includes(id as string) && (
-                        <Animated.View entering={FadeInUp.delay(100).springify()} style={styles.toggleContainer}>
-                            <Text style={styles.toggleLabel}>Process Locally</Text>
-                            <Switch
-                                value={useLocalProcessing}
-                                onValueChange={setUseLocalProcessing}
-                                trackColor={{ false: '#767577', true: '#b5d985' }}
-                                thumbColor={useLocalProcessing ? THEME_COLOR : '#f4f3f4'}
-                            />
-                        </Animated.View>
-                    )}
 
                     <Animated.View entering={FadeInUp.delay(200).springify()} style={styles.buttonWrapper}>
                         <TouchableOpacity
@@ -440,7 +347,39 @@ export default function ImageAnalysisScreen() {
 
                 {/* Mic Button */}
                 <Microphone />
+
             </View>
+
+            {/* Offline Mode Popup */}
+            <Modal
+                transparent={true}
+                visible={offlineModalVisible}
+                animationType="fade"
+                onRequestClose={() => setOfflineModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <Animated.View entering={ZoomIn.springify()} style={styles.offlineModalContent}>
+                        <View style={styles.offlineModalBody}>
+                            <View style={styles.offlineIconCircle}>
+                                <Ionicons name="wifi-outline" size={moderateScale(20)} color="white" />
+                            </View>
+                            <View style={styles.offlineTextContainer}>
+                                <Text style={styles.offlineModalTitle}>{t('imageAnalysis.offlineMode')}</Text>
+                                <Text style={styles.offlineModalMessage}>{t('imageAnalysis.offlineModeMessage')}</Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity
+                            style={styles.offlineButton}
+                            onPress={() => {
+                                setOfflineModalVisible(false);
+                                setTimeout(() => processLocally(), 300);
+                            }}
+                        >
+                            <Text style={styles.offlineButtonText}>{t('imageAnalysis.continueOffline')}</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </View>
+            </Modal>
 
             {/* Custom Alert Modal */}
             <Modal
@@ -604,6 +543,68 @@ const styles = StyleSheet.create({
         width: horizontalScale(30),
         height: horizontalScale(30),
         tintColor: 'white',
+    },
+    offlineModalContent: {
+        width: '85%',
+        backgroundColor: '#FFFDE7',
+        borderRadius: moderateScale(16),
+        borderLeftWidth: moderateScale(5),
+        borderLeftColor: '#F5A623',
+        padding: moderateScale(20),
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: verticalScale(4) },
+        shadowOpacity: 0.2,
+        shadowRadius: moderateScale(8),
+    },
+    offlineModalBody: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: horizontalScale(12),
+        marginBottom: verticalScale(20),
+    },
+    offlineIconCircle: {
+        width: moderateScale(36),
+        height: moderateScale(36),
+        borderRadius: moderateScale(18),
+        backgroundColor: '#F5A623',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: verticalScale(2),
+    },
+    offlineExclamation: {
+        color: 'white',
+        fontSize: moderateScale(20),
+        fontFamily: 'NotoSansArabic-Bold',
+        lineHeight: moderateScale(24),
+    },
+    offlineTextContainer: {
+        flex: 1,
+    },
+    offlineModalTitle: {
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(15),
+        color: '#B45309',
+        marginBottom: verticalScale(6),
+        textAlign: 'right',
+    },
+    offlineModalMessage: {
+        fontFamily: 'NotoSansArabic-Regular',
+        fontSize: moderateScale(13),
+        color: '#78350F',
+        textAlign: 'right',
+        lineHeight: verticalScale(22),
+    },
+    offlineButton: {
+        backgroundColor: '#F5A623',
+        paddingVertical: verticalScale(10),
+        borderRadius: moderateScale(25),
+        alignItems: 'center',
+    },
+    offlineButtonText: {
+        fontFamily: 'NotoSansArabic-Bold',
+        fontSize: moderateScale(14),
+        color: 'white',
     },
     modalOverlay: {
         flex: 1,

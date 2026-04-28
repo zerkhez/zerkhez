@@ -85,7 +85,10 @@
         "invalidServerResponse": "Invalid response from server",
         "noFertilizerNeeded": "No Fertilizer Needed",
         "cropDoesNotNeedFertilizer": "Your crop does not need fertilizer at this time! Therefore, please try again after 10 days.",
-        "okay": "Okay"
+        "okay": "Okay",
+        "offlineMode": "Offline Mode",
+        "offlineModeMessage": "Internet service is not available. Results will be calculated using offline functionality.",
+        "continueOffline": "Continue"
     },
     "fertilizers": {
         "ammonium_sulfate": "Ammonium Sulfate:",
@@ -188,5 +191,25 @@
             "note": "If you want to create another package, click the button below. When the page opens, enter 22, 58 and 37 for hybrid varieties, and 18, 46 and 37 for common local varieties respectively for nitrogen, phosphorus and potash, and select one fertilizer each from Group 1, Group 2 and Group 3."
         },
         "nitrogenInstructions": "To determine the amount of nitrogen fertilizer through images, it is necessary to establish a 'sufficient nitrogen plot'. For this, after planting maize, select a plot 10 feet wide and 10 feet long anywhere in the field and apply 150 grams of urea after planting and then with every irrigation in addition to other fertilizers in this plot. Urea will be applied in the specified amount in this plot while other inputs will be applied as in the normal crop. If the same maize variety is planted at the same time in more than one field on a farm, only one 'sufficient nitrogen plot' needs to be established."
+    },
+    "chat": {
+        "agentName": "Kisan Dost",
+        "agentSubtitle": "Agricultural Advisor",
+        "welcome": "Hello! How can I help you today?\nAsk about weather, planting, or diseases.",
+        "placeholder": "Ask anything...",
+        "errorResponse": "Sorry, I couldn't get a response. Please try again.",
+        "connectionError": "Connection error. Please check your internet connection.",
+        "wheatPlanting": "Wheat planting",
+        "maizeDisease": "Maize disease",
+        "weather": "Weather",
+        "prices": "Prices",
+        "wheat": "Wheat",
+        "rice": "Rice",
+        "maize": "Maize",
+        "listening": "Listening...",
+        "processing": "Processing...",
+        "noSpeechDetected": "No speech detected. Please try again.",
+        "micPermissionDenied": "Microphone permission denied. Please enable it in settings.",
+        "speechError": "Error recognizing speech. Please try again."
     }
 }

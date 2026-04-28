@@ -34,24 +34,24 @@ export default function AnalysisResultsScreen() {
 
                     {/* Result Rows */}
                     <Animated.View entering={FadeInUp.delay(300).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
-                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{ammonium_sulfate || '-'}</Text>
+                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{ammonium_sulfate ?? '-'}</Text>
                         <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}>{t('fertilizers.ammonium_sulfate')}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(400).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
-                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{urea || '-'}</Text>
+                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{urea ?? '-'}</Text>
                         <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}>{t('fertilizers.urea')}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={[styles.resultRow, isRTL ? styles.resultRowRTL : styles.resultRowLTR]}>
-                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{can || '-'}</Text>
+                        <Text style={[styles.resultValue, getHeaderFont(i18n.language)]}>{can ?? '-'}</Text>
                         <Text style={[styles.resultLabel, { textAlign: isRTL ? 'right' : 'left' }, getHeaderFont(i18n.language)]}>{t('fertilizers.can')}</Text>
                     </Animated.View>
 
                     {/* Summary Section */}
                     <Animated.View entering={FadeInUp.delay(600).springify()} style={styles.summaryBox}>
                         <Text style={[styles.summaryText, getRegularFont(i18n.language)]}>
-                            {t('results.recommendedNitrogenRate')} <Text style={[styles.summaryValue, getHeaderFont(i18n.language)]}>{n_rate || '-'}</Text> {t('results.perHectare')}
+                            {t('results.recommendedNitrogenRate')} <Text style={[styles.summaryValue, getHeaderFont(i18n.language)]}>{n_rate ?? '-'}</Text> {t('results.perHectare')}
                         </Text>
                     </Animated.View>
 

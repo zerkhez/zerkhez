@@ -1,7 +1,9 @@
 // Purpose: Kisan Dost premium chatbot screen
 import { useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
+    Alert,
     FlatList,
     Image,
     KeyboardAvoidingView,
@@ -17,11 +19,14 @@ import Animated, {
     FadeIn,
     FadeInDown,
     FadeInUp,
+    ZoomIn,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ExpoWebSpeechRecognition } from 'expo-speech-recognition';
 import { THEME_COLOR } from '@/constants/theme';
+import { BACKEND_API_URL } from '@/constants';
 import {
     horizontalScale,
     moderateScale,
@@ -39,11 +44,24 @@ interface CropTile {
     emoji: string;
 }
 
+interface MessageAction {
+    label: string;
+    type: 'navigation' | 'action';
+    target?: string;
+}
+
 interface Message {
     id: string;
     type: MessageType;
     text: string;
     cropTiles?: CropTile[];
+    isTyping?: boolean;
+    action?: MessageAction;
+}
+
+interface ConversationMessage {
+    role: 'user' | 'assistant';
+    content: string;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -58,27 +76,81 @@ const TEXT_DARK      = '#2A2A2A';
 const GRAD_START = '#3D5010';
 const GRAD_END   = '#5A7320';
 
-const QUICK_REPLIES = [
-    { icon: '☁️', label: 'موسم' },
-    { icon: '🌱', label: 'گندم بوائی' },
-    { icon: '🌽', label: 'مکئی بیماری' },
-    { icon: '💰', label: 'قیمتیں' },
+const QUICK_REPLIES_CONFIG = [
+    { icon: '☁️', translationKey: 'chat.weather' },
+    { icon: '🌱', translationKey: 'chat.wheatPlanting' },
+    { icon: '🌽', translationKey: 'chat.maizeDisease' },
+    { icon: '💰', translationKey: 'chat.prices' },
 ];
 
-const CROP_TILES: CropTile[] = [
-    { id: 'wheat', label: 'گندم', emoji: '🌾' },
-    { id: 'rice',  label: 'چاول', emoji: '🍚' },
-    { id: 'maize', label: 'مکئی', emoji: '🌽' },
+const CROP_TILES_CONFIG = [
+    { id: 'wheat', translationKey: 'chat.wheat', emoji: '🌾' },
+    { id: 'rice',  translationKey: 'chat.rice', emoji: '🍚' },
+    { id: 'maize', translationKey: 'chat.maize', emoji: '🌽' },
 ];
 
-const INITIAL_MESSAGES: Message[] = [
-    {
-        id: '1',
-        type: 'bot',
-        text: 'خوش آمدید! آج میں آپ کی کیا مدد کر سکتا ہوں؟\nموسم، بوائی یا بیماری کے بارے میں پوچھیں۔',
-        cropTiles: CROP_TILES,
-    },
-];
+// ─── Typing Indicator ─────────────────────────────────────────────────────────
+function TypingIndicator() {
+    const [dots, setDots] = useState('.');
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setDots(prev => {
+                if (prev === '.') return '..';
+                if (prev === '..') return '...';
+                return '.';
+            });
+        }, 400);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return <Text style={{ fontSize: moderateScale(16) }}>{dots}</Text>;
+}
+
+// ─── Markdown Parser ──────────────────────────────────────────────────────────
+function parseMarkdownText(text: string) {
+    const parts: (string | { type: string; content: string })[] = [];
+    const regex = /\*\*(.+?)\*\*/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+            parts.push(text.substring(lastIndex, match.index));
+        }
+        parts.push({ type: 'bold', content: match[1] });
+        lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+        parts.push(text.substring(lastIndex));
+    }
+
+    return parts.length === 0 ? [text] : parts;
+}
+
+function MarkdownText({ text, style }: { text: string; style: any }) {
+    const parts = parseMarkdownText(text);
+
+    return (
+        <Text style={style}>
+            {parts.map((part, index) => {
+                if (typeof part === 'string') {
+                    return <Text key={index}>{part}</Text>;
+                }
+                if (part.type === 'bold') {
+                    return (
+                        <Text key={index} style={{ fontWeight: 'bold' }}>
+                            {part.content}
+                        </Text>
+                    );
+                }
+                return null;
+            })}
+        </Text>
+    );
+}
 
 // ─── Bot Avatar ───────────────────────────────────────────────────────────────
 function BotAvatar({ size = 32, glow = false }: { size?: number; glow?: boolean }) {
@@ -100,11 +172,11 @@ function BotAvatar({ size = 32, glow = false }: { size?: number; glow?: boolean 
 }
 
 // ─── Crop Product Tile ────────────────────────────────────────────────────────
-function CropProductTile({ crop, onPress }: { crop: CropTile; onPress: () => void }) {
+function CropProductTile({ crop, onPress, language = 'ur' }: { crop: CropTile; onPress: () => void; language?: string }) {
     return (
         <TouchableOpacity style={styles.cropTile} onPress={onPress} activeOpacity={0.8}>
             <Text style={styles.cropTileEmoji}>{crop.emoji}</Text>
-            <Text style={[styles.cropTileLabel, getRegularFont('ur')]}>{crop.label}</Text>
+            <Text style={[styles.cropTileLabel, getRegularFont(language)]}>{crop.label}</Text>
             <Text style={styles.cropTileChevron}>›</Text>
         </TouchableOpacity>
     );
@@ -114,63 +186,261 @@ function CropProductTile({ crop, onPress }: { crop: CropTile; onPress: () => voi
 export default function ChatScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
-    const [inputText, setInputText] = useState('');
-    const flatListRef = useRef<FlatList>(null);
+    const { t, i18n } = useTranslation();
 
-    const sendMessage = (text: string) => {
-        if (!text.trim()) return;
-        const userMsg: Message = { id: Date.now().toString(), type: 'user', text: text.trim() };
-        const botReply: Message = {
+    const cropTiles: CropTile[] = CROP_TILES_CONFIG.map(tile => ({
+        id: tile.id,
+        label: t(tile.translationKey),
+        emoji: tile.emoji,
+    }));
+
+    const initialMessages: Message[] = [
+        {
+            id: '1',
+            type: 'bot',
+            text: t('chat.welcome'),
+            cropTiles,
+        },
+    ];
+
+    const [messages, setMessages] = useState<Message[]>(initialMessages);
+    const [inputText, setInputText] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
+    const flatListRef = useRef<FlatList>(null);
+    const recognitionRef = useRef<ExpoWebSpeechRecognition | null>(null);
+
+    useEffect(() => {
+        recognitionRef.current = new ExpoWebSpeechRecognition();
+    }, []);
+
+    const handleMicPress = () => {
+        if (!recognitionRef.current) {
+            Alert.alert(t('common.error'), t('chat.speechError'));
+            return;
+        }
+
+        if (isListening) {
+            try {
+                recognitionRef.current.stop();
+            } catch (e) {
+                console.error('Error stopping recognition:', e);
+            }
+            setIsListening(false);
+            return;
+        }
+
+        try {
+            const recognition = recognitionRef.current;
+            // Note: Urdu might not be fully supported on web browsers
+            // Fallback to English for web if Urdu isn't available
+            const locale = i18n.language === 'ur' ? 'ur-PK' : 'en-US';
+
+            // On web, if Urdu is selected, try it but be prepared to fallback
+            console.log('Selected language:', i18n.language, 'Locale:', locale);
+
+            // Reset recognition object to clear previous state
+            recognition.lang = locale;
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            let hasResult = false;
+
+            recognition.onstart = () => {
+                console.log('Speech recognition started');
+                setIsListening(true);
+            };
+
+            recognition.onresult = (event: any) => {
+                console.log('Speech result event:', event);
+                if (event.results && event.results.length > 0) {
+                    const result = event.results[event.results.length - 1];
+                    if (result && result[0]) {
+                        const transcript = result[0].transcript;
+                        console.log('Transcript:', transcript);
+                        if (transcript.trim()) {
+                            hasResult = true;
+                            setInputText(transcript);
+                            setTimeout(() => sendMessage(transcript), 300);
+                        }
+                    }
+                }
+            };
+
+            recognition.onerror = (event: any) => {
+                console.error('Speech recognition error:', event.error);
+                const errorCode = event.error || 'unknown';
+
+                // Silent errors
+                if (errorCode === 'no-match' || errorCode === 'network') {
+                    console.log('Expected speech error:', errorCode);
+                    return;
+                }
+
+                if (errorCode === 'permission-denied') {
+                    Alert.alert(t('common.error'), t('chat.micPermissionDenied'));
+                } else if (errorCode === 'not-allowed') {
+                    Alert.alert(t('common.error'), 'Microphone access required. Please enable in browser settings.');
+                } else {
+                    console.warn('Speech recognition error:', errorCode);
+                }
+            };
+
+            recognition.onend = () => {
+                console.log('Speech recognition ended, hasResult:', hasResult);
+                setIsListening(false);
+
+                if (!hasResult) {
+                    console.log('No speech detected');
+                }
+            };
+
+            console.log('Starting speech recognition with locale:', locale);
+            recognition.start();
+        } catch (error) {
+            console.error('Error in handleMicPress:', error);
+            setIsListening(false);
+            Alert.alert(t('common.error'), t('chat.speechError'));
+        }
+    };
+
+    const sendMessage = async (text: string) => {
+        if (!text.trim() || isTyping) return;
+
+        const trimmedText = text.trim();
+        const userMsg: Message = { id: Date.now().toString(), type: 'user', text: trimmedText };
+        const typingMsg: Message = {
             id: (Date.now() + 1).toString(),
             type: 'bot',
-            text: 'آپ کے سوال کا جواب تیار ہو رہا ہے... جلد ہی آپ کو مکمل معلومات فراہم کی جائیں گی۔',
+            text: '...',
+            isTyping: true,
         };
-        setMessages(prev => [...prev, userMsg, botReply]);
+
+        setMessages(prev => [...prev, userMsg, typingMsg]);
         setInputText('');
+        setIsTyping(true);
         setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 150);
+
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: trimmedText,
+                    history: conversationHistory,
+                    language: i18n.language,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.response) {
+                const botReply: Message = {
+                    id: (Date.now() + 100).toString(),
+                    type: 'bot',
+                    text: data.response,
+                    action: data.action,
+                };
+
+                setMessages(prev => prev.filter(m => !m.isTyping).concat(botReply));
+                setConversationHistory(prev => [
+                    ...prev,
+                    { role: 'user', content: trimmedText },
+                    { role: 'assistant', content: data.response },
+                ]);
+            } else {
+                const errorMsg: Message = {
+                    id: (Date.now() + 100).toString(),
+                    type: 'bot',
+                    text: t('chat.errorResponse'),
+                };
+                setMessages(prev => prev.filter(m => !m.isTyping).concat(errorMsg));
+            }
+        } catch (error) {
+            const errorMsg: Message = {
+                id: (Date.now() + 100).toString(),
+                type: 'bot',
+                text: t('chat.connectionError'),
+            };
+            setMessages(prev => prev.filter(m => !m.isTyping).concat(errorMsg));
+        } finally {
+            setIsTyping(false);
+            setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        }
     };
 
     const renderMessage = ({ item }: { item: Message }) => {
         const isBot = item.type === 'bot';
+        const isRTL = i18n.language === 'ur';
         return (
             <Animated.View entering={FadeInDown.duration(300)} style={[styles.messageRow, isBot ? styles.messageRowBot : styles.messageRowUser]}>
                 {isBot && <BotAvatar size={26} />}
-                <View style={{ flex: 1, alignItems: isBot ? 'flex-end' : 'flex-start' }}>
+                <View style={{ flex: 1, alignItems: isBot ? 'flex-start' : 'flex-end' }}>
                     {/* Bubble */}
                     <View style={[styles.bubble, isBot ? styles.bubbleBot : styles.bubbleUser]}>
-                        <Text style={[styles.bubbleText, isBot ? styles.bubbleTextBot : styles.bubbleTextUser, getRegularFont('ur')]}>
-                            {item.text}
-                        </Text>
+                        {item.isTyping ? (
+                            <View style={{ flexDirection: 'row', gap: horizontalScale(4) }}>
+                                <TypingIndicator />
+                            </View>
+                        ) : (
+                            <MarkdownText
+                                text={item.text}
+                                style={[styles.bubbleText, isBot ? styles.bubbleTextBot : styles.bubbleTextUser, getRegularFont(i18n.language), { textAlign: isRTL ? 'right' : 'left' }]}
+                            />
+                        )}
                     </View>
                     {/* Premium Crop Tiles */}
                     {isBot && item.cropTiles && (
-                        <View style={styles.cropTileRow}>
+                        <View style={[styles.cropTileRow, { justifyContent: isRTL ? 'flex-end' : 'flex-start' }]}>
                             {item.cropTiles.map(crop => (
                                 <CropProductTile
                                     key={crop.id}
                                     crop={crop}
-                                    onPress={() => sendMessage(`${crop.label} کے بارے میں جاننا چاہتا ہوں`)}
+                                    language={i18n.language}
+                                    onPress={() => sendMessage(
+                                        i18n.language === 'ur'
+                                            ? `${crop.label} کے بارے میں جاننا چاہتا ہوں`
+                                            : `Tell me about ${crop.label}`
+                                    )}
                                 />
                             ))}
                         </View>
+                    )}
+                    {/* Action Button */}
+                    {isBot && item.action && (
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={() => {
+                                if (item.action?.type === 'navigation' && item.action?.target) {
+                                    router.push(item.action.target as any);
+                                }
+                            }}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={[styles.actionButtonText, getRegularFont(i18n.language)]}>
+                                {item.action.label}
+                            </Text>
+                        </TouchableOpacity>
                     )}
                 </View>
             </Animated.View>
         );
     };
 
-    const HEADER_HEIGHT = verticalScale(160);
+    const HEADER_HEIGHT = verticalScale(155);
 
     return (
         <Animated.View entering={FadeIn.duration(600)} style={{ flex: 1 }}>
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: CREAM }}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior="padding"
+            keyboardVerticalOffset={0}
         >
             {/* ── Premium Gradient Header ── */}
             <Animated.View
-                entering={FadeInDown.duration(700)}
+                entering={FadeInDown.duration(500).springify()}
                 style={[styles.headerWrapper, { height: HEADER_HEIGHT, paddingTop: insets.top }]}
             >
                 {/* Gradient fill */}
@@ -182,13 +452,13 @@ export default function ChatScreen() {
                 />
                 {/* Curved wave bottom */}
                 <Svg
-                    height={verticalScale(40)}
+                    height={verticalScale(30)}
                     width="100%"
                     style={styles.headerCurve}
-                    viewBox="0 0 375 40"
+                    viewBox="0 0 375 30"
                     preserveAspectRatio="none"
                 >
-                    <Path d="M 0 0 Q 187.5 60 375 0 L 375 40 L 0 40 Z" fill={CREAM} />
+                    <Path d="M 0 0 Q 187.5 45 375 0 L 375 30 L 0 30 Z" fill={CREAM} />
                 </Svg>
 
                 {/* Close button top-left */}
@@ -216,11 +486,16 @@ export default function ChatScreen() {
 
                 {/* Centered agent info */}
                 <View style={styles.agentInfo}>
-                    <BotAvatar size={46} glow />
-                    <View style={styles.agentText}>
-                        <Text style={[styles.agentName, getHeaderFont('ur')]}>کسان دوست</Text>
-                        <Text style={[styles.agentSubtitle, getRegularFont('ur')]}>زرعی مشیر</Text>
-                    </View>
+                    <Animated.View entering={ZoomIn.delay(100).duration(500).springify()}>
+                        <BotAvatar size={46} glow />
+                    </Animated.View>
+                    <Animated.View
+                        style={styles.agentText}
+                        entering={FadeInDown.delay(200).duration(500)}
+                    >
+                        <Text style={[styles.agentName, getHeaderFont(i18n.language)]}>{t('chat.agentName')}</Text>
+                        <Text style={[styles.agentSubtitle, getRegularFont(i18n.language)]}>{t('chat.agentSubtitle')}</Text>
+                    </Animated.View>
                 </View>
             </Animated.View>
 
@@ -232,11 +507,12 @@ export default function ChatScreen() {
                 renderItem={renderMessage}
                 contentContainerStyle={styles.chatBody}
                 showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
                 onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             />
 
             {/* ── Action Area ── */}
-            <View style={styles.actionArea}>
+            <View style={[styles.actionArea, { paddingBottom: insets.bottom }]}>
                 {/* Quick reply pills */}
                 <Animated.View entering={FadeInUp.duration(600).delay(200)}>
                     <ScrollView
@@ -244,39 +520,62 @@ export default function ChatScreen() {
                         showsHorizontalScrollIndicator={false}
                         contentContainerStyle={styles.quickRepliesScroll}
                     >
-                        {QUICK_REPLIES.map(r => (
-                            <TouchableOpacity
-                                key={r.label}
-                                style={styles.quickReplyPill}
-                                onPress={() => sendMessage(r.label)}
-                                activeOpacity={0.75}
-                            >
-                                <Text style={styles.quickReplyIcon}>{r.icon}</Text>
-                                <Text style={[styles.quickReplyText, getRegularFont('ur')]}>{r.label}</Text>
-                            </TouchableOpacity>
-                        ))}
+                        {QUICK_REPLIES_CONFIG.map(r => {
+                            const label = t(r.translationKey);
+                            return (
+                                <TouchableOpacity
+                                    key={r.translationKey}
+                                    style={styles.quickReplyPill}
+                                    onPress={() => sendMessage(label)}
+                                    activeOpacity={0.75}
+                                >
+                                    <Text style={styles.quickReplyIcon}>{r.icon}</Text>
+                                    <Text style={[styles.quickReplyText, getRegularFont(i18n.language)]}>{label}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
                     </ScrollView>
                 </Animated.View>
 
                 {/* Input row */}
-                <View style={[styles.inputBar, { paddingBottom: insets.bottom + verticalScale(6) }]}>
-                    <TouchableOpacity style={styles.micBtn}>
-                        <Image source={require('../assets/icons/mic.png')} style={styles.micIcon} />
+                <View style={[styles.inputBar, { paddingBottom: verticalScale(6) }]}>
+                    <TouchableOpacity
+                        style={styles.micBtn}
+                        disabled={isTyping}
+                        onPress={handleMicPress}
+                        activeOpacity={0.7}
+                    >
+                        <Image
+                            source={require('../assets/icons/mic.png')}
+                            style={[
+                                styles.micIcon,
+                                (isTyping || isListening) && styles.micIconActive,
+                                isTyping && styles.micIconDisabled
+                            ]}
+                        />
                     </TouchableOpacity>
                     <TextInput
-                        style={[styles.textInput, getRegularFont('ur')]}
+                        style={[styles.textInput, getRegularFont(i18n.language), isTyping && styles.textInputDisabled]}
                         value={inputText}
                         onChangeText={setInputText}
-                        placeholder="کچھ بھی پوچھیں..."
+                        placeholder={t('chat.placeholder')}
                         placeholderTextColor="#8FA870"
-                        textAlign="right"
+                        textAlign={i18n.language === 'ur' ? 'right' : 'left'}
                         multiline
+                        editable={!isTyping}
                         onSubmitEditing={() => sendMessage(inputText)}
                     />
-                    <TouchableOpacity style={styles.sendBtn} onPress={() => sendMessage(inputText)} activeOpacity={0.8}>
-                        <Text style={styles.sendBtnText}>➤</Text>
+                    <TouchableOpacity style={[styles.sendBtn, isTyping && styles.sendBtnDisabled]} onPress={() => sendMessage(inputText)} activeOpacity={0.8} disabled={isTyping}>
+                        <Text style={styles.sendBtnText}>{isTyping ? '⏳' : '➤'}</Text>
                     </TouchableOpacity>
                 </View>
+                {isListening && (
+                    <View style={styles.listeningIndicator}>
+                        <Text style={[styles.listeningText, getRegularFont(i18n.language)]}>
+                            {t('chat.listening')}
+                        </Text>
+                    </View>
+                )}
             </View>
         </KeyboardAvoidingView>
         </Animated.View>
@@ -314,21 +613,25 @@ const styles = StyleSheet.create({
     },
     agentInfo: {
         alignItems: 'center',
-        gap: verticalScale(6),
-        paddingBottom: verticalScale(16),
+        gap: verticalScale(2),
+        paddingBottom: verticalScale(8),
+        flex: 1,
+        justifyContent: 'center',
     },
     agentText: {
         alignItems: 'center',
+        justifyContent: 'center',
     },
     agentName: {
         color: 'white',
-        fontSize: moderateScale(22),
+        fontSize: moderateScale(18),
         letterSpacing: 0.3,
+        fontWeight: '700',
     },
     agentSubtitle: {
         color: 'rgba(255,255,255,0.75)',
-        fontSize: moderateScale(12),
-        marginTop: verticalScale(2),
+        fontSize: moderateScale(11),
+        marginTop: verticalScale(1),
     },
 
     // ── Avatar ──
@@ -367,10 +670,11 @@ const styles = StyleSheet.create({
         gap: horizontalScale(8),
     },
     messageRowBot: {
-        flexDirection: 'row-reverse',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
     },
     messageRowUser: {
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
         justifyContent: 'flex-start',
     },
 
@@ -404,7 +708,6 @@ const styles = StyleSheet.create({
     bubbleText: {
         fontSize: moderateScale(14),
         lineHeight: moderateScale(23),
-        textAlign: 'right',
     },
     bubbleTextBot: {
         color: TEXT_DARK,
@@ -509,6 +812,13 @@ const styles = StyleSheet.create({
         height: horizontalScale(22),
         tintColor: THEME_COLOR,
     },
+    micIconActive: {
+        tintColor: '#E74C3C',
+        opacity: 1,
+    },
+    micIconDisabled: {
+        opacity: 0.5,
+    },
     textInput: {
         flex: 1,
         backgroundColor: CREAM,
@@ -520,6 +830,10 @@ const styles = StyleSheet.create({
         maxHeight: verticalScale(100),
         borderWidth: 1,
         borderColor: GREEN_BORDER,
+    },
+    textInputDisabled: {
+        opacity: 0.6,
+        backgroundColor: '#f0f0f0',
     },
     sendBtn: {
         backgroundColor: THEME_COLOR,
@@ -534,9 +848,48 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 6,
     },
+    sendBtnDisabled: {
+        opacity: 0.6,
+    },
     sendBtnText: {
         color: 'white',
         fontSize: moderateScale(16),
         transform: [{ rotate: '-45deg' }],
+    },
+
+    // ── Action Button ──
+    actionButton: {
+        marginTop: verticalScale(12),
+        paddingVertical: verticalScale(10),
+        paddingHorizontal: horizontalScale(16),
+        backgroundColor: THEME_COLOR,
+        borderRadius: moderateScale(20),
+        alignItems: 'center',
+        shadowColor: DARK_GREEN,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    actionButtonText: {
+        color: 'white',
+        fontSize: moderateScale(13),
+        fontWeight: '600',
+    },
+
+    // ── Listening Indicator ──
+    listeningIndicator: {
+        backgroundColor: 'rgba(231, 76, 60, 0.08)',
+        paddingHorizontal: horizontalScale(12),
+        paddingVertical: verticalScale(8),
+        alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(231, 76, 60, 0.2)',
+    },
+    listeningText: {
+        color: '#E74C3C',
+        fontSize: moderateScale(12),
+        fontWeight: '600',
+        letterSpacing: 0.3,
     },
 });

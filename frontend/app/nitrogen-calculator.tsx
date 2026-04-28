@@ -89,8 +89,9 @@ export default function NitrogenCalculatorScreen() {
     };
 
     const StatusMessage = ({ children }: { children: React.ReactNode }) => (
-        <Animated.View entering={FadeInUp.duration(400)} style={styles.messageContainer}>
-            <Text style={[styles.messageText, getRegularFont(i18n.language)]}>{children}</Text>
+        <Animated.View entering={FadeInUp.duration(400)} style={[styles.messageContainer, isRTL && styles.messageContainerRTL]}>
+            <Text style={styles.warningIcon}>!</Text>
+            <Text style={[styles.messageText, getRegularFont(i18n.language), isRTL && { textAlign: 'right' }]}>{children}</Text>
         </Animated.View>
     );
 
@@ -265,16 +266,35 @@ const styles = StyleSheet.create({
     },
     messageContainer: {
         width: '100%',
-        padding: moderateScale(15),
-        marginBottom: verticalScale(10),
-        alignItems: 'center',
+        padding: moderateScale(16),
+        marginBottom: verticalScale(15),
+        marginTop: verticalScale(20),
+        backgroundColor: 'rgba(255, 193, 7, 0.15)',
+        borderRadius: moderateScale(12),
+        borderLeftWidth: 4,
+        borderLeftColor: '#FFC107',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: horizontalScale(12),
+    },
+    messageContainerRTL: {
+        flexDirection: 'row-reverse',
+        borderLeftWidth: 0,
+        borderRightWidth: 4,
+        borderRightColor: '#FFC107',
+    },
+    warningIcon: {
+        fontSize: moderateScale(28),
+        color: '#FF9800',
+        fontWeight: 'bold',
+        marginTop: verticalScale(2),
     },
     messageText: {
-        fontSize: moderateScale(16),
-        color: 'black',
-        textAlign: 'center',
-        marginTop: verticalScale(20),
-        lineHeight: verticalScale(28),
+        fontSize: moderateScale(14),
+        color: '#333',
+        textAlign: 'left',
+        lineHeight: verticalScale(24),
+        flex: 1,
     },
     redText: {
         color: 'red',
