@@ -205,6 +205,11 @@
         "prices": "Prices",
         "wheat": "Wheat",
         "rice": "Rice",
-        "maize": "Maize"
+        "maize": "Maize",
+        "listening": "Listening...",
+        "processing": "Processing...",
+        "noSpeechDetected": "No speech detected. Please try again.",
+        "micPermissionDenied": "Microphone permission denied. Please enable it in settings.",
+        "speechError": "Error recognizing speech. Please try again."
     }
 }

@@ -1,7 +1,7 @@
 // Purpose: Get images as input from user and call the api to upload images to do analysis.
 // 
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal , Platform } from 'react-native';
 import Animated, { FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
@@ -23,7 +23,6 @@ import {
 } from '@/lib/maizeRulesCalculator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
-import { Platform } from 'react-native';
 import { BACKEND_API_URL } from '@/constants';
 import * as Network from 'expo-network';
 import { THEME_COLOR } from '@/constants/theme';

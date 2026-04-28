@@ -1,9 +1,7 @@
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View , Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Text } from 'react-native';
-import { commonStyles, getHeaderFont } from '@/styles/common';
-import { moderateScale } from '@/styles/common';
+import { commonStyles, getHeaderFont , moderateScale } from '@/styles/common';
 import { useTranslation } from 'react-i18next';
 import Svg, { Path } from 'react-native-svg';
 

@@ -24,6 +24,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ExpoWebSpeechRecognition } from 'expo-speech-recognition';
 import { THEME_COLOR } from '@/constants/theme';
 import { BACKEND_API_URL } from '@/constants';
 import {
@@ -205,8 +206,105 @@ export default function ChatScreen() {
     const [messages, setMessages] = useState<Message[]>(initialMessages);
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
     const flatListRef = useRef<FlatList>(null);
+    const recognitionRef = useRef<ExpoWebSpeechRecognition | null>(null);
+
+    useEffect(() => {
+        recognitionRef.current = new ExpoWebSpeechRecognition();
+    }, []);
+
+    const handleMicPress = () => {
+        if (!recognitionRef.current) {
+            Alert.alert(t('common.error'), t('chat.speechError'));
+            return;
+        }
+
+        if (isListening) {
+            try {
+                recognitionRef.current.stop();
+            } catch (e) {
+                console.error('Error stopping recognition:', e);
+            }
+            setIsListening(false);
+            return;
+        }
+
+        try {
+            const recognition = recognitionRef.current;
+            // Note: Urdu might not be fully supported on web browsers
+            // Fallback to English for web if Urdu isn't available
+            const locale = i18n.language === 'ur' ? 'ur-PK' : 'en-US';
+
+            // On web, if Urdu is selected, try it but be prepared to fallback
+            console.log('Selected language:', i18n.language, 'Locale:', locale);
+
+            // Reset recognition object to clear previous state
+            recognition.lang = locale;
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            let hasResult = false;
+
+            recognition.onstart = () => {
+                console.log('Speech recognition started');
+                setIsListening(true);
+            };
+
+            recognition.onresult = (event: any) => {
+                console.log('Speech result event:', event);
+                if (event.results && event.results.length > 0) {
+                    const result = event.results[event.results.length - 1];
+                    if (result && result[0]) {
+                        const transcript = result[0].transcript;
+                        console.log('Transcript:', transcript);
+                        if (transcript.trim()) {
+                            hasResult = true;
+                            setInputText(transcript);
+                            setTimeout(() => sendMessage(transcript), 300);
+                        }
+                    }
+                }
+            };
+
+            recognition.onerror = (event: any) => {
+                console.error('Speech recognition error:', event.error);
+                const errorCode = event.error || 'unknown';
+
+                // Silent errors
+                if (errorCode === 'no-match' || errorCode === 'network') {
+                    console.log('Expected speech error:', errorCode);
+                    return;
+                }
+
+                if (errorCode === 'permission-denied') {
+                    Alert.alert(t('common.error'), t('chat.micPermissionDenied'));
+                } else if (errorCode === 'not-allowed') {
+                    Alert.alert(t('common.error'), 'Microphone access required. Please enable in browser settings.');
+                } else {
+                    console.warn('Speech recognition error:', errorCode);
+                }
+            };
+
+            recognition.onend = () => {
+                console.log('Speech recognition ended, hasResult:', hasResult);
+                setIsListening(false);
+
+                if (!hasResult) {
+                    console.log('No speech detected');
+                }
+            };
+
+            console.log('Starting speech recognition with locale:', locale);
+            recognition.start();
+        } catch (error) {
+            console.error('Error in handleMicPress:', error);
+            setIsListening(false);
+            Alert.alert(t('common.error'), t('chat.speechError'));
+        }
+    };
 
     const sendMessage = async (text: string) => {
         if (!text.trim() || isTyping) return;
@@ -440,8 +538,20 @@ export default function ChatScreen() {
 
                 {/* Input row */}
                 <View style={[styles.inputBar, { paddingBottom: insets.bottom + verticalScale(6) }]}>
-                    <TouchableOpacity style={styles.micBtn} disabled={isTyping}>
-                        <Image source={require('../assets/icons/mic.png')} style={[styles.micIcon, isTyping && styles.micIconDisabled]} />
+                    <TouchableOpacity
+                        style={styles.micBtn}
+                        disabled={isTyping}
+                        onPress={handleMicPress}
+                        activeOpacity={0.7}
+                    >
+                        <Image
+                            source={require('../assets/icons/mic.png')}
+                            style={[
+                                styles.micIcon,
+                                (isTyping || isListening) && styles.micIconActive,
+                                isTyping && styles.micIconDisabled
+                            ]}
+                        />
                     </TouchableOpacity>
                     <TextInput
                         style={[styles.textInput, getRegularFont(i18n.language), isTyping && styles.textInputDisabled]}
@@ -458,6 +568,13 @@ export default function ChatScreen() {
                         <Text style={styles.sendBtnText}>{isTyping ? '⏳' : '➤'}</Text>
                     </TouchableOpacity>
                 </View>
+                {isListening && (
+                    <View style={styles.listeningIndicator}>
+                        <Text style={[styles.listeningText, getRegularFont(i18n.language)]}>
+                            {t('chat.listening')}
+                        </Text>
+                    </View>
+                )}
             </View>
         </KeyboardAvoidingView>
         </Animated.View>
@@ -694,6 +811,10 @@ const styles = StyleSheet.create({
         height: horizontalScale(22),
         tintColor: THEME_COLOR,
     },
+    micIconActive: {
+        tintColor: '#E74C3C',
+        opacity: 1,
+    },
     micIconDisabled: {
         opacity: 0.5,
     },
@@ -753,5 +874,21 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: moderateScale(13),
         fontWeight: '600',
+    },
+
+    // ── Listening Indicator ──
+    listeningIndicator: {
+        backgroundColor: 'rgba(231, 76, 60, 0.08)',
+        paddingHorizontal: horizontalScale(12),
+        paddingVertical: verticalScale(8),
+        alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(231, 76, 60, 0.2)',
+    },
+    listeningText: {
+        color: '#E74C3C',
+        fontSize: moderateScale(12),
+        fontWeight: '600',
+        letterSpacing: 0.3,
     },
 });
