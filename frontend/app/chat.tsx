@@ -435,7 +435,8 @@ export default function ChatScreen() {
         <Animated.View entering={FadeIn.duration(600)} style={{ flex: 1 }}>
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: CREAM }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior="padding"
+            keyboardVerticalOffset={0}
         >
             {/* ── Premium Gradient Header ── */}
             <Animated.View
@@ -511,7 +512,7 @@ export default function ChatScreen() {
             />
 
             {/* ── Action Area ── */}
-            <View style={styles.actionArea}>
+            <View style={[styles.actionArea, { paddingBottom: insets.bottom }]}>
                 {/* Quick reply pills */}
                 <Animated.View entering={FadeInUp.duration(600).delay(200)}>
                     <ScrollView
@@ -537,7 +538,7 @@ export default function ChatScreen() {
                 </Animated.View>
 
                 {/* Input row */}
-                <View style={[styles.inputBar, { paddingBottom: insets.bottom + verticalScale(6) }]}>
+                <View style={[styles.inputBar, { paddingBottom: verticalScale(6) }]}>
                     <TouchableOpacity
                         style={styles.micBtn}
                         disabled={isTyping}

@@ -1,5 +1,5 @@
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import { Image, StyleSheet, TouchableOpacity, PanResponder, Animated as RNAnimated } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, PanResponder, Animated as RNAnimated, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { THEME_COLOR } from '@/constants/theme';
@@ -9,10 +9,18 @@ import React from 'react';
 function Microphone() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    
+    const screenWidth = Dimensions.get('window').width;
+    const buttonWidth = horizontalScale(52);
+    const sideMargin = horizontalScale(20);
+
+    // Snap positions relative to the container (which has left: sideMargin)
+    // The container itself is offset by sideMargin, so pan positions are relative to that
+    const leftSnapX = 0;
+    const rightSnapX = screenWidth - buttonWidth - 2 * sideMargin;
+
     // Pan responder for dragging the bot button
     const pan = React.useRef(new RNAnimated.ValueXY()).current;
-    
+
     const panResponder = React.useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) => {
@@ -26,15 +34,29 @@ function Microphone() {
                 });
                 pan.setValue({ x: 0, y: 0 });
             },
-            onPanResponderMove: RNAnimated.event(
-                [
-                    null,
-                    { dx: pan.x, dy: pan.y }
-                ],
-                { useNativeDriver: false }
-            ),
+            onPanResponderMove: (_, { dx, dy }) => {
+                // Allow free vertical movement, constrain horizontal to dragging
+                pan.x.setValue(dx);
+                pan.y.setValue(dy);
+            },
             onPanResponderRelease: () => {
                 pan.flattenOffset();
+
+                // Calculate current x position
+                const currentX = (pan.x as any)._value;
+                const distanceToLeft = Math.abs(currentX - leftSnapX);
+                const distanceToRight = Math.abs(currentX - rightSnapX);
+
+                // Determine which edge is closer
+                const targetX = distanceToLeft < distanceToRight ? leftSnapX : rightSnapX;
+
+                // Animate to the target position
+                RNAnimated.spring(pan.x, {
+                    toValue: targetX,
+                    useNativeDriver: false,
+                    speed: 12,
+                    bounciness: 3,
+                }).start();
             }
         })
     ).current;
