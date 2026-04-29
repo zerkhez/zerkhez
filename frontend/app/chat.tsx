@@ -226,8 +226,8 @@ export default function ChatScreen() {
                 recognitionRef.current.stop();
             } catch (e) {
                 console.error('Error stopping recognition:', e);
+                setIsListening(false);
             }
-            setIsListening(false);
             return;
         }
 
