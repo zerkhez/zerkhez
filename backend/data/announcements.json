@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ann_welcome",
+    "type": "general",
+    "title_en": "Welcome to Zerkhez!",
+    "title_ur": "زرخیز میں خوش آمدید!",
+    "body_en": "Analyze your crop leaves to get personalized nitrogen fertilizer recommendations.",
+    "body_ur": "ذاتی نائٹروجن کھاد کی سفارشات کے لیے اپنی فصل کے پتے تجزیہ کریں۔",
+    "date": "2025-01-01T00:00:00Z"
+  },
+  {
+    "id": "ann_feature",
+    "type": "general",
+    "title_en": "Real-time Weather Alerts",
+    "title_ur": "بروقت موسم کی انتباہات",
+    "body_en": "Get weather alerts for your region to better plan your farming activities.",
+    "body_ur": "اپنے علاقے کے لیے موسم کی انتباہات حاصل کریں تاکہ اپنی کاشتکاری کی سرگرمیوں کی بہتر منصوبہ بندی کریں۔",
+    "date": "2025-02-15T00:00:00Z"
+  }
+]

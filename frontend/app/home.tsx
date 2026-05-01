@@ -5,6 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import * as Location from "expo-location";
 import * as Network from "expo-network";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OPEN_WEATHER_API_URL } from "@/constants";
 import {
     Dimensions,
@@ -146,7 +147,7 @@ export default function HomeScreen() {
     }, [i18n.language]);
 
     useEffect(() => {
-        // If weather data was passed via params, we don't need to fetch again immediately
+        // If weather data was passed via params, use it
         if (params.temp && params.location) {
             setWeather({
                 temp: params.temp as string,
@@ -199,6 +200,8 @@ export default function HomeScreen() {
                     description: data.weather[0].description,
                     location: data.name,
                 });
+                // Store location for use in notifications
+                await AsyncStorage.setItem('last_location', JSON.stringify({ lat, lon }));
             } else {
                 console.error("Weather API Error:", data.message);
             }

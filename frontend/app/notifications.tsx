@@ -34,6 +34,8 @@ export interface AnalysisHistoryEntry {
 
 interface Announcement {
     id: string;
+    type?: 'general' | 'weather';
+    severity?: 'low' | 'medium' | 'high';
     title_en: string;
     title_ur: string;
     body_en: string;
@@ -92,7 +94,16 @@ export default function NotificationsScreen() {
         try {
             const networkState = await Network.getNetworkStateAsync();
             if (networkState.isConnected) {
-                const response = await fetch(`${BACKEND_API_URL}/api/announcements`);
+                // Get stored location to pass to endpoint
+                const locJson = await AsyncStorage.getItem('last_location');
+                const location = locJson ? JSON.parse(locJson) : null;
+
+                let url = `${BACKEND_API_URL}/api/announcements`;
+                if (location) {
+                    url += `?lat=${location.lat}&lon=${location.lon}`;
+                }
+
+                const response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json();
                     setAnnouncements(data);
@@ -192,29 +203,45 @@ export default function NotificationsScreen() {
                         </View>
 
                         {history.length > 0 ? (
-                            history.slice(0, 10).map((entry, index) => (
-                                <Animated.View key={entry.id} entering={FadeInUp.delay(350 + index * 80).springify()}>
-                                    <TouchableOpacity style={[styles.historyCard, i18n.language === 'ur' && styles.historyCardRTL]} onPress={() => handleHistoryPress(entry)} activeOpacity={0.7}>
-                                        <View style={[styles.historyLeft, i18n.language === 'ur' && styles.historyLeftRTL]}>
-                                            <Text style={styles.historyIcon}>{CROP_ICONS[entry.crop] || '🌱'}</Text>
-                                            <View style={styles.historyInfo}>
-                                                <Text style={[styles.historyVariety, getHeaderFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>{getTranslatedVariety(entry.crop, entry.variety)}</Text>
-                                                <Text style={[styles.historyDate, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>{formatDate(entry.date)}</Text>
+                            <>
+                                {history.slice(0, 3).map((entry, index) => (
+                                    <Animated.View key={entry.id} entering={FadeInUp.delay(350 + index * 80).springify()}>
+                                        <TouchableOpacity style={[styles.historyCard, i18n.language === 'ur' && styles.historyCardRTL]} onPress={() => handleHistoryPress(entry)} activeOpacity={0.7}>
+                                            <View style={[styles.historyLeft, i18n.language === 'ur' && styles.historyLeftRTL]}>
+                                                <Text style={styles.historyIcon}>{CROP_ICONS[entry.crop] || '🌱'}</Text>
+                                                <View style={styles.historyInfo}>
+                                                    <Text style={[styles.historyVariety, getHeaderFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>{getTranslatedVariety(entry.crop, entry.variety)}</Text>
+                                                    <Text style={[styles.historyDate, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>{formatDate(entry.date)}</Text>
+                                                </View>
                                             </View>
-                                        </View>
-                                        <View style={styles.historyRight}>
-                                            <Text style={[styles.historyNRate, getHeaderFont(i18n.language)]}>{Math.round(entry.n_rate)}</Text>
-                                            <Text style={[styles.historyNRateLabel, getRegularFont(i18n.language)]}>{t('notifications.nRate')}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </Animated.View>
-                            ))
+                                            <View style={styles.historyRight}>
+                                                <Text style={[styles.historyNRate, getHeaderFont(i18n.language)]}>{Math.round(entry.n_rate)}</Text>
+                                                <Text style={[styles.historyNRateLabel, getRegularFont(i18n.language)]}>{t('notifications.nRate')}</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </Animated.View>
+                                ))}
+                                {history.length > 3 && (
+                                    <Animated.View entering={FadeInUp.delay(590).springify()}>
+                                        <TouchableOpacity
+                                            style={[styles.viewAllButton, i18n.language === 'ur' && styles.viewAllButtonRTL]}
+                                            onPress={() => router.push('/history')}
+                                            activeOpacity={0.6}
+                                        >
+                                            <Text style={[styles.viewAllText, getHeaderFont(i18n.language)]}>
+                                                {t('common.viewAll')} ({history.length})
+                                            </Text>
+                                            <Ionicons name="arrow-forward" size={moderateScale(16)} color={THEME_COLOR} />
+                                        </TouchableOpacity>
+                                    </Animated.View>
+                                )}
+                            </>
                         ) : (
                             <Text style={[styles.emptyText, getRegularFont(i18n.language)]}>{t('notifications.noHistory')}</Text>
                         )}
                     </Animated.View>
 
-                    {/* ── Announcements ── */}
+                    {/* ── Announcements & Weather Alerts ── */}
                     <Animated.View entering={FadeInUp.delay(500).springify()} style={styles.section}>
                         <View style={[styles.sectionHeader, i18n.language === 'ur' && styles.sectionHeaderRTL]}>
                             <Ionicons name="megaphone-outline" size={moderateScale(20)} color={THEME_COLOR} />
@@ -222,17 +249,41 @@ export default function NotificationsScreen() {
                         </View>
 
                         {announcements.length > 0 ? (
-                            announcements.map((item, index) => (
-                                <Animated.View key={item.id} entering={FadeInUp.delay(550 + index * 80).springify()} style={styles.announcementCard}>
-                                    <Text style={[styles.announcementTitle, getHeaderFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>
-                                        {i18n.language === 'ur' ? item.title_ur : item.title_en}
-                                    </Text>
-                                    <Text style={[styles.announcementBody, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>
-                                        {i18n.language === 'ur' ? item.body_ur : item.body_en}
-                                    </Text>
-                                    <Text style={[styles.announcementDate, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>{formatDate(item.date)}</Text>
-                                </Animated.View>
-                            ))
+                            announcements.map((item, index) => {
+                                const isWeather = item.type === 'weather';
+                                const severityColor = item.severity === 'high' ? '#e87c3e' : '#e8a83e';
+
+                                return (
+                                    <Animated.View key={item.id} entering={FadeInUp.delay(550 + index * 80).springify()}>
+                                        <View style={[
+                                            isWeather ? styles.weatherAnnouncementCard : styles.announcementCard,
+                                            isWeather && item.severity && { borderLeftColor: severityColor, borderRightColor: severityColor }
+                                        ]}>
+                                            {isWeather && (
+                                                <View style={[styles.announcementHeader, i18n.language === 'ur' && styles.announcementHeaderRTL]}>
+                                                    <Ionicons
+                                                        name={item.severity === 'high' ? 'warning-outline' : 'alert-circle-outline'}
+                                                        size={moderateScale(18)}
+                                                        color={severityColor}
+                                                    />
+                                                    <Text style={[styles.announcementTitle, getHeaderFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>
+                                                        {i18n.language === 'ur' ? item.title_ur : item.title_en}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                            {!isWeather && (
+                                                <Text style={[styles.announcementTitle, getHeaderFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>
+                                                    {i18n.language === 'ur' ? item.title_ur : item.title_en}
+                                                </Text>
+                                            )}
+                                            <Text style={[styles.announcementBody, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>
+                                                {i18n.language === 'ur' ? item.body_ur : item.body_en}
+                                            </Text>
+                                            <Text style={[styles.announcementDate, getRegularFont(i18n.language), { textAlign: i18n.language === 'ur' ? 'right' : 'left' }]}>{formatDate(item.date)}</Text>
+                                        </View>
+                                    </Animated.View>
+                                );
+                            })
                         ) : (
                             <Text style={[styles.emptyText, getRegularFont(i18n.language)]}>{t('notifications.noAnnouncements')}</Text>
                         )}
@@ -379,6 +430,23 @@ const styles = StyleSheet.create({
         borderLeftWidth: 3,
         borderLeftColor: '#e0c040',
     },
+    weatherAnnouncementCard: {
+        backgroundColor: '#fff5ee',
+        borderRadius: moderateScale(14),
+        padding: moderateScale(14),
+        marginBottom: verticalScale(10),
+        borderLeftWidth: 3,
+        borderLeftColor: '#e87c3e',
+    },
+    announcementHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: horizontalScale(8),
+        marginBottom: verticalScale(8),
+    },
+    announcementHeaderRTL: {
+        flexDirection: 'row-reverse',
+    },
     announcementTitle: {
         fontSize: moderateScale(14),
         color: '#2a3510',
@@ -393,6 +461,24 @@ const styles = StyleSheet.create({
     announcementDate: {
         fontSize: moderateScale(10),
         color: '#999',
+    },
+
+    // ── View All Button ──
+    viewAllButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingVertical: verticalScale(12),
+        paddingHorizontal: horizontalScale(10),
+        gap: horizontalScale(6),
+        marginTop: verticalScale(8),
+    },
+    viewAllButtonRTL: {
+        justifyContent: 'flex-start',
+    },
+    viewAllText: {
+        fontSize: moderateScale(13),
+        color: THEME_COLOR,
     },
 
     // ── Empty state ──

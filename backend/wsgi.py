@@ -5,6 +5,7 @@ from app.routes.wheat_routes import wheat_bp
 from app.routes.maize_routes import maize_bp
 from app.routes.fertilizer_routes import fertilizer_bp
 from app.routes.chat_routes import chat_bp
+from app.routes.announcements_routes import announcements_bp
 from datetime import datetime
 
 def create_app():
@@ -27,6 +28,7 @@ def create_app():
     app.register_blueprint(maize_bp, url_prefix='/api')
     app.register_blueprint(fertilizer_bp, url_prefix='/api')
     app.register_blueprint(chat_bp, url_prefix='/api')
+    app.register_blueprint(announcements_bp, url_prefix='/api')
 
     return app
 
