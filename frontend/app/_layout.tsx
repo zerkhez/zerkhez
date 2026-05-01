@@ -53,6 +53,7 @@ export default function RootLayout() {
         <Stack.Screen name="gobh-instructions" />
         <Stack.Screen name="language-select" />
         <Stack.Screen name="notifications" />
+        <Stack.Screen name="history" />
         <Stack.Screen name="results" />
       </Stack>
       <StatusBar style="auto" />

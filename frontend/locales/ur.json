@@ -33,7 +33,13 @@
         "fertilizerAtPlanting": "بوقت کاشت {{cropName}} کی کھادیں",
         "cropDiseaseIdentification": "فصلوں کی بیماریوں کی تشخیص",
         "appUsageInstructions": "ایپ استعمال کرنے کی ہدایات",
-        "results": "نتائج"
+        "results": "نتائج",
+        "viewAll": "تمام دیکھیں",
+        "deleteRecord": "ریکارڈ حذف کریں",
+        "deleteConfirm": "کیا آپ واقعی یہ ریکارڈ حذف کرنا چاہتے ہیں؟",
+        "delete": "حذف کریں",
+        "cancel": "منسوخ کریں",
+        "all": "تمام"
     },
     "fertilizerSelection": {
         "header": "کھاد کا انتخاب",
@@ -105,6 +111,12 @@
         "noAnnouncements": "اس وقت کوئی اعلان نہیں۔",
         "kgPerAcre": "کلوگرام/ایکڑ",
         "nRate": "نائٹروجن شرح"
+    },
+    "history": {
+        "title": "تجزیے کی تاریخ",
+        "newest": "نیا ترین",
+        "oldest": "پرانا ترین",
+        "noRecords": "کوئی ریکارڈ نہیں ملا"
     },
     "results": {
         "recommendedNitrogenRate": "تجویز کردہ نائٹروجن شرح:",
