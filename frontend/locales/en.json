@@ -33,7 +33,13 @@
         "fertilizerAtPlanting": "{{cropName}} Fertilizer Application at Planting",
         "cropDiseaseIdentification": "Crop Disease Identification",
         "appUsageInstructions": "App Usage Instructions",
-        "results": "Results"
+        "results": "Results",
+        "viewAll": "View All",
+        "deleteRecord": "Delete Record",
+        "deleteConfirm": "Are you sure you want to delete this record?",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "all": "All"
     },
     "fertilizerSelection": {
         "header": "Fertilizer Selection",
@@ -105,6 +111,12 @@
         "noAnnouncements": "No announcements at the moment.",
         "kgPerAcre": "kg/acre",
         "nRate": "N-Rate"
+    },
+    "history": {
+        "title": "Analysis History",
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "noRecords": "No records found"
     },
     "results": {
         "recommendedNitrogenRate": "Recommended Nitrogen Rate:",

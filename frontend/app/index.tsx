@@ -165,6 +165,9 @@ export default function WelcomeScreen() {
 
             // get user current location
             let location = await Location.getCurrentPositionAsync({});
+            // Store location for use in announcements
+            await AsyncStorage.setItem('last_location', JSON.stringify({ lat: location.coords.latitude, lon: location.coords.longitude }));
+
             const apiKey =
                 process.env.EXPO_PUBLIC_OPENWEATHERMAP_API_KEY ||
                 "fddbdfd48ce21911399a167863770702";
