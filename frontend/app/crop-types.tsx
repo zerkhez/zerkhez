@@ -45,13 +45,13 @@ export default function CropTypesScreen() {
                                     if (nextRoute) {
                                         // If nextRoute is passed, navigate there
                                         router.push({
-                                            pathname: nextRoute as string,
+                                            pathname: nextRoute as any,
                                             params: { typeName: type, id, name, cropTypeIndex: index }
                                         });
                                     } else {
                                         // Default behavior
                                         router.push({
-                                            pathname: '/crop-stages' as string,
+                                            pathname: '/crop-stages' as any,
                                             params: params,
                                         });
                                     }
