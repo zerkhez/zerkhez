@@ -5,7 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Image
+  Image,
 } from 'react-native';
 
 import Animated, {
@@ -16,10 +16,10 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
+import YoutubePlayer from 'react-native-youtube-iframe';
+import { useState, useEffect } from 'react';
 
 import Microphone from '@/components/microphone';
 import Header from '@/components/header';
@@ -29,18 +29,24 @@ import {
   verticalScale,
   horizontalScale,
   moderateScale,
-  getRegularFont
+  getRegularFont,
 } from '@/styles/common';
 
-// Crop Images
 import riceImg from '@/assets/images/how_to_take_pic_of_rice.jpeg';
 import maizeImg from '@/assets/images/how_to_take_pic_of_maize.jpeg';
 import wheatImg from '@/assets/images/how_to_take_pic_of_wheat.jpeg';
 
-export default function RiceTutorialScreen() {
+const CROP_VIDEO_IDS: Record<string, string> = {
+  'چاول': 'RZ6o473CMSs',
+  'مکئی': 'Hn92mLbiYuI',
+  'گندم': 'BQTlHHNIyek',
+};
+
+export default function VideoTutorialScreen() {
   const params = useLocalSearchParams();
   const { t, i18n } = useTranslation();
   const { displayFieldName } = params;
+  const [playing, setPlaying] = useState(false);
 
   const cropName = Array.isArray(displayFieldName)
     ? displayFieldName[0]
@@ -63,28 +69,18 @@ export default function RiceTutorialScreen() {
     transform: [{ scale: playButtonScale.value }],
   }));
 
+  const getVideoId = () => {
+    for (const [key, id] of Object.entries(CROP_VIDEO_IDS)) {
+      if (cropName.includes(key)) return id;
+    }
+    return CROP_VIDEO_IDS['چاول'];
+  };
 
-  // Dynamic image selection using Urdu crop names
   const getCropImage = () => {
-    if (
-      cropName.includes('چاول')
-    ) {
-      return riceImg;
-    }
-
-    if (
-      cropName.includes('مکئی')
-    ) {
-      return maizeImg;
-    }
-
-    if (
-      cropName.includes('گندم')
-    ) {
-      return wheatImg;
-    }
-
-    return riceImg; // fallback
+    if (cropName.includes('چاول')) return riceImg;
+    if (cropName.includes('مکئی')) return maizeImg;
+    if (cropName.includes('گندم')) return wheatImg;
+    return riceImg;
   };
 
   return (
@@ -102,62 +98,54 @@ export default function RiceTutorialScreen() {
           contentContainerStyle={commonStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-
           <Text
             style={[
               commonStyles.descriptionText,
               getRegularFont(i18n.language),
-              {
-                textAlign:
-                  i18n.language === 'ur'
-                    ? 'right'
-                    : 'left'
-              }
+              { textAlign: i18n.language === 'ur' ? 'right' : 'left' },
             ]}
           >
             {cropName} {t('common.watchVideo')}
           </Text>
 
-          {/* Video Card */}
-          <TouchableOpacity
-            style={styles.videoCard}
-            activeOpacity={0.85}
-          >
-            <View style={styles.videoThumbnail}>
-              <Image
-                source={getCropImage()}
-                style={styles.thumbnailImage}
-                resizeMode="contain"
+          <View style={styles.videoCard}>
+            {playing ? (
+              <YoutubePlayer
+                height={verticalScale(220)}
+                videoId={getVideoId()}
+                play={true}
               />
-
-              <Animated.View
-                style={[
-                  styles.playButton,
-                  playButtonAnimatedStyle
-                ]}
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.9}
+                style={styles.thumbnailWrapper}
+                onPress={() => setPlaying(true)}
               >
-                <Text style={styles.playIcon}>▶</Text>
-              </Animated.View>
-            </View>
+                <Image
+                  source={getCropImage()}
+                  style={styles.thumbnailImage}
+                  resizeMode="cover"
+                />
+                <Animated.View style={[styles.playButton, playButtonAnimatedStyle]}>
+                  <Text style={styles.playIcon}>▶</Text>
+                </Animated.View>
+              </TouchableOpacity>
+            )}
 
-            <View style={styles.videoInfo}>
-              <Text
-                style={[
-                  styles.videoTitle,
-                  getRegularFont(i18n.language),
-                  {
-                    textAlign:
-                      i18n.language === 'ur'
-                        ? 'right'
-                        : 'left'
-                  }
-                ]}
-              >
-                {t('common.wayOfImage', { cropName })}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
+            {!playing && (
+              <View style={styles.videoInfo}>
+                <Text
+                  style={[
+                    styles.videoTitle,
+                    getRegularFont(i18n.language),
+                    { textAlign: i18n.language === 'ur' ? 'right' : 'left' },
+                  ]}
+                >
+                  {t('common.wayOfImage', { cropName })}
+                </Text>
+              </View>
+            )}
+          </View>
         </ScrollView>
 
         <Microphone />
@@ -176,28 +164,25 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
   },
 
-  videoThumbnail: {
-    height: verticalScale(180),
-    backgroundColor: '#fff',
+  thumbnailWrapper: {
+    height: verticalScale(220),
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
 
   thumbnailImage: {
     width: '100%',
     height: '100%',
+    position: 'absolute',
   },
 
   playButton: {
-    position: 'absolute',
     width: horizontalScale(70),
     height: horizontalScale(70),
     borderRadius: horizontalScale(35),
     backgroundColor: 'rgba(255,255,255,0.92)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1,
   },
 
   playIcon: {
