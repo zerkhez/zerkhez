@@ -6,6 +6,7 @@ import {
     Alert,
     FlatList,
     Image,
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -24,7 +25,13 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ExpoWebSpeechRecognition } from 'expo-speech-recognition';
+// Conditionally import speech recognition (not available in Expo Go)
+let ExpoWebSpeechRecognition: any = null;
+try {
+    ExpoWebSpeechRecognition = require('expo-speech-recognition').ExpoWebSpeechRecognition;
+} catch (e) {
+    console.warn('expo-speech-recognition not available (Expo Go?). Mic disabled.');
+}
 import { THEME_COLOR } from '@/constants/theme';
 import { BACKEND_API_URL } from '@/constants';
 import {
@@ -207,12 +214,32 @@ export default function ChatScreen() {
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isListening, setIsListening] = useState(false);
+    const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
     const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
     const flatListRef = useRef<FlatList>(null);
-    const recognitionRef = useRef<ExpoWebSpeechRecognition | null>(null);
+    const recognitionRef = useRef<any>(null);
 
     useEffect(() => {
-        recognitionRef.current = new ExpoWebSpeechRecognition();
+        if (ExpoWebSpeechRecognition) {
+            recognitionRef.current = new ExpoWebSpeechRecognition();
+        }
+    }, []);
+
+    // Track keyboard visibility & auto-scroll chat
+    useEffect(() => {
+        const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+        const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+        const showSub = Keyboard.addListener(showEvent, () => {
+            setIsKeyboardVisible(true);
+            setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        });
+        const hideSub = Keyboard.addListener(hideEvent, () => {
+            setIsKeyboardVisible(false);
+        });
+        return () => {
+            showSub.remove();
+            hideSub.remove();
+        };
     }, []);
 
     const handleMicPress = () => {
@@ -435,7 +462,7 @@ export default function ChatScreen() {
         <Animated.View entering={FadeIn.duration(600)} style={{ flex: 1 }}>
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: CREAM }}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior="padding"
             keyboardVerticalOffset={0}
         >
             {/* ── Premium Gradient Header ── */}
@@ -512,7 +539,7 @@ export default function ChatScreen() {
             />
 
             {/* ── Action Area ── */}
-            <View style={[styles.actionArea, { paddingBottom: insets.bottom }]}>
+            <View style={[styles.actionArea, { paddingBottom: isKeyboardVisible ? 0 : insets.bottom }]}>
                 {/* Quick reply pills */}
                 <Animated.View entering={FadeInUp.duration(600).delay(200)}>
                     <ScrollView
